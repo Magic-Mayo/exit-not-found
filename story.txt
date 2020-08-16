@@ -1,0 +1,47 @@
+Legend of a vast treasure of {infinite fortune} perpetually lures {treasure seekers} to try and discover it's {location}.
+Needless to say, it's never been found.  Unfortunately, you have heard the treasure's {siren's song} and are now on a hunt for it.
+As the {lore} goes, there is a {cave} of sorts in which the {treasure} lies.  The first problem is the journey there.  Not only does it
+ lie past the [forest] but you must also trek the {towering} [mountains].  The second issue is no one knows the exact location of the {cave}.
+Once you get to the [mountains] it's a virtual guessing game as to where the {cave} is.  If you manage to find the {cave} there's {no telling}
+what kind of {danger} is {contained} within.  Of course there are {myths} from {all over} throwing out {wild guesses} as to not only what
+ the treasure includes but also what you must {battle} to even reach it.  There's only one way to find out and you've decided, unwisely, to
+ find out for yourself where and what this {treasure} is.
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+game play
+-------------
+each playable character has base stats including hp, class(range/melee/mage based) with special ability(?), 
+defense, agility based on class, luck(used in combat(counters and crits), finding items/food and ?), speed(squares per turn),
+field of vision based on class, hunger/thirst, xp
+
+enemies have hp, def, atk, classes randomly chosen based on location, ranged/melee/magic randomly chosen, 
+and field of vision based on style of attack, stats are based on class
+
+enemy hits alert other enemies(? range of alert)
+
+fog of war -- rooms discovered 30% opacity, room currently in 100% op, undiscovered rooms 0% op
+field of vision -- can see X squares in front based on class.  rooms can be lit or dark.  can have torch(?)
+square types -- flat, water(might be something in the water), quicksand, up/downhill, 
+    rocks(blocked path, blow up rocks(reveal treasure/danger), pickaxe to climb), trap
+non-walkable squares -- if tile is "false" in generation then decide what kind of tile to be other than flat or up/downhill
+items -- food, torch
+status effects -- wet
+
+enemies randomly walk around on their turn and can attack if character is in their field of vision
+
+------------------------------------------------------------------------------------------------------------------------
+
+playable characters
+--------------------
+melee -- high attack, high def, high hp, low fov, low agility, mid speed
+ranged -- low attack, mid def, mid hp, high agility, high fov, high speed
+mage -- high attack, low def, low hp, mid agility, high fov, low speed
+
+----------------------------------------------------------------------------------------------------
+
+Legend
+----------
+{} = potential to change verbiage
+[] = name TBD
+? = figure out how to change/add
