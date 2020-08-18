@@ -1,4 +1,4 @@
-window.addEventListener("load", buildDungeon);
+// window.addEventListener("load", buildDungeon);
 
 // ==========================
 // BUILDING OUT THE DUNGEON
@@ -32,29 +32,23 @@ function buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth) {
   const game = document.getElementById("game");
   const ctx = game.getContext("2d")
     console.log(game)
+    const COORDINATES = {};
   // SET UP COORDINATE PLANE
-  const COORDINATES = rows.map((v, y) => {
-    y = y * tHeight;
-
-    return columns.map((v, x) => {
-      x = x * tWidth;
-
-      return { x, y };
+  columns.forEach((vX, x) => {
+    x = x * tWidth;
+    COORDINATES[x] = {};
+      
+    rows.forEach((vY, y) => {
+      y = y * tHeight;
+      const cellChance = Math.random();
+      
+      COORDINATES[x][y] = cellChance <= WALKABLE_TILE_CHANCE ? 1 : 0
+      ctx.fillStyle = COORDINATES[x][y] === 1 ? "green" : "red";
+      ctx.fillRect(x, y, tWidth, tHeight)
     });
   });
 
-  
-  COORDINATES.forEach(row => {
-      row.forEach(col => {
-          const cellChance = Math.random();
-          
-          col.tileType = cellChance <= WALKABLE_TILE_CHANCE ? 1 : 0
-          ctx.fillStyle = col.tileType === 1 ? "green" : "red";
-          ctx.fillRect(col.x, col.y, tWidth, tHeight)
-          // ADD VALUE OF ROW/COLUMN COORDINATE TO THE ARRAY FOR THE "i" ROW
-        })
-    })
-    console.log(COORDINATES);
+  console.log(COORDINATES);
 
   // console.log(COORDINATES[0])
   // console.log(COORDINATES[1])
