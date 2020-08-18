@@ -8,8 +8,8 @@ window.addEventListener("load", buildDungeon);
 const CANVAS_HEIGHT = 256;
 const CANVAS_WIDTH = 256;
 
-const NUMBER_OF_ROWS = 4;
-const NUMBER_OF_COLUMNS = 4;
+const NUMBER_OF_ROWS = 16;
+const NUMBER_OF_COLUMNS = 16;
 
 const ROWS = new Array(NUMBER_OF_ROWS).fill();
 const COLUMNS = new Array(NUMBER_OF_COLUMNS).fill();
