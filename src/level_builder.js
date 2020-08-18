@@ -45,39 +45,4 @@ const buildLevel = (numCells = 10) => {};
 // while(i<100){
 //     console.log(new Enemy(i+1))
 //     i++
-// }
-
-
-
-
-
-
-// ==========================
-// BUILDING OUT THE GAME BOARD
-// ==========================
-
-const HEIGHT = new Array(4).fill();
-const WIDTH = new Array(4).fill();
-
-// SET UP COORDINATE PLANE 
-const COORDINATES = HEIGHT.map((v,y) => WIDTH.map((v,x) => ({x,y})))
-
-const WALKABLE_TILE_CHANCE = .8;
-
-COORDINATES.forEach(row => {
-    row.forEach(col => {
-        const cellChance = Math.random();
-        
-        col.tileType = cellChance <= WALKABLE_TILE_CHANCE ? 1 : 0
-        
-        // ADD VALUE OF ROW/COLUMN COORDINATE TO THE ARRAY FOR THE "i" ROW
-    })
-})
-
-console.log(COORDINATES[0])
-console.log(COORDINATES[1])
-console.log(COORDINATES[2])
-console.log(COORDINATES[3])
-
-
-
+// 
