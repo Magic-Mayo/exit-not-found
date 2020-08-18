@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .game{
+            width: 80vw;
+            max-width: 1225px;
+            display: flex;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        .cell {
+            width: 35px;
+            height: 35px;
+        }
+        .cell:nth-of-type(odd) {
+            background-color: greenyellow;
+        }
+        .cell:nth-of-type(even) {
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="game">
+        <div class="cell"></div>
+    </div>
+</body>
+<script src='./level_builder.js'></script>
+</html>
