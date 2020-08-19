@@ -1,5 +1,3 @@
-window.addEventListener("load", buildDungeon);
-
 // ==========================
 // BUILDING OUT THE DUNGEON
 // ==========================
@@ -27,47 +25,45 @@ buildDungeon(
   TILE_HEIGHT,
   TILE_WIDTH
 );
-
-function buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth) {
-  const gameBG = document.getElementById("gameBG");
-  const gameFG = document.getElementById("gameFG");
-  const ctxBG = gameBG.getContext("2d");
-  const ctxFG = gameFG.getContext("2d");
-  console.log(gameBG);
-  // SET UP COORDINATE PLANE
-  const COORDINATES = rows.map((v, y) => {
-    y = y * tHeight;
-
-    return columns.map((v, x) => {
+  
+  function buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth) {
+    const game = document.getElementById("game");
+    const ctx = game.getContext("2d")
+    console.log(game)
+    const COORDINATES = {};
+    // SET UP COORDINATE PLANE
+    columns.forEach((vX, x) => {
       x = x * tWidth;
-
-      return {
-        x,
-        y
-      };
+      COORDINATES[x] = {};
+      
+      rows.forEach((vY, y) => {
+        y = y * tHeight;
+        const cellChance = Math.random();
+        
+        COORDINATES[x][y] = cellChance <= WALKABLE_TILE_CHANCE ? 1 : 0
+        ctx.fillStyle = COORDINATES[x][y] === 1 ? "green" : "red";
+        ctx.fillRect(x, y, tWidth, tHeight)
+      });
     });
-  });
+    // console.log(COORDINATES);
+    
+    // console.log(COORDINATES[0])
+    // console.log(COORDINATES[1])
+    // console.log(COORDINATES[2])
+    // console.log(COORDINATES[3])
+    
+    //////////////////////////////////////////
+    // these next two functions, start and end,
+    // can go away once we have a system in
+    // place for picking a start and exit
+    ///////////////////////////////////////////
+    const start = (x=0,y=0) => COORDINATES[x][y] ? [x,y]:start(x+TILE_WIDTH, y)
+    const end = (x=0, y = 160) => COORDINATES[x][y] ? [x,y]:end(x, y-TILE_HEIGHT)
 
-  COORDINATES.forEach((row) => {
-    row.forEach((col) => {
-      const cellChance = Math.random();
-
-      col.tileType = cellChance <= WALKABLE_TILE_CHANCE ? 1 : 0;
-      ctxBG.fillStyle = col.tileType === 1 ? "green" : "red";
-
-      // ctxFG.fillStyle = "white";
-      // ctxFG.font = "8px sans-serif"
-      // ctxFG.fillText(
-      //   `{${col.x},${col.y}}`,
-      //   col.x + tWidth / 2,
-      //   col.y + tHeight / 2
-      // );
-      ctxBG.fillRect(col.x, col.y, tWidth, tHeight);
-      // ADD VALUE OF ROW/COLUMN COORDINATE TO THE ARRAY FOR THE "i" ROW
-    });
-  });
-  console.log(COORDINATES);
-
+    // checks to make sure the dungeon can be completed.
+    // if not build another one until you get one that can be
+    if(!checker(COORDINATES, start(), start(), end(), start(), 1, TILE_HEIGHT, [CANVAS_WIDTH - TILE_WIDTH, CANVAS_HEIGHT - TILE_HEIGHT]))
+      return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth);
   console.log("this is the dungeon");
 }
 
