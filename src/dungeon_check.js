@@ -15,7 +15,7 @@ const checker = (room, [cX, cY], [pX, pY], [eX, eY], [sX, sY], direction, tileSi
   const rightOne = room[cX + tileSize]?.[cY];
   const leftOne = room[cX - tileSize]?.[cY];
   const downOne = room[cX]?.[cY + tileSize];
-  const move = (x, y, dir = direction, xX = cX, yY = cY) => checker(room, [x, y], [xX, yY], [eX, eY], [sX, sY], dir, tileSize, [xMax, yMax], i+1);
+  const move = (x, y, dir = direction, xX = cX, yY = cY) => checker(room, [x, y], [xX, yY], [eX, eY], [sX, sY], dir, tileSize, [xMax, yMax]);
   const back = ([x,y], dir, j=1) => {
     if(!dir){
       if(room[x][y+tileSize] && room[x+tileSize][y+tileSize])return move(x+tileSize,y+tileSize, 0, x+tileSize,y)
