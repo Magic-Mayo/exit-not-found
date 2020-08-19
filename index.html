@@ -8,17 +8,37 @@
         body {
             background-color: black;
         }
-        canvas {
-            background-color: cornsilk;
+
+        .container {
+            position: relative;
             width: 100%;
             max-width: 480px;
             margin: auto;
-            display: block;
+        }
+
+        canvas {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+
+        }
+
+        #gameBG {
+            background-color: cornsilk;
+        }
+
+        #gameFG {
+            background-color: transparent;
         }
     </style>
 </head>
 <body>
-    <canvas id="game" width="256" height="256"></canvas>
+    <div class="container">
+        <canvas id="gameBG" width="256" height="256"></canvas>
+        <canvas id="gameFG" width="256" height="256"></canvas>
+    </div>
+
     <h1>hello world</h1>
     <script src="./src/dungeon.js"></script>
     <script src="./src/level_builder.js"></script>

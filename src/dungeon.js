@@ -8,8 +8,8 @@ window.addEventListener("load", buildDungeon);
 const CANVAS_HEIGHT = 256;
 const CANVAS_WIDTH = 256;
 
-const NUMBER_OF_ROWS = 16;
-const NUMBER_OF_COLUMNS = 16;
+const NUMBER_OF_ROWS = 17;
+const NUMBER_OF_COLUMNS = 17;
 
 const ROWS = new Array(NUMBER_OF_ROWS).fill();
 const COLUMNS = new Array(NUMBER_OF_COLUMNS).fill();
@@ -29,9 +29,11 @@ buildDungeon(
 );
 
 function buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth) {
-  const game = document.getElementById("game");
-  const ctx = game.getContext("2d")
-    console.log(game)
+  const gameBG = document.getElementById("gameBG");
+  const gameFG = document.getElementById("gameFG");
+  const ctxBG = gameBG.getContext("2d");
+  const ctxFG = gameFG.getContext("2d");
+  console.log(gameBG);
   // SET UP COORDINATE PLANE
   const COORDINATES = rows.map((v, y) => {
     y = y * tHeight;
@@ -39,27 +41,32 @@ function buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth) {
     return columns.map((v, x) => {
       x = x * tWidth;
 
-      return { x, y };
+      return {
+        x,
+        y
+      };
     });
   });
 
-  
-  COORDINATES.forEach(row => {
-      row.forEach(col => {
-          const cellChance = Math.random();
-          
-          col.tileType = cellChance <= WALKABLE_TILE_CHANCE ? 1 : 0
-          ctx.fillStyle = col.tileType === 1 ? "green" : "red";
-          ctx.fillRect(col.x, col.y, tWidth, tHeight)
-          // ADD VALUE OF ROW/COLUMN COORDINATE TO THE ARRAY FOR THE "i" ROW
-        })
-    })
-    console.log(COORDINATES);
+  COORDINATES.forEach((row) => {
+    row.forEach((col) => {
+      const cellChance = Math.random();
 
-  // console.log(COORDINATES[0])
-  // console.log(COORDINATES[1])
-  // console.log(COORDINATES[2])
-  // console.log(COORDINATES[3])
+      col.tileType = cellChance <= WALKABLE_TILE_CHANCE ? 1 : 0;
+      ctxBG.fillStyle = col.tileType === 1 ? "green" : "red";
+
+      // ctxFG.fillStyle = "white";
+      // ctxFG.font = "8px sans-serif"
+      // ctxFG.fillText(
+      //   `{${col.x},${col.y}}`,
+      //   col.x + tWidth / 2,
+      //   col.y + tHeight / 2
+      // );
+      ctxBG.fillRect(col.x, col.y, tWidth, tHeight);
+      // ADD VALUE OF ROW/COLUMN COORDINATE TO THE ARRAY FOR THE "i" ROW
+    });
+  });
+  console.log(COORDINATES);
 
   console.log("this is the dungeon");
 }
