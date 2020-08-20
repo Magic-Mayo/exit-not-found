@@ -6,8 +6,8 @@
 const CANVAS_HEIGHT = 256;
 const CANVAS_WIDTH = 256;
 
-const NUMBER_OF_ROWS = 17;
-const NUMBER_OF_COLUMNS = 17;
+const NUMBER_OF_ROWS = 16;
+const NUMBER_OF_COLUMNS = 16;
 
 const ROWS = new Array(NUMBER_OF_ROWS).fill();
 const COLUMNS = new Array(NUMBER_OF_COLUMNS).fill();
@@ -27,7 +27,7 @@ buildDungeon(
 );
   
   function buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth) {
-    const game = document.getElementById("game");
+    const game = document.getElementById("gameBG");
     const ctx = game.getContext("2d")
     console.log(game)
     const COORDINATES = {};
@@ -45,7 +45,7 @@ buildDungeon(
         ctx.fillRect(x, y, tWidth, tHeight)
       });
     });
-    // console.log(COORDINATES);
+    console.log(COORDINATES);
     
     // console.log(COORDINATES[0])
     // console.log(COORDINATES[1])
@@ -57,13 +57,22 @@ buildDungeon(
     // can go away once we have a system in
     // place for picking a start and exit
     ///////////////////////////////////////////
-    const start = (x=0,y=0) => COORDINATES[x][y] ? [x,y]:start(x+TILE_WIDTH, y)
-    const end = (x=0, y = 160) => COORDINATES[x][y] ? [x,y]:end(x, y-TILE_HEIGHT)
+    const start = (x=0,y=0) => COORDINATES[x][y] ? [x,y] : start(x+TILE_WIDTH, y)
+    const end = (x=0, y = 160) => COORDINATES[x][y] ? [x,y] : end(x, y-TILE_HEIGHT)
 
+    console.log(start());
     // checks to make sure the dungeon can be completed.
     // if not build another one until you get one that can be
-    if(!checker(COORDINATES, start(), start(), end(), start(), 1, TILE_HEIGHT, [CANVAS_WIDTH - TILE_WIDTH, CANVAS_HEIGHT - TILE_HEIGHT]))
-      return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth);
+    if(!checker(
+      COORDINATES, 
+      start(), 
+      start(), 
+      end(), 
+      start(), 
+      1, 
+      TILE_HEIGHT, 
+      [CANVAS_WIDTH - TILE_WIDTH, CANVAS_HEIGHT - TILE_HEIGHT]
+    )) return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth);
   console.log("this is the dungeon");
 }
 
