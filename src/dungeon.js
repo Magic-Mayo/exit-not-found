@@ -58,6 +58,7 @@ const buildDungeon = (cHeight, cWidth, columns, rows, tHeight, tWidth) => {
 
   const start = (x, y) => (COORDINATES[x][y] ? [x, y] : start(x + tWidth, y));
   const end = (x, y) => (COORDINATES[x][y] ? [x, y] : end(x, y - tHeight));
+
   const [sX, sY] = start(rx(), ry());
   const [eX, eY] = end(240, 160);
   // const dir = () => {
@@ -68,11 +69,14 @@ const buildDungeon = (cHeight, cWidth, columns, rows, tHeight, tWidth) => {
   if (
     !checker(
       COORDINATES,
-      [sX, sY],
-      [sX, sY],
+      // [sX, sY],
+      [0,240],
+      // [sX, sY],
+      [0,240],
       [eX, eY],
-      [sX, sY],
-      3,
+      // [sX, sY],
+      [0,240],
+      0,
       TILE_HEIGHT,
       [xMax, yMax]
     )

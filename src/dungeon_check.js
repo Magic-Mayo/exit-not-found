@@ -28,15 +28,14 @@ const checker = (
   tileSize,
   [xMax, yMax]
 ) => {
-
   ctx.fillStyle = room[pX][pY] && "darkturquoise";
   ctx.fillRect(pX, pY, tileSize, tileSize);
   ctx.fillStyle = room[cX][cY] && "darkblue";
   ctx.fillRect(cX, cY, tileSize, tileSize);
-  ctx.fillStyle = room[sX,sY] && "goldenrod";
-  ctx.fillRect(sX,sY, tileSize,tileSize);
-  ctx.fillStyle = room[eX,eY] && "hotpink";
-  ctx.fillRect(eX,eY, tileSize,tileSize);
+  ctx.fillStyle = room[(sX, sY)] && "goldenrod";
+  ctx.fillRect(sX, sY, tileSize, tileSize);
+  ctx.fillStyle = room[(eX, eY)] && "hotpink";
+  ctx.fillRect(eX, eY, tileSize, tileSize);
 
   const upOneAvail = room[cX]?.[cY - tileSize];
   const rightOneAvail = room[cX + tileSize]?.[cY];
@@ -47,13 +46,13 @@ const checker = (
   const sameX = cX == pX;
 
   const movedRight = cX == pX + tileSize;
-  const movedDown = cY == pY - tileSize;
+  const movedDown = cY == pY + tileSize;
   const movedLeft = cX == pX - tileSize;
-  const movedUp = cY == pY + tileSize;
+  const movedUp = cY == pY - tileSize;
 
   if (cX == sX && cY == sY) console.log(room);
-  console.log(`  [${cX}, ${cY}], [${pX},${pY}], [${sX}, ${sY}], exit: [${eX}, ${eY}], ${direction}
-  [${rightOneAvail}, ${downOneAvail}, ${leftOneAvail}, ${upOneAvail}]
+  console.log(`CURRENT  [${cX}, ${cY}], [${pX},${pY}],START [${sX}, ${sY}], EXIT: [${eX}, ${eY}], DIRECTION: ${direction}
+  WHAT IS AVAILABLE: [RIGHT: ${rightOneAvail}, DOWN: ${downOneAvail}, LEFT: ${leftOneAvail}, UP: ${upOneAvail}]
   ------------------------------------------------`);
   const move = (x, y, dir = direction, xX = cX, yY = cY) =>
     setTimeout(
@@ -105,37 +104,238 @@ const checker = (
 
   //checks if moving up
   if (!direction) {
-    //check to see if we made it to the end of the column and start a different direction if so
-    if (cY - tileSize < 0) return move(cX, cY, 1);
+
+    // WE MADE IT TO TOP OF DUNGEON
+    if (cY - tileSize < 0) {
+      // WE ARE ON THE FAR LEFT OF THE DUNGEON
+      if (cX === 0) {
+        // CHANGE DIRECTION TO "RIGHT"
+        return move(cX, cY, 1);
+      }
+      // THERE IS AN AVAILABLE BLOCK TO THE LEFT
+      else if (leftOneAvail){
+        return move(cX - tileSize, cY)
+      }
+      // THERE IS NO AVAILABLE BLOCK TO THE LEFT, SO CHANGE DIRECTION TO "RIGHT"
+      else return move(cX,cY,1)
+    }
+
+    // PREVIOUS COORDINATE & CURRENT COORDINATE ARE THE SAME, THEREFORE THIS DIRECTION CHECK HAS JUST STARTED
+    if (sameX && sameY) {
+      // ASSUMPTION: WE ARE STARTING AT [0,240]
+      console.log("THIS IS THE BEGINNING");
+      // THERE IS AN AVAILABLE BLOCK ABOVE SO MOVE UP
+      if (upOneAvail) return move(cX, cY - tileSize);
+
+      // THERE IS NO AVAILABLE BLOCK ABOVE, SO MOVE RIGHT
+      else return move(cX + tileSize, cY);
+    }
+
+    // MOVED UP OR DOWN
+    else if (sameX) {
+      // MOVED UP
+      if (movedUp) {
+        console.log("it moved up!");
+
+        // WE ARE ON THE FARTHEST LEFT (WE CANNOT MOVE LEFT)
+        if (cX === 0) {
+          // MOVE UP AGAIN
+          if (upOneAvail) {
+            console.log("we're moving up");
+            return move(cX, cY - tileSize)
+          }
+          // MOVE RIGHT
+          else if (rightOneAvail) {
+            console.log("we're moving right");
+            return move(cX + tileSize, cY)
+          }
+          // TURN AROUND AND GO BACK DOWN
+          else {
+            console.log("we gotta move back down");
+            return move(cX, cY + tileSize)
+          }
+        } 
+        // WE ARE NOT ON THE FURTHEST LEFT (WE CAN MOVE LEFT)
+        else {
+          // MOVE LEFT
+          if (leftOneAvail) {
+            console.log("we're moving left");
+            return move(cX - tileSize, cY)
+          }
+          // MOVE UP
+          else if (upOneAvail) {
+            console.log("we're moving up");
+            return move(cX, cY - tileSize)
+          }
+          // MOVE RIGHT
+          else if (rightOneAvail) {
+            console.log("we're moving right");
+            return move(cX + tileSize, cY)
+          }
+          // TURN AROUND AND GO BACK DOWN
+          else {
+            console.log("we gotta move back down");
+            return move(cX, cY + tileSize)
+          }
+        }
+      }
+      //MOVED DOWN
+      else if (movedDown) {
+        console.log("It moved down!");
+
+        // WE ARE ON THE FARTHEST LEFT (WE CANNOT MOVE LEFT)
+        if (cX === 0) {
+          // MOVE RIGHT
+          if (rightOneAvail) {
+            console.log("we're moving right")
+            return move(cX + tileSize, cY)
+          }
+          // MOVE DOWN
+          else if (downOneAvail) {
+            console.log("we're moving down")
+            return move(cX,cY + tileSize)
+          }
+          // TURN AROUND AND GO BACK UP
+          else {
+            console.log("we gotta go back up")
+            return move(cX, cY - tileSize)
+          }
+        }
+        // WE ARE NOT ON THE FARTHEST LEFT (WE CAN MOVE LEFT), BUT WE CHECK TO SEE IF WE CAN MOVE RIGHT FIRST TO AVOID GETTING STUCK IN A LOOP
+        else {
+          // MOVE RIGHT
+          if (rightOneAvail) {
+            console.log("we're moving right");
+            return move(cX + tileSize, cY)
+          }
+          // MOVE LEFT
+          else if (leftOneAvail) {
+            console.log("we're moving left");
+            return move(cX - tileSize, cY)
+          }
+          // MOVE DOWN
+          else if (downOneAvail) {
+            console.log("we're moving down");
+            return move(cX, cY + tileSize)
+          }
+          // TURN AROUND AND GO BACK UP
+          else {
+            console.log("we gotta move back up");
+            return move(cX, cY - tileSize)
+          }
+        }
+      }
+    }
+
+    // MOVED LEFT OR RIGHT
+    else if (sameY) {
+
+      // MOVED LEFT
+      if (movedLeft) {
+        console.log("it moved left!");
+
+        // WE ARE NOW ON THE FURTHEST LEFT AND CANNOT MOVE LEFT AGAIN
+        if (cX === 0) {
+          // MOVE UP
+          if (upOneAvail) {
+            console.log("we're moving up");
+            return move(cX, cY - tileSize)
+          }
+          // MOVE DOWN
+          else if (downOneAvail) {
+            console.log("we're moving down");
+            return move(cX, cY + tileSize)
+          }
+          // TURN AROUND AND GO BACK RIGHT
+          else {
+            console.log("we gotta move back right");
+            return move(cX + tileSize, cY)
+          }
+        }
+        // WE ARE NOT ON THE FURTHEST LEFT
+        else {
+          // MOVE LEFT
+          if (leftOneAvail) {
+            console.log("we're moving left");
+            return move(cX - tileSize, cY)
+          }
+          // MOVE UP
+          else if (upOneAvail) {
+            console.log("we're moving up");
+            return move(cX, cY - tileSize)
+          }
+          // MOVE DOWN
+          else if (downOneAvail) {
+            console.log("we're moving down");
+            return move(cX, cY + tileSize)
+          }
+          // TURN AROUND AND GO BACK RIGHT
+          else {
+            console.log("we gotta move back right");
+            return move(cX + tileSize, cY)
+          }
+        }
+
+      } 
+      // MOVED RIGHT
+      else if (movedRight) {
+        console.log("it moved right!");
+        // MOVE UP
+        if (upOneAvail) {
+          console.log("we're moving up");
+          return move(cX, cY - tileSize);
+        } 
+        // MOVE RIGHT
+        else if (rightOneAvail) {
+          console.log("we're moving right");
+          return move(cX + tileSize, cY);
+        } 
+        // MOVE DOWN
+        else if (downOneAvail) {
+          console.log("we're moving down");
+          return move(cX, cY + tileSize);
+        }
+        // TURN AROUND AND MOVE BACK LEFT
+        else {
+          console.log("we gotta go back left");
+          return move(cX - tileSize, cY);
+        }
+      }
+    } 
+    // else return back([cX, cY], 0);
 
     // if we have moved at least one square up since the last time we moved right,
     // then check to see if we can move left and do it if we can or
     // if we can move left and we moved left last time do it again
-    if (leftOneAvail) {
-      if (sameX || movedLeft) {
-        if (movedUp || movedLeft) {
-          if (pX != cX - tileSize) return move(cX - tileSize, cY);
-        }
-        // return move(cX - tileSize, cY);
-      }
-    }
+    // if (leftOneAvail) {
+    //   if (sameX || movedLeft) {
+    //     if (movedUp || movedLeft) {
+    //       if (pX != cX - tileSize) return move(cX - tileSize, cY);
+    //     }
+    //     // return move(cX - tileSize, cY);
+    //   }
+    // }
 
-    // if we just moved left check to see if we can move down,
-    // if so move down or if we just moved down check to see if
-    // we can move down again and do it
-    if (downOneAvail && (movedLeft || (movedUp && sameX)))
-      return move(cX, cY + tileSize);
+    // // if we just moved left check to see if we can move down,
+    // // if so move down or if we just moved down check to see if
+    // // we can move down again and do it
+    // if (downOneAvail) {
+    //   if (movedLeft || (movedUp && sameX)) return move(cX, cY + tileSize);
+    // }
 
-    // move up if a tile is available
-    if (upOneAvail) return move(cX, cY - tileSize);
+    // // move up if a tile is available
+    // if (upOneAvail) {
+    //   return move(cX, cY - tileSize);
+    // }
 
-    // move right if a tile is available
-    if (rightOneAvail) return move(cX + tileSize, cY);
+    // // move right if a tile is available
+    // if (rightOneAvail) {
+    //   return move(cX + tileSize, cY);
+    // }
 
     // if(leftOneAvail)return move(cX - tileSize, cY);
     // if none of the other scenarios hit then we need to backtrack until
     // we find a good tile to restart the same direction from
-    return back([cX, cY], 0);
   }
   if (direction == 1) {
     //check to see if we made it to the end of the column and start a different direction if so
