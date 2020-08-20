@@ -17,8 +17,6 @@ const ctx = game.getContext("2d");
 /////////////////////////////////////////
 //// fix issue with getting trapped ////
 ///////////////////////////////////////
-const game = document.getElementById("game");
-const ctx = game.getContext("2d");
 
 const checker = (
   room,
@@ -30,10 +28,16 @@ const checker = (
   tileSize,
   [xMax, yMax]
 ) => {
-  ctx.fillStyle = room[pX][pY] && "blue";
+
+  ctx.fillStyle = room[pX][pY] && "darkturquoise";
   ctx.fillRect(pX, pY, tileSize, tileSize);
-  ctx.fillStyle = room[cX][cY] && "black";
+  ctx.fillStyle = room[cX][cY] && "darkblue";
   ctx.fillRect(cX, cY, tileSize, tileSize);
+  ctx.fillStyle = room[sX,sY] && "goldenrod";
+  ctx.fillRect(sX,sY, tileSize,tileSize);
+  ctx.fillStyle = room[eX,eY] && "hotpink";
+  ctx.fillRect(eX,eY, tileSize,tileSize);
+
   const upOneAvail = room[cX]?.[cY - tileSize];
   const rightOneAvail = room[cX + tileSize]?.[cY];
   const leftOneAvail = room[cX - tileSize]?.[cY];
