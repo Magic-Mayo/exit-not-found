@@ -17,29 +17,20 @@ const TILE_WIDTH = CANVAS_WIDTH / NUMBER_OF_ROWS;
 // init constraint for tile-type ratio between walkable & nonwalkable
 const WALKABLE_TILE_CHANCE = 0.8;
 
-buildDungeon(
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-  COLUMNS,
-  ROWS,
-  TILE_HEIGHT,
-  TILE_WIDTH
-);
-  
-  function buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth) {
-    const game = document.getElementById("game");
-    const ctx = game.getContext("2d")
-    console.log(game)
-    const COORDINATES = {};
-    // SET UP COORDINATE PLANE
-    columns.forEach((vX, x) => {
+const buildDungeon = (cHeight, cWidth, columns, rows, tHeight, tWidth) => {
+  const xMax = cWidth - tWidth;
+  const yMax = cHeight - tHeight;
+  console.log(game)
+  const COORDINATES = {};
+  // SET UP COORDINATE PLANE
+  columns.forEach((vX, x) => {
       x = x * tWidth;
       COORDINATES[x] = {};
       
       rows.forEach((vY, y) => {
         y = y * tHeight;
         const cellChance = Math.random();
-        
+
         COORDINATES[x][y] = cellChance <= WALKABLE_TILE_CHANCE ? 1 : 0
         ctx.fillStyle = COORDINATES[x][y] === 1 ? "green" : "red";
         ctx.fillRect(x, y, tWidth, tHeight)
@@ -57,16 +48,34 @@ buildDungeon(
     // can go away once we have a system in
     // place for picking a start and exit
     ///////////////////////////////////////////
-    const start = (x=0,y=0) => COORDINATES[x][y] ? [x,y]:start(x+TILE_WIDTH, y)
-    const end = (x=0, y = 160) => COORDINATES[x][y] ? [x,y]:end(x, y-TILE_HEIGHT)
+    const xX = rng(241)
+  const rx = (pos = 0) => !pos || pos == 2 ? xX - xX % 16 : pos == 1 ? 0 : xMax;
+  console.log(rx());
+  const ry = (pos = 0) => !pos ? yMax : pos == 1 ? rng() : pos == 2 ? 0 : rng();
+  console.log(ry());
 
+    const start = (x,y) => COORDINATES[x][y] ? [x,y]:start(x+tWidth, y)
+    const end = (x,y) => COORDINATES[x][y] ? [x,y]:end(x, y-tHeight)
+    const [sX, sY] = start(rx(), ry());
+    const [eX, eY] = end(240, 160)
+    // const dir = () => {
+    //   if(sX == 0)
+    // }
     // checks to make sure the dungeon can be completed.
     // if not build another one until you get one that can be
-    if(!checker(COORDINATES, start(), start(), end(), start(), 1, TILE_HEIGHT, [CANVAS_WIDTH - TILE_WIDTH, CANVAS_HEIGHT - TILE_HEIGHT]))
-      return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth);
+    if(!checker(COORDINATES, [sX, sY], [sX,sY], [eX,eY], [sX,sY], 3, TILE_HEIGHT, [xMax, yMax]))
+    return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth);
   console.log("this is the dungeon");
 }
 
+buildDungeon(
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  COLUMNS,
+  ROWS,
+  TILE_HEIGHT,
+  TILE_WIDTH
+);
 // STEPS TO REPRODUCE ABOVE TO PRODUCE CANVAS ELEMENT WITH TILES\
 // 1. initiate the canvas element with a width & a height.
 // 2. set up coordinate plane relative to canvas element size considering the # number of rows & colummns
