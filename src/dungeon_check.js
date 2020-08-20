@@ -236,15 +236,15 @@ const checker = (
 
         // WE ARE NOW ON THE FURTHEST LEFT AND CANNOT MOVE LEFT AGAIN
         if (cX === 0) {
-          // MOVE UP
-          if (upOneAvail) {
-            console.log("we're moving up");
-            return move(cX, cY - tileSize)
-          }
           // MOVE DOWN
-          else if (downOneAvail) {
+          if (downOneAvail) {
             console.log("we're moving down");
             return move(cX, cY + tileSize)
+          }
+          // MOVE UP
+          else if (upOneAvail) {
+            console.log("we're moving up");
+            return move(cX, cY - tileSize)
           }
           // TURN AROUND AND GO BACK RIGHT
           else {
@@ -254,8 +254,13 @@ const checker = (
         }
         // WE ARE NOT ON THE FURTHEST LEFT
         else {
+          // MOVE DOWN
+          if (downOneAvail) {
+            console.log("we're moving down");
+            return move(cX, cY + tileSize)
+          }
           // MOVE LEFT
-          if (leftOneAvail) {
+          else if (leftOneAvail) {
             console.log("we're moving left");
             return move(cX - tileSize, cY)
           }
@@ -263,11 +268,6 @@ const checker = (
           else if (upOneAvail) {
             console.log("we're moving up");
             return move(cX, cY - tileSize)
-          }
-          // MOVE DOWN
-          else if (downOneAvail) {
-            console.log("we're moving down");
-            return move(cX, cY + tileSize)
           }
           // TURN AROUND AND GO BACK RIGHT
           else {
