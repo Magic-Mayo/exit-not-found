@@ -17,7 +17,7 @@ const TILE_WIDTH = CANVAS_WIDTH / NUMBER_OF_ROWS;
 // init constraint for tile-type ratio between walkable & nonwalkable
 const WALKABLE_TILE_CHANCE = 0.8;
 
-const buildDungeon = (cHeight, cWidth, columns, rows, tHeight, tWidth) => {
+const buildDungeon = (cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX, pExitY]) => {
   const xMax = cWidth - tWidth;
   const yMax = cHeight - tHeight;
   console.log(game);
@@ -48,19 +48,23 @@ const buildDungeon = (cHeight, cWidth, columns, rows, tHeight, tWidth) => {
   // can go away once we have a system in
   // place for picking a start and exit
   ///////////////////////////////////////////
-  const xX = rng(241);
-  const rx = (pos = 0) =>
-    !pos || pos == 2 ? xX - (xX % 16) : pos == 1 ? 0 : xMax;
-  console.log(rx());
-  const ry = (pos = 0) =>
-    !pos ? yMax : pos == 1 ? rng() : pos == 2 ? 0 : rng();
-  console.log(ry());
+  const inversePX = pX => {
+    if(!pX) return 240;
+    if(pX === 240) return 0;
+    return pX;
+  }
 
-  const start = (x, y) => (COORDINATES[x][y] ? [x, y] : start(x + tWidth, y));
-  const end = (x, y) => (COORDINATES[x][y] ? [x, y] : end(x, y - tHeight));
+  const inversePY = pY => {
+    if(!pY) return 240;
+    if(pY == 240) return 0;
+    return pY;
+  }
 
-  const [sX, sY] = start(rx(), ry());
-  const [eX, eY] = end(240, 160);
+  const start = (x, y) => (COORDINATES[x]?.[y] ? [x, y] : start(x + tWidth, y));
+  const end = (x, y) => (COORDINATES[x]?.[y] ? [x, y] : end(x, y - tHeight));
+
+  const [sX, sY] = start(inversePX(pExitX), inversePY(pExitY));
+  const [eX, eY] = end(64, 240);
   // const dir = () => {
   //   if(sX == 0)
   // }
@@ -69,19 +73,20 @@ const buildDungeon = (cHeight, cWidth, columns, rows, tHeight, tWidth) => {
   if (
     !checker(
       COORDINATES,
-      // [sX, sY],
-      [0,240],
-      // [sX, sY],
-      [0,240],
+      [sX, sY],
+      // [0,240],
+      [sX, sY],
+      // [0,240],
       [eX, eY],
-      // [sX, sY],
-      [0,240],
+      [sX, sY],
+      // [0,240],
       0,
-      TILE_HEIGHT,
+      tHeight,
       [xMax, yMax]
     )
-  )
-    return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth);
+  ){
+    return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX, pExitY]);
+  }
   console.log("this is the dungeon");
 };
 
@@ -93,6 +98,7 @@ buildDungeon(
   TILE_HEIGHT,
   TILE_WIDTH
 );
+
 // STEPS TO REPRODUCE ABOVE TO PRODUCE CANVAS ELEMENT WITH TILES\
 // 1. initiate the canvas element with a width & a height.
 // 2. set up coordinate plane relative to canvas element size considering the # number of rows & colummns
