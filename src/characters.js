@@ -1,3 +1,6 @@
+// CANVAS ELEMENT
+const game = document.getElementById("gameBG");
+const ctx = game.getContext("2d");
 const players = document.getElementById("gameFG");
 const ctx2 = players.getContext("2d");
 
@@ -113,8 +116,8 @@ const generatePlayer = (
   playerCoord = coord;
   console.log(room)
   console.log(`The player will start at ${playerCoord} and will have the color ${color}`);
-  ctx2.fillStyle = room[coord[0]][coord[1]] && color;
-  ctx2.fillRect(coord[0], coord[1], tileSize, tileSize);
+  // ctx.fillStyle = room[coord[0]][coord[1]] && color;
+  // ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
 
   window.addEventListener('keypress', e => handlePlayerMovement(e,room, tileSize, color))
 }
@@ -126,35 +129,37 @@ const handlePlayerMovement = (event,room, tileSize, color) => {
   key = key.toLowerCase()
   console.log(key)
   const dir = {
-    up: {
+    w: {
       code: "w",
       coord: [playerX, playerY - tileSize]
     },
-    right: {
+    d: {
       code: "d",
       coord: [playerX + tileSize, playerY]
     },
-    down: {
+    s: {
       code: "s",
       coord: [playerX, playerY + tileSize]
     },
-    left: {
+    a: {
       code: "a",
       coord: [playerX - tileSize, playerY]
     }
   }
-
-  const dest = key == dir.up.code ? dir.up.coord : key == dir.right.code ? dir.right.coord : key == dir.down.code ? dir.down.coord : key == dir.left.code ? dir.left.coord : null;
+  const [nextX, nextY] = dir[key].coord;
 
   console.log(playerX,playerY);
-  console.log(dest)
+  console.log(room[nextX][nextY])
   
-  ctx2.fillStyle = room[playerX][playerY] && "transparent";
-  ctx2.fillRect(playerX, playerY, tileSize, tileSize);  
+  if(room[nextX][nextY]){
+    ctx2.fillStyle = room[nextX][nextY] && "green";
+    ctx2.fillRect(playerX, playerY, tileSize, tileSize);
 
-  ctx2.fillStyle = room[dest[0]][dest[1]] && color;
-  ctx2.fillRect(dest[0], dest[1], tileSize, tileSize); 
+    ctx2.fillStyle = room[nextX][nextY] && color;
+    ctx2.fillRect(nextX, nextY, tileSize, tileSize);
+
+    playerCoord = [nextX, nextY]
+  }
   
-  playerCoord = dest
 
 }
