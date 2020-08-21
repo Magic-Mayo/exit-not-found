@@ -26,16 +26,22 @@ const checker = (
   [sX, sY],
   direction,
   tileSize,
-  [xMax, yMax]
+  [xMax, yMax],
+  counter = 0
 ) => {
-  ctx.fillStyle = room[pX][pY] && "darkturquoise";
-  ctx.fillRect(pX, pY, tileSize, tileSize);
-  ctx.fillStyle = room[cX][cY] && "darkblue";
-  ctx.fillRect(cX, cY, tileSize, tileSize);
-  ctx.fillStyle = room[(sX, sY)] && "goldenrod";
-  ctx.fillRect(sX, sY, tileSize, tileSize);
-  ctx.fillStyle = room[(eX, eY)] && "hotpink";
-  ctx.fillRect(eX, eY, tileSize, tileSize);
+  counter++;
+  if(counter > 400) {
+    console.log('over 400');
+    return false;
+  }
+  // ctx.fillStyle = room[pX][pY] && "darkturquoise";
+  // ctx.fillRect(pX, pY, tileSize, tileSize);
+  // ctx.fillStyle = room[cX][cY] && "darkblue";
+  // ctx.fillRect(cX, cY, tileSize, tileSize);
+  // ctx.fillStyle = room[(sX, sY)] && "goldenrod";
+  // ctx.fillRect(sX, sY, tileSize, tileSize);
+  // ctx.fillStyle = room[(eX, eY)] && "hotpink";
+  // ctx.fillRect(eX, eY, tileSize, tileSize);
 
   const upOneAvail = room[cX]?.[cY - tileSize];
   const rightOneAvail = room[cX + tileSize]?.[cY];
@@ -50,53 +56,49 @@ const checker = (
   const movedDown = cY == pY + tileSize;
   const movedUp = cY == pY - tileSize;
 
-  if (cX == sX && cY == sY) console.log(room);
-  console.log(`CURRENT  [${cX}, ${cY}], [${pX},${pY}],START [${sX}, ${sY}], EXIT: [${eX}, ${eY}], DIRECTION: ${direction}
-  WHAT IS AVAILABLE: [RIGHT: ${rightOneAvail}, DOWN: ${downOneAvail}, LEFT: ${leftOneAvail}, UP: ${upOneAvail}]
-  ------------------------------------------------`);
+  // if (cX == sX && cY == sY) console.log(room);
+  // console.log(`CURRENT  [${cX}, ${cY}], [${pX},${pY}],START [${sX}, ${sY}], EXIT: [${eX}, ${eY}], DIRECTION: ${direction}
+  // WHAT IS AVAILABLE: [RIGHT: ${rightOneAvail}, DOWN: ${downOneAvail}, LEFT: ${leftOneAvail}, UP: ${upOneAvail}]
+  // ------------------------------------------------`);
   const move = (x, y, dir = direction, xX = cX, yY = cY) =>
-    setTimeout(
-      () =>
-        checker(room, [x, y], [xX, yY], [eX, eY], [sX, sY], dir, tileSize, [
-          xMax,
-          yMax,
-        ]),
-      175
-    );
+    // setTimeout(
+    //   () =>
+        checker(room, [x, y], [xX, yY], [eX, eY], [sX, sY], dir, tileSize, [xMax,yMax], counter++)
+    //   175
+    // );
 
     
-  const fromRight = () => {
-    switch(direction){
-      case 0: return move(
-        upOneAvail ? cX : rightOneAvail ? cX + tileSize : downOneAvail ? cX : cX - tileSize,
-        upOneAvail ? cY - tileSize : rightOneAvail ? cY : downOneAvail ? cY + tileSize : cX)
-    }
-  }
+  // const fromRight = () => {
+  //   switch(direction){
+  //     case 0: return move(
+  //       upOneAvail ? cX : rightOneAvail ? cX + tileSize : downOneAvail ? cX : cX - tileSize,
+  //       upOneAvail ? cY - tileSize : rightOneAvail ? cY : downOneAvail ? cY + tileSize : cX)
+  //   }
+  // }
   // checks first to see if exit coords are reached.  if so dungeon exit can be reached.  return true
-  if (eX == cX && eY == cY) return true;
+  if (eX == cX && eY == cY) {
+    console.log(counter);
+    return true;
+  }
 
   // next checks if we've at least made one move from the starting point
   // or if we're trapped in a single cell at the start.
   // if so and we are back to the starting point we've traveled all the way around the board
   // return false since we never found the exit and are back at the start
-  if (
-    ((cX != pX || cY != pY) && cX == sX && cY == sY) ||
-    (!upOneAvail && !rightOneAvail && !leftOneAvail && !downOneAvail)
-  )
-    return false;
+  if ((!upOneAvail && !rightOneAvail && !leftOneAvail && !downOneAvail))return false;
 
   //checks if moving up
   if (!direction) {
 
     // WE MADE IT TO TOP OF DUNGEON
-    if (cY - tileSize < 0) {
-      // WE ARE ON THE FAR LEFT OF THE DUNGEON
-      if (cX === 0) {
-        if(movedLeft){
-          if(downOneAvail){
-            return move(cX, cY + tileSize)
-          }
+    if (cY == 0) {
+      if(movedLeft){
+        if(downOneAvail){
+          return move(cX, cY + tileSize)
         }
+      }
+      // WE ARE ON THE FAR LEFT OF THE DUNGEON
+      if (cX == 0) {
         // CHANGE DIRECTION TO "RIGHT"
         return move(cX, cY, 1);
       }
@@ -126,7 +128,7 @@ const checker = (
         console.log("it moved up!");
 
         // WE ARE ON THE FARTHEST LEFT (WE CANNOT MOVE LEFT)
-        if (cX === 0) {
+        if (cX == 0) {
           // MOVE UP AGAIN
           if (upOneAvail) {
             console.log("we're moving up");
@@ -172,7 +174,7 @@ const checker = (
         console.log("It moved down!");
 
         // WE ARE ON THE FARTHEST LEFT (WE CANNOT MOVE LEFT)
-        if (cX === 0) {
+        if (cX == 0) {
           // MOVE RIGHT
           if (rightOneAvail) {
             console.log("we're moving right")
@@ -289,7 +291,8 @@ const checker = (
           return move(cX - tileSize, cY);
         }
       }
-    } 
+    }
+    return (console.log(counter), false)
   }
   if (direction == 1) {
 
@@ -389,9 +392,13 @@ const checker = (
           return move(cX,cY + tileSize)
         }
         // TURN AROUND AND GO BACK LEFT
-        else {
+        else if(leftOneAvail){
           console.log("we gotta go back left")
           return move(cX - tileSize, cY)
+        }
+        else {
+          console.log("we're going up");
+          return move(cX, cY - tileSize)
         }
       }
     }
@@ -495,19 +502,20 @@ const checker = (
         }
         
       }
-    } 
+    }
+    return (console.log(counter), false)
   }
   if (direction == 2) {
 
     // WE MADE IT TO BOTTOM OF DUNGEON
-    if (cY + tileSize > yMax) {
+    if (cY == yMax) {
+      if(movedRight){
+        if(upOneAvail){
+          return move(cX, cY - tileSize)
+        }
+      }
       // WE ARE ON THE FAR RIGHT OF THE DUNGEON
       if (cX == xMax) {
-        if(movedRight){
-          if(upOneAvail){
-            return move(cX, cY - tileSize)
-          }
-        }
         // CHANGE DIRECTION TO "LEFT"
         return move(cX, cY, 3);
       }
@@ -565,15 +573,15 @@ const checker = (
             console.log("we're moving left");
             return move(cX - tileSize, cY)
           }
-          // MOVE RIGHT
-          else if (rightOneAvail) {
-            console.log("we're moving right");
-            return move(cX + tileSize, cY)
-          }
           // MOVE UP
           else if (upOneAvail) {
             console.log("we're moving up");
             return move(cX, cY - tileSize)
+          }
+          // MOVE RIGHT
+          else if (rightOneAvail) {
+            console.log("we're moving right");
+            return move(cX + tileSize, cY)
           }
           // TURN AROUND AND GO BACK DOWN
           else {
@@ -704,19 +712,20 @@ const checker = (
           }
         }
       }
-    } 
+    }
+    return (console.log(counter), false)
   }
   if (direction == 3) {
 
     // WE MADE IT TO LEFT OF THE DUNGEON
     if (cX - tileSize < 0) {
       // WE ARE ON THE BOTTOM OF THE DUNGEON
-      if (cY == yMax) {
-        if(movedDown){
-          if(rightOneAvail){
-            return move(cX + tileSize, cY)
-          }
+      if(movedDown){
+        if(rightOneAvail){
+          return move(cX + tileSize, cY)
         }
+      }
+      if (cY == yMax) {
         // CHANGE DIRECTION TO "UP"
         return move(cX, cY, 0);
       }
@@ -909,8 +918,8 @@ const checker = (
             return move(cX - tileSize, cY)
           }
         }
-        
       }
-    } 
+    }
+    return (console.log(counter), false)
   }
 };
