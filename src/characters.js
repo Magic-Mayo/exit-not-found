@@ -1,3 +1,7 @@
+const players = document.getElementById("gameFG");
+const ctx2 = players.getContext("2d");
+
+
 const rooms = [];
 const lvl = 1;
 const weapons = [
@@ -97,3 +101,60 @@ const Enemy = function (difficulty) {
     //check fov to see if it can spot character
   };
 };
+
+let playerCoord = []
+
+const generatePlayer = (
+  coord,
+  color,
+  room,
+  tileSize
+) => {
+  playerCoord = coord;
+  console.log(room)
+  console.log(`The player will start at ${playerCoord} and will have the color ${color}`);
+  ctx2.fillStyle = room[coord[0]][coord[1]] && color;
+  ctx2.fillRect(coord[0], coord[1], tileSize, tileSize);
+
+  window.addEventListener('keypress', e => handlePlayerMovement(e,room, tileSize, color))
+}
+
+const handlePlayerMovement = (event,room, tileSize, color) => {
+  let { key } = event;
+  let [playerX, playerY] = playerCoord
+  console.log(playerX, playerY)
+  key = key.toLowerCase()
+  console.log(key)
+  const dir = {
+    up: {
+      code: "w",
+      coord: [playerX, playerY - tileSize]
+    },
+    right: {
+      code: "d",
+      coord: [playerX + tileSize, playerY]
+    },
+    down: {
+      code: "s",
+      coord: [playerX, playerY + tileSize]
+    },
+    left: {
+      code: "a",
+      coord: [playerX - tileSize, playerY]
+    }
+  }
+
+  const dest = key == dir.up.code ? dir.up.coord : key == dir.right.code ? dir.right.coord : key == dir.down.code ? dir.down.coord : key == dir.left.code ? dir.left.coord : null;
+
+  console.log(playerX,playerY);
+  console.log(dest)
+  
+  ctx2.fillStyle = room[playerX][playerY] && "transparent";
+  ctx2.fillRect(playerX, playerY, tileSize, tileSize);  
+
+  ctx2.fillStyle = room[dest[0]][dest[1]] && color;
+  ctx2.fillRect(dest[0], dest[1], tileSize, tileSize); 
+  
+  playerCoord = dest
+
+}
