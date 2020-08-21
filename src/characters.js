@@ -116,8 +116,8 @@ const generatePlayer = (
   playerCoord = coord;
   console.log(room)
   console.log(`The player will start at ${playerCoord} and will have the color ${color}`);
-  // ctx.fillStyle = room[coord[0]][coord[1]] && color;
-  // ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
+  ctx.fillStyle = room[coord[0]][coord[1]] && color;
+  ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
 
   window.addEventListener('keypress', e => handlePlayerMovement(e,room, tileSize, color))
 }
@@ -157,7 +157,7 @@ const handlePlayerMovement = (event,room, tileSize, color) => {
 
     ctx2.fillStyle = room[nextX][nextY] && color;
     ctx2.fillRect(nextX, nextY, tileSize, tileSize);
-
+    
     playerCoord = [nextX, nextY]
   }
   
