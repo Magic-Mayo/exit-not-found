@@ -46,8 +46,8 @@ const checker = (
   const sameX = cX == pX;
 
   const movedRight = cX == pX + tileSize;
-  const movedDown = cY == pY + tileSize;
   const movedLeft = cX == pX - tileSize;
+  const movedDown = cY == pY + tileSize;
   const movedUp = cY == pY - tileSize;
 
   if (cX == sX && cY == sY) console.log(room);
@@ -109,6 +109,11 @@ const checker = (
     if (cY - tileSize < 0) {
       // WE ARE ON THE FAR LEFT OF THE DUNGEON
       if (cX === 0) {
+        if(movedLeft){
+          if(downOneAvail){
+            return move(cX, cY + tileSize)
+          }
+        }
         // CHANGE DIRECTION TO "RIGHT"
         return move(cX, cY, 1);
       }
@@ -208,15 +213,15 @@ const checker = (
             console.log("we're moving right");
             return move(cX + tileSize, cY)
           }
-          // MOVE LEFT
-          else if (leftOneAvail) {
-            console.log("we're moving left");
-            return move(cX - tileSize, cY)
-          }
           // MOVE DOWN
           else if (downOneAvail) {
             console.log("we're moving down");
             return move(cX, cY + tileSize)
+          }
+          // MOVE LEFT
+          else if (leftOneAvail) {
+            console.log("we're moving left");
+            return move(cX - tileSize, cY)
           }
           // TURN AROUND AND GO BACK UP
           else {
@@ -338,34 +343,207 @@ const checker = (
     // we find a good tile to restart the same direction from
   }
   if (direction == 1) {
-    //check to see if we made it to the end of the column and start a different direction if so
-    if (cX + tileSize > xMax) return move(cX, cY, 2);
-    // if(cX + tileSize == xMax && upOne)
-    // if we have moved at least one square right since the last time we moved down,
-    // then check to see if we can move up and do it if we can or
-    // if we can move up and we moved up last time do it again
-    if (
-      upOneAvail &&
-      ((cY && sameY && movedRight && pY != cY - tileSize) || movedDown)
-    )
-      return move(cX, cY - tileSize);
 
-    // if we just moved up check to see if we can move left,
-    // if so move left or if we just moved left see if we can again
-    if (leftOneAvail && (movedDown || (movedLeft && sameY)))
-      return move(cX - tileSize, cY);
-
-    // if we can move right do it
-    if (rightOneAvail) return move(cX + tileSize, cY);
-
-    // move down if we can
-    if (downOneAvail) return move(cX, cY + tileSize);
-
-    // if(upOneAvail)return move(cX, cY - tileSize);
-
-    // if none of the other scenarios hit then we need to backtrack until
-    // we find a good tile to restart the same direction from
-    return back([cX, cY], 1);
+    // WE MADE IT TO RIGHT OF THE DUNGEON
+    if (cX + tileSize > xMax) {
+      // WE ARE ON THE TOP OF THE DUNGEON
+      if (cY == 0) {
+        if(movedUp){
+          if(leftOneAvail){
+            return move(cX - tileSize, cY)
+          }
+        }
+        // CHANGE DIRECTION TO "DOWN"
+        return move(cX, cY, 2);
+      }
+      // THERE IS AN AVAILABLE BLOCK TO ABOVE
+      else if (upOneAvail){
+        return move(cX, cY - tileSize)
+      }
+      // CHANGE DIRECTION TO "RIGHT"
+      else return move(cX,cY,2)
+    }
+  
+    // PREVIOUS COORDINATE & CURRENT COORDINATE ARE THE SAME, THEREFORE THIS DIRECTION CHECK HAS JUST STARTED
+    if (sameX && sameY) {
+      console.log("THIS IS THE BEGINNING");
+      // THERE IS AN AVAILABLE BLOCK TO THE RIGHT SO MOVE RIGHT
+      if (rightOneAvail) return move(cX + tileSize, cY);
+  
+      // THERE IS NO AVAILABLE BLOCK TO THE RIGHT, SO MOVE DOWN
+      else return move(cX + tileSize, cY);
+    }
+  
+    // MOVED UP OR DOWN
+    else if (sameX) {
+      // MOVED UP
+      if (movedUp) {
+        console.log("it moved up!");
+  
+        // WE ARE ON THE FARTHEST RIGHT (WE CANNOT MOVE RIGHT)
+        if (cX == xMax) {
+          // MOVE UP AGAIN
+          if (upOneAvail) {
+            console.log("we're moving up");
+            return move(cX, cY - tileSize)
+          }
+          // MOVE LEFT
+          else if (leftOneAvail) {
+            console.log("we're moving right");
+            return move(cX - tileSize, cY)
+          }
+          // TURN AROUND AND GO RIGHT
+          else {
+            console.log("we gotta move back down");
+            return move(cX + tileSize, cY)
+          }
+        } 
+        // WE ARE NOT ON THE FURTHEST UP (WE CAN MOVE UP)
+        else {
+          // TURN AROUND AND GO BACK DOWN
+          if(upOneAvail) {
+            console.log("we gotta move back up");
+            return move(cX, cY - tileSize)
+          }
+          // MOVE LEFT
+          else if (leftOneAvail) {
+            console.log("we're moving left");
+            return move(cX - tileSize, cY)
+          }
+          // MOVE RIGHT
+          if (rightOneAvail) {
+              console.log("we're moving right");
+              return move(cX + tileSize, cY)
+          }
+          // MOVE DOWN
+          else {
+            console.log("we're moving down");
+            return move(cX, cY + tileSize)
+          }
+        }
+      }
+      //MOVED DOWN
+      else if (movedDown) {
+        console.log("It moved down!");
+  
+        // MOVE RIGHT
+        if (rightOneAvail) {
+          console.log("we're moving right")
+          return move(cX + tileSize, cY)
+        }
+        // MOVE DOWN
+        else if (downOneAvail) {
+          console.log("we're moving down")
+          return move(cX,cY + tileSize)
+        }
+        // TURN AROUND AND GO BACK UP
+        else {
+          console.log("we gotta go back up")
+          return move(cX, cY - tileSize)
+        }
+      }
+    }
+    
+    // MOVED LEFT OR RIGHT
+    else if (sameY) {
+      // MOVED LEFT
+      if (movedLeft) {
+        console.log("it moved left!");
+        
+        // WE ARE NOW ON THE FURTHEST RIGHT AND CANNOT MOVE RIGHT AGAIN
+        if (cX == xMax) {
+          // MOVE UP
+          if (upOneAvail) {
+            console.log("we're moving up");
+            return move(cX, cY - tileSize)
+          }
+          // MOVE LEFT
+          else if (leftOneAvail) {
+            console.log("we're moving left");
+            return move(cX - tileSize, cY)
+          }
+          // TURN AROUND AND GO BACK RIGHT
+          else {
+            console.log("we gotta move back right");
+            return move(cX + tileSize, cY)
+          }
+        }
+        // WE ARE NOT ON THE FURTHEST RIGHT
+        else {
+          // MOVE DOWN
+          if (downOneAvail) {
+            console.log("we're moving down");
+            return move(cX, cY + tileSize)
+          }
+          // MOVE LEFT
+          else if (leftOneAvail) {
+            console.log("we're moving left");
+            return move(cX - tileSize, cY)
+          }
+          // MOVE UP
+          else if (upOneAvail) {
+            console.log("we're moving up");
+            return move(cX, cY - tileSize)
+          }
+          // TURN AROUND AND GO BACK RIGHT
+          else {
+            console.log("we gotta move back right");
+            return move(cX + tileSize, cY)
+          }
+        }
+      } 
+      // MOVED RIGHT
+      else if (movedRight) {
+        console.log("it moved right!");
+        // WE ARE ON THE FARTHEST RIGHT (WE CANNOT MOVE RIGHT)
+        if(cX == 0){
+          // MOVE UP
+          if (upOneAvail) {
+            console.log("we're moving up");
+            return move(cX, cY - tileSize);
+          } 
+          // MOVE RIGHT
+          else if (rightOneAvail) {
+            console.log("we're moving right");
+            return move(cX + tileSize, cY);
+          } 
+          // MOVE DOWN
+          else if (downOneAvail) {
+            console.log("we're moving down");
+            return move(cX, cY + tileSize);
+          }
+          // TURN AROUND AND MOVE BACK LEFT
+          else {
+            console.log("we gotta go back left");
+            return move(cX - tileSize, cY);
+          }
+        }
+        // WE ARE NOT ON THE FARTHEST RIGHT (WE CAN MOVE RIGHT), BUT WE CHECK TO SEE IF WE CAN MOVE DOWN FIRST TO AVOID GETTING STUCK IN A LOOP
+        else {
+          // MOVE UP
+          if (upOneAvail) {
+            console.log("we're moving down");
+            return move(cX, cY - tileSize)
+          }
+          // MOVE RIGHT
+          else if (rightOneAvail) {
+            console.log("we're moving right");
+            return move(cX + tileSize, cY)
+          }
+          // GO BACK DOWN
+          else if (downOneAvail) {
+            console.log("we gotta move back down");
+            return move(cX, cY + tileSize)
+          }
+          // TURN AROUND AND MOVE LEFT
+          else {
+            console.log("we're moving left");
+            return move(cX - tileSize, cY)
+          }
+        }
+        
+      }
+    } 
   }
   if (direction == 2) {
     //check to see if we made it to the end of the column and start a different direction if so
