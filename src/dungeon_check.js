@@ -32,7 +32,7 @@ const checker = (
   counter++;
   if(counter > 400) {
     console.log('over 400');
-    return false;
+    return ;
   }
   // ctx.fillStyle = room[pX][pY] && "darkturquoise";
   // ctx.fillRect(pX, pY, tileSize, tileSize);
@@ -84,8 +84,8 @@ const checker = (
   // next checks if we've at least made one move from the starting point
   // or if we're trapped in a single cell at the start.
   // if so and we are back to the starting point we've traveled all the way around the board
-  // return false since we never found the exit and are back at the start
-  if ((!upOneAvail && !rightOneAvail && !leftOneAvail && !downOneAvail))return false;
+  // return  since we never found the exit and are back at the start
+  if ((!upOneAvail && !rightOneAvail && !leftOneAvail && !downOneAvail))return ;
 
   //checks if moving up
   if (!direction) {
@@ -292,7 +292,7 @@ const checker = (
         }
       }
     }
-    return (console.log(counter), false)
+    return 
   }
   if (direction == 1) {
 
@@ -503,7 +503,7 @@ const checker = (
         
       }
     }
-    return (console.log(counter), false)
+    return 
   }
   if (direction == 2) {
 
@@ -713,7 +713,7 @@ const checker = (
         }
       }
     }
-    return (console.log(counter), false)
+    return 
   }
   if (direction == 3) {
 
@@ -920,6 +920,6 @@ const checker = (
         }
       }
     }
-    return (console.log(counter), false)
+    return 
   }
 };
