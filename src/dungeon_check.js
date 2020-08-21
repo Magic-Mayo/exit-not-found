@@ -37,10 +37,10 @@ const checker = (
   ctx.fillStyle = room[(eX, eY)] && "hotpink";
   ctx.fillRect(eX, eY, tileSize, tileSize);
 
-  const upOneAvail = room[cX][cY - tileSize];
-  const rightOneAvail = room[cX + tileSize][cY];
-  const leftOneAvail = room[cX - tileSize][cY];
-  const downOneAvail = room[cX][cY + tileSize];
+  const upOneAvail = room[cX]?.[cY - tileSize];
+  const rightOneAvail = room[cX + tileSize]?.[cY];
+  const leftOneAvail = room[cX - tileSize]?.[cY];
+  const downOneAvail = room[cX]?.[cY + tileSize];
 
   const sameY = cY == pY;
   const sameX = cX == pX;
