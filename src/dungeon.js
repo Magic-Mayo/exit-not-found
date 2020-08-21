@@ -80,8 +80,7 @@ const buildDungeon = (cHeight, cWidth, columns, rows, tHeight, tWidth) => {
       TILE_HEIGHT,
       [xMax, yMax]
     )
-  )
-    return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth);
+  ) return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth);
   console.log("this is the dungeon");
 };
 

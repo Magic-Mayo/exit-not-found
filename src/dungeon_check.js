@@ -34,14 +34,14 @@ const checker = (
     console.log('over 400');
     return false;
   }
-  // ctx.fillStyle = room[pX][pY] && "darkturquoise";
-  // ctx.fillRect(pX, pY, tileSize, tileSize);
-  // ctx.fillStyle = room[cX][cY] && "darkblue";
-  // ctx.fillRect(cX, cY, tileSize, tileSize);
-  // ctx.fillStyle = room[(sX, sY)] && "goldenrod";
-  // ctx.fillRect(sX, sY, tileSize, tileSize);
-  // ctx.fillStyle = room[(eX, eY)] && "hotpink";
-  // ctx.fillRect(eX, eY, tileSize, tileSize);
+  ctx.fillStyle = room[pX][pY] && "darkturquoise";
+  ctx.fillRect(pX, pY, tileSize, tileSize);
+  ctx.fillStyle = room[cX][cY] && "darkblue";
+  ctx.fillRect(cX, cY, tileSize, tileSize);
+  ctx.fillStyle = room[(sX, sY)] && "goldenrod";
+  ctx.fillRect(sX, sY, tileSize, tileSize);
+  ctx.fillStyle = room[(eX, eY)] && "hotpink";
+  ctx.fillRect(eX, eY, tileSize, tileSize);
 
   const upOneAvail = room[cX]?.[cY - tileSize];
   const rightOneAvail = room[cX + tileSize]?.[cY];
@@ -61,11 +61,11 @@ const checker = (
   // WHAT IS AVAILABLE: [RIGHT: ${rightOneAvail}, DOWN: ${downOneAvail}, LEFT: ${leftOneAvail}, UP: ${upOneAvail}]
   // ------------------------------------------------`);
   const move = (x, y, dir = direction, xX = cX, yY = cY) =>
-    // setTimeout(
-    //   () =>
+    setTimeout(
+      () =>
         checker(room, [x, y], [xX, yY], [eX, eY], [sX, sY], dir, tileSize, [xMax,yMax], counter++)
-    //   175
-    // );
+      ,50
+    );
 
     
   // const fromRight = () => {
@@ -78,6 +78,9 @@ const checker = (
   // checks first to see if exit coords are reached.  if so dungeon exit can be reached.  return true
   if (eX == cX && eY == cY) {
     console.log(counter);
+    generatePlayer(
+      [sX,sY],"white",room,tileSize
+    )
     return true;
   }
 
