@@ -1,8 +1,4 @@
-// CANVAS ELEMENT
-const game = document.getElementById("gameBG");
-const ctx = game.getContext("2d");
-const players = document.getElementById("gameFG");
-const ctx2 = players.getContext("2d");
+
 
 const rooms = [];
 const lvl = 1;
@@ -105,8 +101,13 @@ const Enemy = function (difficulty) {
 };
 
 let playerCoord = [];
+let handleKeyPress;
+const generatePlayer = (coord, color, room, tileSize, exit) => {
+  handleKeyPress = e => {
+    console.log("i clicked a button")
+    handlePlayerMovement(e,room,tileSize,color,exit)
+  }
 
-const generatePlayer = (coord, color, room, tileSize) => {
   playerCoord = coord;
   console.log(room);
   console.log(
@@ -115,24 +116,23 @@ const generatePlayer = (coord, color, room, tileSize) => {
   ctx.fillStyle = room[coord[0]][coord[1]] && color;
   ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
 
-  window.addEventListener(
-    "keypress",
-    (e) =>
-      (e.code == "KeyW" ||
-        e.code == "KeyD" ||
-        e.code == "KeyS" ||
-        e.code == "KeyA") &&
-      handlePlayerMovement(e, room, tileSize, color)
-  );
+  window.addEventListener("keypress", handleKeyPress);
+
+
 };
 
-const handlePlayerMovement = (event, room, tileSize, color) => {
-  console.log(event);
+const handlePlayerMovement = (event, room, tileSize, color, exit) => {
+  if (
+    !(event.code == "KeyW" ||
+    event.code == "KeyD" ||
+    event.code == "KeyS" ||
+    event.code == "KeyA")
+  ) return;
   let { key } = event;
+  console.log("I MOVED")
+  console.log("=======");
   let [playerX, playerY] = playerCoord;
-  console.log(playerX, playerY);
   key = key.toLowerCase();
-  console.log(key);
   const dir = {
     w: {
       code: "w",
@@ -153,9 +153,6 @@ const handlePlayerMovement = (event, room, tileSize, color) => {
   };
   const [nextX, nextY] = dir[key].coord;
 
-  console.log(playerX, playerY);
-  console.log(room[nextX][nextY]);
-
   if (room[nextX][nextY]) {
     ctx2.fillStyle = room[nextX][nextY] && "green";
     ctx2.fillRect(playerX, playerY, tileSize, tileSize);
@@ -164,5 +161,20 @@ const handlePlayerMovement = (event, room, tileSize, color) => {
     ctx2.fillRect(nextX, nextY, tileSize, tileSize);
 
     playerCoord = [nextX, nextY];
+  }
+
+  if (nextX == exit[0] && nextY == exit[1]) {
+    console.log("you win!")
+    window.removeEventListener("keypress", handleKeyPress)
+
+    buildDungeon(
+      CANVAS_HEIGHT,
+      CANVAS_WIDTH,
+      COLUMNS,
+      ROWS,
+      TILE_HEIGHT,
+      TILE_WIDTH,
+      [exit[0], exit[1]]
+    )
   }
 };

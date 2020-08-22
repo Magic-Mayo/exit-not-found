@@ -2,9 +2,6 @@
 // that opens the object and y coordinate that opens the inner object and lets the checker know if the tile is safe or not
 // will never change
 
-// CANVAS ELEMENT
-const game = document.getElementById("gameBG");
-const ctx = game.getContext("2d");
 
 // [cX, cY] parameter is current position. array [x,y]
 // [pX, pY] parameter is previous position. array [x,y]
@@ -64,7 +61,7 @@ const checker = (
     setTimeout(
       () =>
         checker(room, [x, y], [xX, yY], [eX, eY], [sX, sY], dir, tileSize, [xMax,yMax], counter++)
-      ,50
+      ,1
     );
 
     
@@ -79,7 +76,7 @@ const checker = (
   if (eX == cX && eY == cY) {
     console.log(counter);
     generatePlayer(
-      [sX,sY],"white",room,tileSize
+      [sX,sY],"white",room,tileSize, [eX,eY]
     )
     return true;
   }
