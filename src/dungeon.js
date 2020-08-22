@@ -36,8 +36,6 @@ const buildDungeon = (cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX, 
       ctx.fillRect(x, y, tWidth, tHeight);
     });
   });
-  console.log(COORDINATES);
-
   // console.log(COORDINATES[0])
   // console.log(COORDINATES[1])
   // console.log(COORDINATES[2])
@@ -59,10 +57,10 @@ const buildDungeon = (cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX, 
     if(pY == 240) return 0;
     return pY;
   }
-
+  
   const start = (x, y) => (COORDINATES[x]?.[y] ? [x, y] : start(x + tWidth, y));
   const end = (x, y) => (COORDINATES[x]?.[y] ? [x, y] : end(x, y - tHeight));
-
+  
   const [sX, sY] = start(inversePX(pExitX), inversePY(pExitY));
   const [eX, eY] = end(64, 240);
   // const dir = () => {
@@ -83,10 +81,10 @@ const buildDungeon = (cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX, 
       0,
       tHeight,
       [xMax, yMax]
-    )
-  ){
-    return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX, pExitY]);
-  }
+      )
+      ){
+        return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX, pExitY]);
+      }
   console.log("this is the dungeon");
 };
 
@@ -96,7 +94,8 @@ buildDungeon(
   COLUMNS,
   ROWS,
   TILE_HEIGHT,
-  TILE_WIDTH
+  TILE_WIDTH,
+  [0,240]
 );
 
 // STEPS TO REPRODUCE ABOVE TO PRODUCE CANVAS ELEMENT WITH TILES\
