@@ -4,7 +4,6 @@ const ctx = game.getContext("2d");
 const players = document.getElementById("gameFG");
 const ctx2 = players.getContext("2d");
 
-
 const rooms = [];
 const lvl = 1;
 const weapons = [
@@ -105,61 +104,65 @@ const Enemy = function (difficulty) {
   };
 };
 
-let playerCoord = []
+let playerCoord = [];
 
-const generatePlayer = (
-  coord,
-  color,
-  room,
-  tileSize
-) => {
+const generatePlayer = (coord, color, room, tileSize) => {
   playerCoord = coord;
-  console.log(room)
-  console.log(`The player will start at ${playerCoord} and will have the color ${color}`);
+  console.log(room);
+  console.log(
+    `The player will start at ${playerCoord} and will have the color ${color}`
+  );
   ctx.fillStyle = room[coord[0]][coord[1]] && color;
   ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
 
-  window.addEventListener('keypress', e => handlePlayerMovement(e,room, tileSize, color))
-}
+  window.addEventListener(
+    "keypress",
+    (e) =>
+      (e.code == "KeyW" ||
+        e.code == "KeyD" ||
+        e.code == "KeyS" ||
+        e.code == "KeyA") &&
+      handlePlayerMovement(e, room, tileSize, color)
+  );
+};
 
-const handlePlayerMovement = (event,room, tileSize, color) => {
+const handlePlayerMovement = (event, room, tileSize, color) => {
+  console.log(event);
   let { key } = event;
-  let [playerX, playerY] = playerCoord
-  console.log(playerX, playerY)
-  key = key.toLowerCase()
-  console.log(key)
+  let [playerX, playerY] = playerCoord;
+  console.log(playerX, playerY);
+  key = key.toLowerCase();
+  console.log(key);
   const dir = {
     w: {
       code: "w",
-      coord: [playerX, playerY - tileSize]
+      coord: [playerX, playerY - tileSize],
     },
     d: {
       code: "d",
-      coord: [playerX + tileSize, playerY]
+      coord: [playerX + tileSize, playerY],
     },
     s: {
       code: "s",
-      coord: [playerX, playerY + tileSize]
+      coord: [playerX, playerY + tileSize],
     },
     a: {
       code: "a",
-      coord: [playerX - tileSize, playerY]
-    }
-  }
+      coord: [playerX - tileSize, playerY],
+    },
+  };
   const [nextX, nextY] = dir[key].coord;
 
-  console.log(playerX,playerY);
-  console.log(room[nextX][nextY])
-  
-  if(room[nextX][nextY]){
+  console.log(playerX, playerY);
+  console.log(room[nextX][nextY]);
+
+  if (room[nextX][nextY]) {
     ctx2.fillStyle = room[nextX][nextY] && "green";
     ctx2.fillRect(playerX, playerY, tileSize, tileSize);
 
     ctx2.fillStyle = room[nextX][nextY] && color;
     ctx2.fillRect(nextX, nextY, tileSize, tileSize);
-    
-    playerCoord = [nextX, nextY]
-  }
-  
 
-}
+    playerCoord = [nextX, nextY];
+  }
+};
