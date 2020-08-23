@@ -1,7 +1,7 @@
 
 
 const rooms = [];
-const lvl = 1;
+let lvl = 1, count = 1;
 const weapons = [
   ["Brass knuckles", "Fists"],
   [""],
@@ -119,9 +119,15 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
   ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
 
   window.addEventListener("keypress", handleKeyPress);
-
-
 };
+
+const generateEnemies = level => {
+  count = level % 2 === 0 ? Math.pow(level,2) / 4 : count
+  lvl++;
+
+  console.log(`We are generating ${count} enemies`);
+}
+
 
 const handlePlayerMovement = (event, room, tileSize, color, exit) => {
   if (
