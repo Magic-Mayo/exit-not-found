@@ -4,8 +4,7 @@
 // CANVAS ELEMENT
 const game = document.getElementById("gameBG");
 const ctx = game.getContext("2d");
-const players = document.getElementById("gameFG");
-const ctx2 = players.getContext("2d");
+
 
 // init constraints for dungeon size
 const CANVAS_HEIGHT = 256;
@@ -35,7 +34,6 @@ const buildDungeon = (
 		!x ? [240, y] : !y ? [x, 240] : x == 241 ? [0, y] : [x, 0];
 
 	ctx.clearRect(0, 0, cWidth, cHeight);
-	ctx2.clearRect(0, 0, cWidth, cHeight);
 	const xMax = cWidth - tWidth;
 	const yMax = cHeight - tHeight;
   const COORDINATES = {};
@@ -54,7 +52,7 @@ const buildDungeon = (
 
 			COORDINATES[x][y] = cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
 
-			ctx.fillStyle = COORDINATES[x][y] === 1 ? "green" : "red";
+			ctx.fillStyle = COORDINATES[x][y] === 1 ? "transparent" : "red";
 			ctx.fillRect(x, y, tWidth, tHeight);
 		});
 	});
@@ -96,7 +94,8 @@ const buildDungeon = (
 			if (sY < 240) return 2;
 			else return 3;
 		}
-	};
+  };
+  console.log(COORDINATES);
 	// checks to make sure the dungeon can be completed.
 	// if not build another one until you get one that can be
 	if (

@@ -102,6 +102,8 @@ const Enemy = function (difficulty) {
 
 let playerCoord = [];
 let handleKeyPress;
+
+
 const generatePlayer = (coord, color, room, tileSize, exit) => {
   handleKeyPress = e => {
     console.log("i clicked a button")
@@ -153,12 +155,12 @@ const handlePlayerMovement = (event, room, tileSize, color, exit) => {
   };
   const [nextX, nextY] = dir[key].coord;
 
-  if (room[nextX][nextY]) {
-    ctx2.fillStyle = room[nextX][nextY] && "green";
-    ctx2.fillRect(playerX, playerY, tileSize, tileSize);
+  if (room[nextX]?.[nextY]) {
+    ctx.fillStyle = room[nextX][nextY] && "green";
+    ctx.fillRect(playerX, playerY, tileSize, tileSize);
 
-    ctx2.fillStyle = room[nextX][nextY] && color;
-    ctx2.fillRect(nextX, nextY, tileSize, tileSize);
+    ctx.fillStyle = room[nextX][nextY] && color;
+    ctx.fillRect(nextX, nextY, tileSize, tileSize);
 
     playerCoord = [nextX, nextY];
   }
