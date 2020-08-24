@@ -80,7 +80,7 @@ const checker = (
 	if (eX == cX && eY == cY) {
 		console.log(counter);
 		generatePlayer([sX, sY], "white", room, tileSize, [eX, eY]);
-		generateEnemies(lvl)
+		generateEnemies(lvl, [sX,sY], [eX,eY], room)
 		return true;
 	}
 

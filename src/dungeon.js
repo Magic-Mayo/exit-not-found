@@ -98,7 +98,6 @@ const buildDungeon = (
 			pExitY,
 		]);
 	}
-	console.log("this is the dungeon");
 };
 
 buildDungeon(
