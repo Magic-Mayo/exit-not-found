@@ -34,7 +34,7 @@ const buildDungeon = (
 			COORDINATES[x][y] =
 				cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
 
-			ctx.fillStyle = COORDINATES[x][y] === 1 ? "transparent" : "red";
+			ctx.fillStyle = COORDINATES[x][y] === 1 ? "transparent" : "#2b2b2b";
 			ctx.fillRect(x, y, tWidth, tHeight);
 		});
 	});

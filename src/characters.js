@@ -134,7 +134,7 @@ const generateEnemies = (level, start, end, room) => {
 	enemyPosition = getEnemyCoordinate(start, end, room);
 	const [x, y] = enemyPosition;
 
-	ctx.fillStyle = room[x][y] && "yellow";
+	ctx.fillStyle = room[x][y] && "#940404";
 	ctx.fillRect(x, y, TILE_WIDTH, TILE_HEIGHT);
 };
 
@@ -244,7 +244,7 @@ const handleEnemyMovement = (room, [x,y]) => {
   enemyPosition = availableSurroundings[Math.floor(Math.random() * availableSurroundings.length)].coord
   const [newX,newY] = enemyPosition
 
-  ctx.fillStyle = room[newX][newY] && "yellow";
+  ctx.fillStyle = room[newX][newY] && "#940404";
 	ctx.fillRect(newX, newY, TILE_WIDTH, TILE_HEIGHT);
 
 };

@@ -30,13 +30,15 @@ const checker = (
 		console.log("over 400");
 		return;
 	}
+
+	// COLOR FOR WATER: #3988e3
 	// ctx.fillStyle = room[pX][pY] && "darkturquoise";
 	// ctx.fillRect(pX, pY, tileSize, tileSize);
 	// ctx.fillStyle = room[cX][cY] && "darkblue";
 	// ctx.fillRect(cX, cY, tileSize, tileSize);
 	// ctx.fillStyle = room[(sX, sY)] && "goldenrod";
 	// ctx.fillRect(sX, sY, tileSize, tileSize);
-	ctx.fillStyle = room[(eX, eY)] && "hotpink";
+	ctx.fillStyle = room[(eX, eY)] && "#39e363";
 	ctx.fillRect(eX, eY, tileSize, tileSize);
 
 	const upOneAvail = room[cX]?.[cY - tileSize];
