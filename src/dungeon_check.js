@@ -295,6 +295,8 @@ const checker = (
 		}
 		return;
 	}
+
+
 	if (direction == 1) {
 		// WE MADE IT TO RIGHT OF THE DUNGEON
 		if (cX == xMax) {

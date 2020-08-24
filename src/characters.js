@@ -248,11 +248,3 @@ const handleEnemyMovement = (room, [x,y]) => {
 	ctx.fillRect(newX, newY, TILE_WIDTH, TILE_HEIGHT);
 
 };
-
-
-
-
-
-
-
-

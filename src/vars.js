@@ -11,7 +11,7 @@ CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS
 const CANVAS_HEIGHT = 256;
 const CANVAS_WIDTH = 256;
 const NUMBER_OF_ROWS = 16;
-const NUMBER_OF_COLUMNS = 16;
+const NUMBER_OF_COLUMNS = 16; 
 const ROWS = new Array(NUMBER_OF_ROWS).fill();
 const COLUMNS = new Array(NUMBER_OF_COLUMNS).fill();
 const TILE_HEIGHT = CANVAS_HEIGHT / NUMBER_OF_ROWS;
@@ -30,7 +30,6 @@ const COORDINATES = {};
 const WALKABLE_COORDINATES = []
 /* ==================================
 ==================================== */
-
 
 
 
