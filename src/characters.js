@@ -121,12 +121,7 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
   window.addEventListener("keypress", handleKeyPress);
 };
 
-const generateEnemies = level => {
-  count = level % 2 === 0 ? Math.pow(level,2) / 4 : count
-  lvl++;
 
-  console.log(`We are generating ${count} enemies`);
-}
 
 
 const handlePlayerMovement = (event, room, tileSize, color, exit) => {

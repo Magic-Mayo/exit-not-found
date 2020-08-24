@@ -1,25 +1,6 @@
 // ==========================
 // BUILDING OUT THE DUNGEON
 // ==========================
-// CANVAS ELEMENT
-const game = document.getElementById("gameBG");
-const ctx = game.getContext("2d");
-
-
-// init constraints for dungeon size
-const CANVAS_HEIGHT = 256;
-const CANVAS_WIDTH = 256;
-
-const NUMBER_OF_ROWS = 16;
-const NUMBER_OF_COLUMNS = 16;
-
-const ROWS = new Array(NUMBER_OF_ROWS).fill();
-const COLUMNS = new Array(NUMBER_OF_COLUMNS).fill();
-
-const TILE_HEIGHT = CANVAS_HEIGHT / NUMBER_OF_ROWS;
-const TILE_WIDTH = CANVAS_WIDTH / NUMBER_OF_ROWS;
-// init constraint for tile-type ratio between walkable & nonwalkable
-const WALKABLE_TILE_CHANCE = 0.8;
 
 const buildDungeon = (
 	cHeight,
@@ -33,11 +14,11 @@ const buildDungeon = (
 	const inverseCoords = ([x, y]) =>
 		!x ? [240, y] : !y ? [x, 240] : x == 241 ? [0, y] : [x, 0];
 
+	// clear board of previous paint...if any
 	ctx.clearRect(0, 0, cWidth, cHeight);
 	const xMax = cWidth - tWidth;
 	const yMax = cHeight - tHeight;
-  const COORDINATES = {};
-  const [sX,sY] = inverseCoords([pExitX,pExitY])
+	const [sX, sY] = inverseCoords([pExitX, pExitY]);
 	// SET UP COORDINATE PLANE
 	columns.forEach((vX, x) => {
 		x = x * tWidth;
@@ -45,12 +26,13 @@ const buildDungeon = (
 
 		rows.forEach((vY, y) => {
 			y = y * tHeight;
-      const cellChance = Math.random();
-      const newStartIsHere = sX === x && sY === y
+			const cellChance = Math.random();
+			const newStartIsHere = sX === x && sY === y;
 
-      console.log(newStartIsHere);
+			console.log(newStartIsHere);
 
-			COORDINATES[x][y] = cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
+			COORDINATES[x][y] =
+				cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
 
 			ctx.fillStyle = COORDINATES[x][y] === 1 ? "transparent" : "red";
 			ctx.fillRect(x, y, tWidth, tHeight);
@@ -62,7 +44,6 @@ const buildDungeon = (
 	// can go away once we have a system in
 	// place for picking a start and exit
 	///////////////////////////////////////////
-
 
 	const generateRandomEndpoint = () => {
 		const first = Math.floor(Math.random() * NUMBER_OF_ROWS) * TILE_HEIGHT;
@@ -79,7 +60,6 @@ const buildDungeon = (
 	//     A. since exit will always be on the perimeter, one value MUST be zero (either X or Y)
 	//     B. exit cannot be straight across from the exit
 
-
 	// const end = (x, y) => (COORDINATES[x]?.[y] ? [x, y] : end(x, y - tHeight));
 
 	// const [eX, eY] = end(randEnd[0], randEnd[1]);
@@ -94,8 +74,8 @@ const buildDungeon = (
 			if (sY < 240) return 2;
 			else return 3;
 		}
-  };
-  console.log(COORDINATES);
+	};
+	console.log(COORDINATES);
 	// checks to make sure the dungeon can be completed.
 	// if not build another one until you get one that can be
 	if (
@@ -104,7 +84,7 @@ const buildDungeon = (
 			[sX, sY],
 			// [0,240],
 			[sX, sY],
-			[0,240],
+			[0, 240],
 			// [eX, eY],
 			[sX, sY],
 			// [0,240],

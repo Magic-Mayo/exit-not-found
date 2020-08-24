@@ -79,8 +79,8 @@ const checker = (
 	// checks first to see if exit coords are reached.  if so dungeon exit can be reached.  return true
 	if (eX == cX && eY == cY) {
 		console.log(counter);
-    generatePlayer([sX, sY], "white", room, tileSize, [eX, eY]);
-    generateEnemies(lvl);
+		generatePlayer([sX, sY], "white", room, tileSize, [eX, eY]);
+		generateEnemies(lvl)
 		return true;
 	}
 
