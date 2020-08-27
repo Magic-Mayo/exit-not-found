@@ -11,8 +11,6 @@ const buildDungeon = (
 	tWidth,
 	[pExitX, pExitY]
 ) => {
-	const inverseCoords = ([x, y]) =>
-		!x ? [240, y] : !y ? [x, 240] : x == 241 ? [0, y] : [x, 0];
 
 	// clear board of previous paint...if any
 	ctx.clearRect(0, 0, cWidth, cHeight);
@@ -99,15 +97,6 @@ const buildDungeon = (
 	}
 };
 
-buildDungeon(
-	CANVAS_HEIGHT,
-	CANVAS_WIDTH,
-	COLUMNS,
-	ROWS,
-	TILE_HEIGHT,
-	TILE_WIDTH,
-	[0, 160]
-);
 
 // STEPS TO REPRODUCE ABOVE TO PRODUCE CANVAS ELEMENT WITH TILES\
 // 1. initiate the canvas element with a width & a height.

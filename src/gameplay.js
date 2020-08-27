@@ -12,6 +12,18 @@ _btn.addEventListener('click', e => {
     _lvl.innerHTML = player.lvl
     _attack.innerHTML = player.attack
     _defense.innerHTML = player.def
+
+    buildDungeon(
+        CANVAS_HEIGHT,
+        CANVAS_WIDTH,
+        COLUMNS,
+        ROWS,
+        TILE_HEIGHT,
+        TILE_WIDTH,
+        [0, 160]
+    );
+
+    
 })
 
 // STATS

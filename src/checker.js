@@ -80,11 +80,10 @@ const checker = (
 	// }
 	// checks first to see if exit coords are reached.  if so dungeon exit can be reached.  return true
 	if (eX == cX && eY == cY) {
-		console.log(counter);
 		generatePlayer([sX, sY], "white", room, tileSize, [eX, eY]);
 		generateEnemies(lvl, [sX, sY], [eX, eY], room);
 
-		_dungeon.innerHTML = dungeon++
+		_dungeon.innerHTML = dungeon++;
 		return true;
 	}
 
@@ -392,57 +391,35 @@ const checker = (
 			// MOVED LEFT
 			if (movedLeft) {
 				// MOVE DOWN
-				if (downOneAvail) {
-					return move(cX, cY + tileSize);
-				}
+				if (downOneAvail) return move(cX, cY + tileSize);
 				// MOVE LEFT
-				else if (leftOneAvail) {
-					return move(cX - tileSize, cY);
-				}
+				else if (leftOneAvail) return move(cX - tileSize, cY);
 				// MOVE UP
-				else if (upOneAvail) {
-					return move(cX, cY - tileSize);
-				}
+				else if (upOneAvail) return move(cX, cY - tileSize);
 				// TURN AROUND AND GO BACK RIGHT
-				else {
-					return move(cX + tileSize, cY);
-				}
+				else return move(cX + tileSize, cY);
 			}
 			// MOVED RIGHT
 			else if (movedRight) {
 				// WE ARE NOW ON THE FURTHEST RIGHT AND CANNOT MOVE RIGHT AGAIN
 				if (cX == 0) {
 					// MOVE UP
-					if (upOneAvail) {
-						return move(cX, cY - tileSize);
-					}
+					if (upOneAvail) return move(cX, cY - tileSize);
 					// TURN AROUND AND GO BACK RIGHT
-					else if (rightOneAvail) {
-						return move(cX + tileSize, cY);
-					}
+					else if (rightOneAvail) return move(cX + tileSize, cY);
 					// MOVE DOWN
-					else {
-						return move(cX, cY + tileSize);
-					}
+					else return move(cX, cY + tileSize);
 				}
 				// WE ARE NOT ON THE FURTHEST RIGHT
 				else {
 					// MOVE UP
-					if (upOneAvail) {
-						return move(cX, cY - tileSize);
-					}
+					if (upOneAvail) return move(cX, cY - tileSize);
 					// MOVE RIGHT
-					else if (rightOneAvail) {
-						return move(cX + tileSize, cY);
-					}
+					else if (rightOneAvail) return move(cX + tileSize, cY);
 					// MOVE DOWN
-					else if (downOneAvail) {
-						return move(cX, cY + tileSize);
-					}
+					else if (downOneAvail) return move(cX, cY + tileSize);
 					// TURN AROUND AND MOVE BACK LEFT
-					else {
-						return move(cX - tileSize, cY);
-					}
+					else return move(cX - tileSize, cY);
 				}
 			}
 		}
@@ -453,18 +430,12 @@ const checker = (
 		if (cX - tileSize < 0) {
 			// WE ARE ON THE BOTTOM OF THE DUNGEON
 			if (movedDown) {
-				if (rightOneAvail) {
-					return move(cX + tileSize, cY);
-				}
+				if (rightOneAvail) return move(cX + tileSize, cY);
 			}
-			if (cY == yMax) {
-				// CHANGE DIRECTION TO "UP"
-				return move(cX, cY, 0);
-			}
+			// CHANGE DIRECTION TO "UP"
+			if (cY == yMax) return move(cX, cY, 0);
 			// THERE IS AN AVAILABLE BLOCK TO DOWN
-			else if (downOneAvail) {
-				return move(cX, cY + tileSize);
-			}
+			else if (downOneAvail) return move(cX, cY + tileSize);
 			// CHANGE DIRECTION TO "UP"
 			else return move(cX, cY, 0);
 		}
