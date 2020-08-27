@@ -1,163 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="stylesheet" href="https://use.typekit.net/qkd3qrc.css" />
-	<title>Dungeon Not Found</title>
-	<style>
-		.font-regular {
-			font-family: lores-12, sans-serif;
-			font-weight: 400;
-			font-style: normal;
-		}
-
-		.font-bold {
-			font-family: lores-12, sans-serif;
-			font-weight: 700;
-			font-style: normal;
-		}
-
-		body {
-			background-color: black;
-		}
-
-		* {
-			margin: 0;
-			box-sizing: border-box;
-		}
-
-		.container {
-			position: absolute;
-			width: 100%;
-			padding: 0 10%;
-			z-index: 500;
-			margin: auto;
-			transition: 0.3s ease-out opacity;
-			display: flex;
-			justify-content: space-around;
-		}
-
-		canvas {
-			max-width: 560px;
-			width: 100%;
-			background-color: #949494;
-		}
-
-		.toggle-game {
-			margin-top: 75px;
-			font-size: 50px;
-		}
-
-		.invisible {
-			opacity: 0;
-			pointer-events: none;
-		}
-
-		.headline {
-			text-align: center;
-			margin-top: 100px;
-		}
-
-		h1 {
-			font-size: 85px;
-			color: wheat;
-			position: relative;
-			display: inline-block;
-			height: 85px;
-			width: 200px;
-		}
-
-		h2 {
-			margin-top: 100px;
-			font-size: 60px;
-			color: firebrick;
-		}
-
-		h1 span {
-			position: absolute;
-			animation: upAndDown 1s ease-in-out infinite both alternate;
-		}
-
-		h1 span:first-child {
-			left: 0;
-		}
-
-		h1 span:nth-child(2) {
-			left: 37.5%;
-			animation-delay: -.3s;
-		}
-
-		h1 span:last-child {
-			right: 0;
-			animation-delay: -.6s;
-		}
-
-		.stats {
-			border: solid 10px firebrick;
-			color: blanchedalmond;
-			width: 40%; 
-		}
-
-		.stats p {
-			margin: 5px 10px;
-			font-size: 26px;
-		}
-
-		h3 {
-			text-transform: uppercase;
-			font-size: 37px;
-			margin: 10px;
-		}
-
-		@keyframes upAndDown {
-			from {
-				transform: translateY(0);
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="https://use.typekit.net/qkd3qrc.css" />
+		<title>Dungeon Not Found</title>
+		<style>
+			.font-regular {
+				font-family: lores-12, sans-serif;
+				font-weight: 400;
+				font-style: normal;
 			}
 
-			to {
-				transform: translateY(75%);
+			.font-bold {
+				font-family: lores-12, sans-serif;
+				font-weight: 700;
+				font-style: normal;
 			}
-		}
-	</style>
-</head>
 
-<body>
-	<div class="container invisible">
-		<canvas id="gameBG" width="256" height="256"></canvas>
-		<div class="stats font-regular">
-			<h3>stats</h3>
+			body {
+				background-color: black;
+			}
+
+			* {
+				margin: 0;
+				box-sizing: border-box;
+			}
+
+			.container {
+				position: absolute;
+				top: 20px;
+				width: 100%;
+				padding: 0 5%;
+				z-index: 500;
+				margin: auto;
+				transition: 0.3s ease-out opacity;
+				display: flex;
+				justify-content: space-around;
+				align-items: flex-start;
+			}
+
+			canvas {
+				max-width: 440px;
+				width: 100%;
+				background-color: #949494;
+			}
+
+			.toggle-game {
+				margin-top: 75px;
+				font-size: 50px;
+			}
+
+			.invisible {
+				opacity: 0;
+				pointer-events: none;
+			}
+
+			.headline {
+				text-align: center;
+				margin-top: 100px;
+			}
+
+			h1 {
+				font-size: 85px;
+				color: wheat;
+				position: relative;
+				display: inline-block;
+				height: 85px;
+				width: 200px;
+			}
+
+			h2 {
+				margin-top: 100px;
+				font-size: 60px;
+				color: firebrick;
+			}
+
+			h1 span {
+				position: absolute;
+				animation: upAndDown 1s ease-in-out infinite both alternate;
+			}
+
+			h1 span:first-child {
+				left: 0;
+			}
+
+			h1 span:nth-child(2) {
+				left: 37.5%;
+				animation-delay: -0.3s;
+			}
+
+			h1 span:last-child {
+				right: 0;
+				animation-delay: -0.6s;
+			}
+
+			.stats {
+				border: solid 5px firebrick;
+				color: blanchedalmond;
+				width: 50%;
+				padding: 5px 5px 15px;
+				display: flex;
+				/* flex-direction: column; */
+				flex-wrap: wrap;
+				max-width: 500px;
+			}
+
+			.stats p {
+				margin: 5px 10px;
+				font-size: 24px;
+				width: 45%;
+			}
+			.stats-health,.stats-lvl,.stats-exp {
+				width: 100% !important;
+			}
+
+			.stats-attack,.stats-defense {
+				padding-top: 20px;
+				padding-bottom: 20px;
+			}
+
+			h3 {
+				text-transform: uppercase;
+				font-size: 37px;
+				margin: 10px;
+				width: 100%;
+			}
+
+			@keyframes upAndDown {
+				from {
+					transform: translateY(0);
+				}
+
+				to {
+					transform: translateY(75%);
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container invisible">
+			<canvas id="gameBG" width="256" height="256"></canvas>
+			<div class="stats font-regular">
+				<h3>stats</h3>
 				<p class="stats-health">
-					HealthPoints: <span id="healthpoints">0</span></p>
-				<p class="stats-lvl">
-					Level: <span id="lvl">0</span></p>
-				<p class="stats-exp">
-					Experience: <span id="exp">0</span>
+					Health: <span id="healthpoints">0</span>
 				</p>
+				<p class="stats-attack">
+					Atk Power: <span id="attack">0</span>
+				</p>
+				<p class="stats-defense">
+					Def Power: <span id="defense">0</span>
+				</p>
+				<p class="stats-lvl">Level: <span id="lvl">0</span></p>
+				<p class="stats-exp">Experience: <span id="exp">0</span></p>
 				<p class="stats-dungeon">
 					Dungeon: <span id="dungeon">0</span>
-				</p>				
+				</p>
 				<p class="stats-steps">
 					Steps Taken: <span id="steps">0</span>
-				</p>	
+				</p>
+			</div>
 		</div>
-	</div>
-	<div class="headline">
-		<h1 class="font-bold">
-			<span>4</span>
-			<span>0</span>
-			<span>4</span>
-		</h1>
-		<h2 class="font-bold">Dungeon Not Found</h2>
-		<button class="toggle-game font-regular">play</button>
-	</div>
-	<script src="./src/vars.js"></script>
-	<script src="./src/characters.js"></script>
-	<script src="./src/dungeon_check.js"></script>
-	<script src="./src/dungeon.js"></script>
+		<div class="headline">
+			<h1 class="font-bold">
+				<span>4</span>
+				<span>0</span>
+				<span>4</span>
+			</h1>
+			<h2 class="font-bold">Dungeon Not Found</h2>
+			<button class="toggle-game font-regular">play</button>
+		</div>
+		<script src="./src/vars.js"></script>
+		<script src="./src/characters.js"></script>
+		<script src="./src/dungeon_check.js"></script>
+		<script src="./src/dungeon.js"></script>
 
-	<script src="./src/gameplay.js"></script>
-</body>
-
+		<script src="./src/gameplay.js"></script>
+	</body>
 </html>
