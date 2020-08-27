@@ -75,7 +75,6 @@ const buildDungeon = (
 			else return 3;
 		}
 	};
-	console.log(COORDINATES);
 	// checks to make sure the dungeon can be completed.
 	// if not build another one until you get one that can be
 	if (

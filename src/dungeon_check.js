@@ -83,6 +83,8 @@ const checker = (
 		console.log(counter);
 		generatePlayer([sX, sY], "white", room, tileSize, [eX, eY]);
 		generateEnemies(lvl, [sX, sY], [eX, eY], room);
+
+		_dungeon.innerHTML = dungeon++
 		return true;
 	}
 
