@@ -106,10 +106,7 @@ let playerCoord = [];
 let handleKeyPress;
 
 const generatePlayer = (coord, color, room, tileSize, exit) => {
-	handleKeyPress = (e) => {
-		console.log("i clicked a button");
-		handlePlayerMovement(e, room, tileSize, color, exit);
-	};
+	handleKeyPress = (e) => handlePlayerMovement(e, room, tileSize, color, exit);
 
 	playerCoord = coord;
 	console.log(room);
@@ -194,9 +191,9 @@ const handlePlayerMovement = (event, room, tileSize, color, exit) => {
 
 		_steps.innerHTML = steps++
 		playerCoord = [nextX, nextY];
+		enemyPosition.forEach((pos,i) => handleEnemyMovement(room,pos,i))
 	}
 
-	enemyPosition.forEach((pos,i) => handleEnemyMovement(room,pos,i))
 
 
 	if (nextX == exit[0] && nextY == exit[1]) {
