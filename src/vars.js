@@ -9,9 +9,11 @@ const _btn = document.body.querySelector('.toggle-game')
 const _container = document.body.querySelector('.container')
 const _landing = document.body.querySelector('.headline')
 const _healthpoints = document.body.querySelector('#healthpoints')
+const _attack = document.body.querySelector('#attack')
+const _defense = document.body.querySelector('#defense')
 const _lvl = document.body.querySelector('#lvl')
-const _expCurrent = document.body.querySelector('#exp')
-const _expToNextLvl = document.body.querySelector('#exp')
+const _expCurrent = document.body.querySelector('#exp-current')
+const _expToNextLvl = document.body.querySelector('#exp-next')
 const _dungeon = document.body.querySelector('#dungeon')
 const _steps = document.body.querySelector('#steps')
 
@@ -41,6 +43,8 @@ const COORDINATES = {};
 const WALKABLE_COORDINATES = []
 let steps = 1;
 let dungeon = 1;
+
+let dungeonEXP = 20 + 10 * dungeon
 /* ==================================
 ==================================== */
 

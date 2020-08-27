@@ -109,7 +109,6 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
 	handleKeyPress = (e) => handlePlayerMovement(e, room, tileSize, color, exit);
 
 	playerCoord = coord;
-	console.log(room);
 	console.log(
 		`The player will start at ${playerCoord} and will have the color ${color}`
 	);
@@ -129,7 +128,6 @@ const generateEnemies = (level, start, end, room) => {
 		const [x, y] = enemyPosition[i];
 		ctx.fillStyle = room[x][y] && "#940404";
 		ctx.fillRect(x, y, TILE_WIDTH, TILE_HEIGHT);
-		console.log(enemyPosition);
 	}
 };
 

@@ -10,7 +10,8 @@ _btn.addEventListener('click', e => {
 
     _healthpoints.innerHTML = player.hp
     _lvl.innerHTML = player.lvl
-    
+    _attack.innerHTML = player.attack
+    _defense.innerHTML = player.def
 })
 
 // STATS
