@@ -66,6 +66,7 @@ const Character = function (name, clas) {
 			? `You hit for ${this.attack - enemy.def}!`
 			: `${this.name} missed!`;
 	};
+	this.handlePlayerMovement
 };
 
 // enemy constructor
