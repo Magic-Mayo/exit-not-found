@@ -1,8 +1,18 @@
 
-// GET CANVAS ELEMENT FROM INDEX.HTML AND CREATE CONTEXT
+/* ==================================
+HTML ELEMENTS
+==================================== */
 const game = document.getElementById("gameBG");
 const ctx = game.getContext("2d");
 
+const _btn = document.body.querySelector('.toggle-game')
+const _container = document.body.querySelector('.container')
+const _landing = document.body.querySelector('.headline')
+const _healthpoints = document.body.querySelector('#healthpoints')
+const _lvl = document.body.querySelector('#lvl')
+const _exp = document.body.querySelector('#exp')
+const _dungeon = document.body.querySelector('#dungeon')
+const _steps = document.body.querySelector('#steps')
 
 
 /* ==================================

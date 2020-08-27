@@ -1,9 +1,14 @@
-const btn = document.body.querySelector('.toggle-game')
-
-btn.addEventListener('click', e => {
+_btn.addEventListener('click', e => {
     e.preventDefault();
 
-    document.body.querySelector('.container').classList.remove('invisible')
-    btn.classList.add('invisible')
+    _container.classList.remove('invisible')
+    _landing.classList.add('invisible')
+    _btn.classList.add('invisible')
     
 })
+
+// STATS
+// 1. healthpoints
+// 2. exp points
+// 3. dungeon lvl
+// 4. total steps walked
