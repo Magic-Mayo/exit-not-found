@@ -4,6 +4,12 @@ _btn.addEventListener('click', e => {
     _container.classList.remove('invisible')
     _landing.classList.add('invisible')
     _btn.classList.add('invisible')
+
+    const player = new Character("slimey",0 )
+    console.log(player);
+
+    _healthpoints.innerHTML = player.hp
+    _lvl.innerHTML = player.lvl
     
 })
 

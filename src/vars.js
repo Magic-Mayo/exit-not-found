@@ -38,6 +38,7 @@ VARIABLES FOR HANDLING GAMEPLAY
 ==================================== */
 const COORDINATES = {};
 const WALKABLE_COORDINATES = []
+let steps = 1;
 /* ==================================
 ==================================== */
 

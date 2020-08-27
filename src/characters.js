@@ -1,4 +1,3 @@
-
 const weapons = [
 	["Brass knuckles", "Fists"],
 	[""],
@@ -66,7 +65,7 @@ const Character = function (name, clas) {
 			? `You hit for ${this.attack - enemy.def}!`
 			: `${this.name} missed!`;
 	};
-	this.handlePlayerMovement
+	this.handlePlayerMovement;
 };
 
 // enemy constructor
@@ -99,17 +98,12 @@ const Enemy = function (difficulty) {
 	};
 };
 
-
-
-
 const rooms = [];
 let lvl = 1;
 let count = 1;
 let enemyPosition = [];
 let playerCoord = [];
 let handleKeyPress;
-
-
 
 const generatePlayer = (coord, color, room, tileSize, exit) => {
 	handleKeyPress = (e) => {
@@ -129,14 +123,17 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
 };
 
 const generateEnemies = (level, start, end, room) => {
+	enemyPosition = []
 	count = level % 2 === 0 ? Math.pow(level, 2) / 4 : count;
 	lvl++;
-
-	enemyPosition = getEnemyCoordinate(start, end, room);
-	const [x, y] = enemyPosition;
-
-	ctx.fillStyle = room[x][y] && "#940404";
-	ctx.fillRect(x, y, TILE_WIDTH, TILE_HEIGHT);
+	console.log("ENEMY COUNT: " + count)
+	for (let i = 0; i < count; i++) {
+		enemyPosition.push(getEnemyCoordinate(start, end, room))
+		const [x, y] = enemyPosition[i];
+		ctx.fillStyle = room[x][y] && "#940404";
+		ctx.fillRect(x, y, TILE_WIDTH, TILE_HEIGHT);
+		console.log(enemyPosition);
+	}
 };
 
 const getEnemyCoordinate = (start, end, room) => {
@@ -195,10 +192,12 @@ const handlePlayerMovement = (event, room, tileSize, color, exit) => {
 		ctx.fillStyle = room[nextX][nextY] && color;
 		ctx.fillRect(nextX, nextY, tileSize, tileSize);
 
+		_steps.innerHTML = steps++
 		playerCoord = [nextX, nextY];
 	}
 
-	handleEnemyMovement(room, enemyPosition);
+	enemyPosition.forEach((pos,i) => handleEnemyMovement(room,pos,i))
+
 
 	if (nextX == exit[0] && nextY == exit[1]) {
 		console.log("you win!");
@@ -216,36 +215,37 @@ const handlePlayerMovement = (event, room, tileSize, color, exit) => {
 	}
 };
 
-const handleEnemyMovement = (room, [x,y]) => {
-
+const handleEnemyMovement = (room, [x,y],i) => {
 	const surroundings = [
 		{
-      pos: "top",
+			pos: "top",
 			coord: [x, y - TILE_WIDTH],
 			available: room[x]?.[y - TILE_WIDTH],
 		},
 		{
-      pos: "right",
-      coord: [x + TILE_WIDTH, y],
+			pos: "right",
+			coord: [x + TILE_WIDTH, y],
 			available: room[x + TILE_WIDTH]?.[y],
 		},
 		{
-      pos: "bottom",
-      coord: [x, y + TILE_WIDTH],
+			pos: "bottom",
+			coord: [x, y + TILE_WIDTH],
 			available: room[x]?.[y + TILE_WIDTH],
 		},
 		{
-      pos: "left",
-      coord: [x - TILE_WIDTH, y],
+			pos: "left",
+			coord: [x - TILE_WIDTH, y],
 			available: room[x - TILE_WIDTH]?.[y],
 		},
-  ];
-  const availableSurroundings = surroundings.filter(c => c.available)
-  ctx.clearRect(x,y,TILE_WIDTH,TILE_HEIGHT)
-  enemyPosition = availableSurroundings[Math.floor(Math.random() * availableSurroundings.length)].coord
-  const [newX,newY] = enemyPosition
+	];
+	const availableSurroundings = surroundings.filter((c) => c.available);
+	ctx.clearRect(x, y, TILE_WIDTH, TILE_HEIGHT);
+	enemyPosition[i] =
+		availableSurroundings[
+			Math.floor(Math.random() * availableSurroundings.length)
+		].coord;
+	const [newX, newY] = enemyPosition[i];
 
-  ctx.fillStyle = room[newX][newY] && "#940404";
+	ctx.fillStyle = room[newX][newY] && "#940404";
 	ctx.fillRect(newX, newY, TILE_WIDTH, TILE_HEIGHT);
-
 };
