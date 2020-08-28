@@ -2,20 +2,22 @@
 /* ==================================
 HTML ELEMENTS
 ==================================== */
-const game = document.getElementById("gameBG");
+const getEl = document.querySelector;
+const game = document.querySelector("#gameBG");
 const ctx = game.getContext("2d");
+const body = document.querySelector('body')
 
-const _btn = document.body.querySelector('.toggle-game')
-const _container = document.body.querySelector('.container')
-const _landing = document.body.querySelector('.headline')
-const _healthpoints = document.body.querySelector('#healthpoints')
-const _attack = document.body.querySelector('#attack')
-const _defense = document.body.querySelector('#defense')
-const _lvl = document.body.querySelector('#lvl')
-const _expCurrent = document.body.querySelector('#exp-current')
-const _expToNextLvl = document.body.querySelector('#exp-next')
-const _dungeon = document.body.querySelector('#dungeon')
-const _steps = document.body.querySelector('#steps')
+const _btn = document.querySelector('.toggle-game')
+const _container = document.querySelector('.container')
+const _landing = document.querySelector('.headline')
+const _healthpoints = document.querySelector('#healthpoints')
+const _attack = document.querySelector('#attack')
+const _defense = document.querySelector('#defense')
+const _lvl = document.querySelector('#lvl')
+const _expCurrent = document.querySelector('#exp-current')
+const _expToNextLvl = document.querySelector('#exp-next')
+const _dungeon = document.querySelector('#dungeon')
+const _steps = document.querySelector('#steps')
 
 
 /* ==================================
@@ -48,6 +50,7 @@ let dungeon = 1;
 // total exp given to player for completing dungeon
 let dungeonEXP = 20 + 10 * dungeon
 
+let player;
 // player level
 let lvl = 1;
 // current coordinate of the player
