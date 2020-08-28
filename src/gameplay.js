@@ -1,11 +1,11 @@
 _btn.addEventListener('click', e => {
-    e.preventDefault();
+    goFullScreen();
 
     _container.classList.remove('invisible')
     _landing.classList.add('invisible')
     _btn.classList.add('invisible')
 
-    const player = new Character("slimey",0 )
+    player = new Character("slimey",0 )
     console.log(player);
 
     _healthpoints.innerHTML = player.hp
