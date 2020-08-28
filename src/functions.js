@@ -134,3 +134,16 @@ const handleEnemyMovement = (room, [x, y], i) => {
 	ctx.fillStyle = room[newX][newY] && "#940404";
 	ctx.fillRect(newX, newY, TILE_WIDTH, TILE_HEIGHT);
 };
+
+
+const goFullScreen = () => {
+  if (body.requestFullscreen) {
+    body.requestFullscreen();
+  } else if (body.mozRequestFullScreen) { /* Firefox */
+    body.mozRequestFullScreen();
+  } else if (body.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+    body.webkitRequestFullscreen();
+  } else if (body.msRequestFullscreen) { /* IE/Edge */
+    body.msRequestFullscreen();
+  }
+}
