@@ -23,18 +23,20 @@ const _steps = document.querySelector('#steps')
 /* ==================================
 CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS
 ==================================== */
-const CANVAS_HEIGHT = 256;
-const CANVAS_WIDTH = 256;
 const NUMBER_OF_ROWS = 16;
 const NUMBER_OF_COLUMNS = 16; 
+const CANVAS_HEIGHT = NUMBER_OF_COLUMNS * NUMBER_OF_COLUMNS;
+const CANVAS_WIDTH = NUMBER_OF_ROWS * NUMBER_OF_ROWS;
 const ROWS = new Array(NUMBER_OF_ROWS).fill();
 const COLUMNS = new Array(NUMBER_OF_COLUMNS).fill();
-const TILE_HEIGHT = CANVAS_HEIGHT / NUMBER_OF_ROWS;
-const TILE_WIDTH = CANVAS_WIDTH / NUMBER_OF_ROWS;
+const TILE_HEIGHT = (CANVAS_HEIGHT / NUMBER_OF_ROWS);
+const TILE_WIDTH = (CANVAS_WIDTH / NUMBER_OF_ROWS);
 const WALKABLE_TILE_CHANCE = 0.8;
 /* ==================================
 ==================================== */
 
+game.setAttribute('width', CANVAS_WIDTH)
+game.setAttribute('height', CANVAS_HEIGHT)
 
 /* ==================================
 VARIABLES FOR HANDLING GAMEPLAY
