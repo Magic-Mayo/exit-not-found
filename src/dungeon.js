@@ -14,87 +14,117 @@ const buildDungeon = (
 
 	// clear board of previous paint...if any
 	ctx.clearRect(0, 0, cWidth, cHeight);
-	const xMax = cWidth - tWidth;
-	const yMax = cHeight - tHeight;
-	const [sX, sY] = inverseCoords([pExitX, pExitY]);
-	// SET UP COORDINATE PLANE
-	columns.forEach((vX, x) => {
+	const xyMax = tHeight * tWidth - tHeight;
+  const [sX, sY] = inverseCoords([pExitX, pExitY], xyMax);
+  const exits = [];
+  // TO GENERATE A NEW EXIT COORDINATE:
+  // 1. RULES:
+  //     A. since exit will always be on the perimeter, one value MUST be zero (either X or Y)
+  //     B. exit cannot be straight across from the exit
+  for(let i = rng(3) + 1; i>0;i--) exits.push(generateRandomEndpoint([sX, sY], tHeight, xyMax, exits))
+
+  console.log(exits);
+  // SET UP COORDINATE PLANE
+	columns.forEach((vX, x, col) => {
+    const newX = x;
 		x = x * tWidth;
 		COORDINATES[x] = {};
 
-		rows.forEach((vY, y) => {
+		rows.forEach((vY, y, row) => {
+      let eX, eY;
+      const newY = y;
 			y = y * tHeight;
 			const cellChance = Math.random();
-			const newStartIsHere = sX === x && sY === y;
+      const newStartIsHere = sX === x && sY === y;
+      exits.forEach(([a,b]) => {
+        if(a == x && b == y){
+          eX = a;
+          eY = b;
+        }
+      })
+      // console.log(x,y);
+      console.log('coords',eX,eY);
 
-			console.log(newStartIsHere);
+			// console.log('newX', newX);
 
-			COORDINATES[x][y] =
-				cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
-
-			ctx.fillStyle = COORDINATES[x][y] === 1 ? "transparent" : "#2b2b2b";
-			ctx.fillRect(x, y, tWidth, tHeight);
+      if(eX == x){
+        COORDINATES[x][y] = 1;
+        let exit;
+        if(eX == 0){
+          exit = ctx.createLinearGradient(0,0,20,0);
+        } else if(eX == 240){
+          exit = ctx.createLinearGradient(256,0,280,0);
+        } else if(eY == 0){
+          exit = ctx.createLinearGradient(0,0,0,20);
+        } else if(eY == 240){
+          exit = ctx.createLinearGradient(0,256,0,280);
+        }
+        
+        if(x == 0 || y == 0){
+          exit.addColorStop(0.2, 'black');
+          exit.addColorStop(1, 'yellow');
+        } else {
+          exit.addColorStop(1, 'black');
+          exit.addColorStop(0, 'yellow');          
+        }
+        
+        ctx.fillStyle = exit;
+        ctx.fillRect(x,y,tWidth,tHeight)
+      } else if(sX == x && sY == y){}
+      else if(newX == 0 || newY == 0 || y == xyMax || x == xyMax){
+        COORDINATES[x][y] = 0;
+        ctx.fillStyle = 'green'
+        ctx.fillRect(x,y,tWidth,tHeight)
+      } else if(x <= xyMax && y <= xyMax){
+        COORDINATES[x][y] =
+        cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
+        
+        ctx.fillStyle = COORDINATES[x][y] === 1 ? "transparent" : "#2b2b2b";
+        ctx.fillRect(x, y, tWidth, tHeight);
+      }
+      //  else {
+      //   COORDINATES[x][y] = 0;
+      // }
 		});
 	});
 
-	//////////////////////////////////////////
-	// these next two functions, start and end,
-	// can go away once we have a system in
-	// place for picking a start and exit
-	///////////////////////////////////////////
-
-	const generateRandomEndpoint = () => {
-		const first = Math.floor(Math.random() * NUMBER_OF_ROWS) * TILE_HEIGHT;
-		const second = 0;
-		const firstIsX = Math.random() > 0.5 ? true : false;
-
-		if (firstIsX) return [first, second];
-		else return [second, first];
-	};
-
-	const randEnd = generateRandomEndpoint();
-	// TO GENERATE A NEW EXIT COORDINATE:
-	// 1. RULES:
-	//     A. since exit will always be on the perimeter, one value MUST be zero (either X or Y)
-	//     B. exit cannot be straight across from the exit
-
-	// const end = (x, y) => (COORDINATES[x]?.[y] ? [x, y] : end(x, y - tHeight));
-
-	// const [eX, eY] = end(randEnd[0], randEnd[1]);
-	let dir = () => {
-		if (sX == 0) {
-			if (sY > 0) return 0;
-			else return 1;
-		} else if (sY == 0) {
-			if (sX < 240) return 1;
-			else return 2;
-		} else if (sX == 240) {
-			if (sY < 240) return 2;
-			else return 3;
-		}
-	};
+  console.log(COORDINATES)
+  
 	// checks to make sure the dungeon can be completed.
-	// if not build another one until you get one that can be
-	if (
-		!checker(
-			COORDINATES,
-			[sX, sY],
-			// [0,240],
-			[sX, sY],
-			[0, 240],
-			// [eX, eY],
-			[sX, sY],
-			// [0,240],
-			dir(),
-			tHeight,
-			[xMax, yMax]
-		)
-	) {
-		return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [
-			pExitX,
-			pExitY,
-		]);
-	}
+  // if not build another one until you get one that can be
+  let exitReached;
+  for(let i=0;i<exits.length;i++){
+    if (
+      checker(
+        COORDINATES,
+        [sX, sY],
+        // [0,240],
+        [sX, sY],
+        // [0, 240],
+        exits[i],
+        [sX, sY],
+        // [0,240],
+        dir([sX, sY], tHeight, xyMax),
+        tHeight,
+        [xyMax, xyMax]
+      )
+    ) {
+      exitReached = true;
+      break;
+    }
+  }
+  
+  if(!exitReached){
+    return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [
+      pExitX,
+      pExitY,
+    ]);
+  }
+  
+  generatePlayer([sX, sY], "white", COORDINATES, tHeight, exits);
+  generateEnemies(lvl, [sX, sY], exits, COORDINATES);
+
+  _dungeon.innerHTML = dungeon++;
 };
 
 
