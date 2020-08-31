@@ -26,11 +26,10 @@ const checker = (
 	counter = 0
 ) => {
 	counter++;
-	if (counter > 400) {
+	if (counter > 250) {
 		console.log("over 400");
 		return;
   }
-  console.log(eX,eY);
 	// COLOR FOR WATER: #3988e3
 	// ctx.fillStyle = room[pX][pY] && "darkturquoise";
 	// ctx.fillRect(pX, pY, tileSize, tileSize);
@@ -71,7 +70,7 @@ const checker = (
 			[xMax, yMax],
 			counter++
     )
-    // , 150);
+    // , 10);
 
 	// const fromRight = () => {
 	//   switch(direction){
@@ -80,7 +79,6 @@ const checker = (
 	//       upOneAvail ? cY - tileSize : rightOneAvail ? cY : downOneAvail ? cY + tileSize : cX)
 	//   }
   // }
-  // console.log(cX, cY);
   // checks first to see if exit coords are reached.  if so dungeon exit can be reached.  return true
   if (eX == cX && eY == cY){
     console.log('exit found');
@@ -427,7 +425,7 @@ const checker = (
 	}
 	if (direction == 3) {
 		// WE MADE IT TO LEFT OF THE DUNGEON
-		if (cX - tileSize < 0) {
+		if (cX == 16) {
 			// WE ARE ON THE BOTTOM OF THE DUNGEON
 			if (movedDown) {
 				if (rightOneAvail) return move(cX + tileSize, cY);

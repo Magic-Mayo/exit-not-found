@@ -1,5 +1,5 @@
 _btn.addEventListener('click', e => {
-    goFullScreen();
+    // goFullScreen();
 
     _container.classList.remove('invisible')
     _landing.classList.add('invisible')
@@ -13,18 +13,18 @@ _btn.addEventListener('click', e => {
     _attack.innerHTML = player.attack
     _defense.innerHTML = player.def
 
-    buildDungeon(
-        CANVAS_HEIGHT,
-        CANVAS_WIDTH,
-        COLUMNS,
-        ROWS,
-        TILE_HEIGHT,
-        TILE_WIDTH,
-        [0, 160]
-    );
-
     
-})
+    
+  })
+      buildDungeon(
+          CANVAS_HEIGHT,
+          CANVAS_WIDTH,
+          COLUMNS,
+          ROWS,
+          TILE_HEIGHT,
+          TILE_WIDTH,
+          [0, 160]
+      );
 
 // STATS
 // 1. healthpoints
