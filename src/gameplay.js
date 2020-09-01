@@ -42,3 +42,11 @@
 // 2. exp points
 // 3. dungeon lvl
 // 4. total steps walked
+
+
+game.addEventListener('click', e => {
+    const percentDiff = (game.width / e.target.clientWidth);
+    const adjustedX = e.layerX * percentDiff
+    const adjustedY = e.layerY * percentDiff
+    console.log(`adjusted x: ${adjustedX}, adjusted y: ${adjustedY}`);
+})
