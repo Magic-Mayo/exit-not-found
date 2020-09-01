@@ -31,21 +31,65 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-				width: 100vw;
-				height: 100vh;
+				max-width: 100vw;
+				overflow-x: hidden;
+				max-height: 100vh;
 				z-index: 500;
 				padding-top: 6vh;
 				display: flex;
-				justify-content: stretch;
+				justify-content: space-evenly;
 				align-items: flex-start;
-				flex-wrap: wrapsa;
-
+				flex-wrap: wrap;
+ 
 				transition: 0.3s ease-out opacity;
 			}
 
 			canvas {
 				width: 40vw;
+				max-width: 800px;
+
 				background-color: #949494;
+				margin: 10px;
+			}
+
+			.enemy-stats {
+				width: 26.5vw;
+				color: #A70707;
+				border: .24vw solid #A70707;
+				margin: 1.6vw;
+				position: relative;
+			}
+
+			.enemy-stats h3 {
+				text-transform: capitalize;
+				font-size: 2vw;
+			}
+
+			.enemy-stats p {
+				color: #F4B8B8;
+				font-size: 1.25vw;
+			}
+
+			.enemy-stats span {
+				color: #A70707;
+				font-size: 1.25vw;
+			}
+
+			.enemy-summary {
+				border-bottom: .24vw solid #A70707;
+				padding: .8vw 1.3vw .8vw;
+			}
+
+			.enemy-details {
+				padding: .8vw 1.3vw 3.2vw;
+			}
+
+			.enemy-item {
+				margin: .4vw .4vw .8vw;
+			}
+
+			.enemy-item p {
+				margin: .16vw 0 .16vw .8vw;
 			}
 
 			.player {
@@ -56,12 +100,12 @@
 			.player h3 {
 				color: #16c551;
 				text-transform: capitalize;
-				font-size: 26px;
+				font-size: 2vw;
 			}
 
 			.player p {
-				font-size: 16px;
-				color: #B3FFCC;
+				font-size: 1.25vw;
+				color: #b3ffcc;
 				text-transform: capitalize;
 			}
 
@@ -71,44 +115,45 @@
 
 			.player-stats,
 			.player-items {
-				border: 3px solid #16c551;
-				padding: 10px 17.5px 40px;
-				margin: 20px;
+				border: .24vw solid #16c551;
+				padding: .8vw 1.37vw 3.2vw;
+				margin: 1.6vw;
 				position: relative;
 			}
 
 			.player-level {
 				position: absolute;
 				right: 0;
-				top: 18px;
-				right: 12px;
+				top: 1.4vw;
+				right: .94vw;
 				text-align: right;
 			}
 
 			.player-info,
 			.player-fight-details {
-				margin: 10px 5px;
+				margin: .8vw .4vw;
 			}
 
 			.player-fight-details {
 				display: flex;
 				flex-wrap: wrap;
 				justify-content: space-between;
-				color: #B3FFCC;
+				color: #b3ffcc;
 			}
 
 			.player-fight-details div {
 				width: 50%;
-				margin-bottom: 10px;
+				margin-bottom: .8vw;
 			}
 
 			.player-fight-details h4 {
 				text-transform: uppercase;
+				font-size: 1.25vw;
 			}
 
 			.player-fight-details p {
 				text-transform: capitalize;
-				margin-left: 30px;
+				margin-left: .012vw;
 				color: #16c551;
 			}
 
@@ -118,12 +163,37 @@
 
 			.game-details {
 				text-align: center;
-				color: #B3FFCC;
+				color: #b3ffcc;
 			}
 
 			.game-details span {
-				color: #B3FFCC !important;
+				color: #b3ffcc !important;
 			}
+
+
+			.actions {
+				width: 100%;
+				background-color: #1a1a1a;
+				display: flex;
+				height: 20vh;
+				justify-content: space-evenly;
+				align-items: center;
+			}
+
+			.actions button {
+				font-size: 2.8vw;
+				font-family: inherit;
+				text-transform: uppercase;
+				cursor: pointer;
+				height: 6.64vw;
+				width: 20vw;
+				color: white;
+			}
+
+			#useItemBtn { background-color: #A76C07;}
+			#lvlUpBtn { background-color: #07A732;}
+			#blockBtn { background-color: #0787A7;}
+			#attackBtn { background-color: #A70707;}
 
 			.toggle-game {
 				margin-top: 75px;
@@ -195,10 +265,8 @@
 					<div class="player-level">
 						<p>Level: <span id="playerLvl">0</span></p>
 						<p>
-							Experience: <br><span id="playerExp">0</span>/<span
-								id="nextExp"
-								>100</span
-							>
+							Experience: <br /><span id="playerExp">0</span
+							>/<span id="nextExp">100</span>
 						</p>
 					</div>
 					<div class="player-info">
@@ -244,8 +312,41 @@
 					<h3>items</h3>
 				</section>
 			</div>
-			<section class="enemy-stats"></section>
-			<section class="actions"></section>
+			<section class="enemy-stats font-bold">
+				<div class="enemy-summary">
+					<h3 class="font-regular">Enemy Stats</h3>
+					<p>Total Enemies: <span id="totalEnemies">0</span></p>
+				</div>
+
+				<article class="enemy-details">
+					<section class="enemy-item">
+						<h4>
+							<span id="enemyNum">1</span>.
+							<span id="enemyType">LVL 2 Skeleton 💀</span>
+						</h4>
+						<p>🧍 Class: <span id="enemyClass">Melee</span></p>
+						<p>🔪 Attack Strength: <span id="enemyAttackStrength">6</span></p>
+						<p>🛡 Defense: <span id="enemyDefense">3</span></p>
+						<p>🔭 FOV: <span id="enemyFOV">2</span></p>
+					</section>
+					<section class="enemy-item">
+						<h4>
+							<span id="enemyNum">2</span>.
+							<span id="enemyType">LVL 2 Wizard 💀</span>
+						</h4>
+						<p>🧍 Class: <span id="enemyClass">Magic</span></p>
+						<p>🔪 Attack Strength: <span id="enemyAttackStrength">6</span></p>
+						<p>🛡 Defense: <span id="enemyDefense">0</span></p>
+						<p>🔭 FOV: <span id="enemyFOV">5</span></p>
+					</section>
+				</article>
+			</section>
+			<section class="actions font-bold">
+				<button id="useItemBtn">use item</button>
+				<button id="lvlUpBtn">Lvl Up</button>
+				<button id="blockBtn">block</button>
+				<button id="attackBtn">attack</button>
+			</section>
 		</div>
 		<div class="headline invisible">
 			<h1 class="font-bold">
