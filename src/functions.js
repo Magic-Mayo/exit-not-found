@@ -84,7 +84,7 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
       player.xp += lvl;
       lvl++;
       if(lvl % 10 == 0) player.autoLvl();
-      else if(player.toNextLvl() <= 0) player.lvlUp();
+      player.checkIfNextLvl();
       _expCurrent.textContent = player.xp;
 
       console.log("you win!");

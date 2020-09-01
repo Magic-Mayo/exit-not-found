@@ -8,14 +8,15 @@ const enemies = [["Skeleton", "Vampire"], [""], [""]];
 // melee
 // range
 //magic
-const weapons = ['melee','range','magic']
+// const weapons = ['melee','range','magic']
 
 // playable character constructor
 const Character = function (name, clas) {
 	// 0 = melee, 1 = magic, 2 = ranged
 	this.class = clas;
 	this.name = name;
-	this.xp = 0;
+  this.xp = 0;
+  this.nextLvl = 100;
 	this.lvl = 1;
 	this.hp = !clas ? 100 : clas == 1 ? 50 : 75;
 
@@ -33,21 +34,40 @@ const Character = function (name, clas) {
 
 	// this.accuracy = TBD
 	this.items = [];
-	this.lvlUp = function () {
-		xp >= lvl * 404 ? this.addStat() : null;
-	};
+	this.checkIfNextLvl = function () {
+		this.nextLvl - this.xp <= 0 ? this.lvlUp() : null;
+  };
+  this.lvlUp = function(){
+    this.nextLvl += this.nextLvl + Math.pow(this.lvl,3);
+    this.lvl++;
+    _lvl.textContent = this.lvl;
+    _expToNextLvl.textContent = player.nextLvl;
+    this.addStat();
+  }
+  this.autoLvl = function(){
+    this.xp = this.nextLvl;
+    this.lvlUp();
+  }
 	this.weapons = weapons[this.class];
 	this.addStat = function (stat) {
-		// add code to prompt user to enter a stat to increase
+    /////////////// TO DO //////////////
+    // Needs functionality to 
+    // bring up modal and prompt user
+    // to choose which stat to upgrade
+    /////////////// TO DO //////////////
 		switch (stat) {
 			case 0:
-				return (this.attack = Math.ceil(this.attack * 1.2));
+				(this.attack = Math.ceil(this.attack * 1.2));
+        return _attack.textContent = this.attack;
 			case 1:
-				return (this.agility = Math.ceil(this.agility * 1.1));
+        (this.agility = Math.ceil(this.agility * 1.1));
+        return _agility.textContent = this.agility;
 			case 2:
-				return (this.def = Math.ceil(this.def * 1.15));
+        (this.def = Math.ceil(this.def * 1.15));
+        return _defense.textContent = this.def;
 			case 3:
-				return (this.speed = Math.ceil(this.speed * 1.1));
+        (this.speed = Math.ceil(this.speed * 1.1));
+        return _speed.textContent = this.speed;
 		}
 	};
 	this.move = function (squares) {
@@ -221,11 +241,13 @@ const Enemy = function (enemyPower) {
 	// reset/quit button?
 	// add modal for stat update
 
-// 1. get the player funct done with auto level up every 10 levels (before taking into account enemy interactions)
+  ////////////// CHECK. DONE ////////////////
+  // 1. get the player funct done with auto level up every 10 levels (before taking into account enemy interactions)
 	// implement formulas for calculating data
 	// add experience = to room # on room completion
 	// level up every 10 levels with experience total
 	// UPGRADE 1 STAT
+  ////////////// CHECK. DONE ////////////////
 
 
 // 2. assign enemy characteristics for each generated enemy (still no player/enemy interaction)
