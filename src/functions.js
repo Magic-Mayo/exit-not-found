@@ -1,4 +1,3 @@
-const rng = (n = 4) => Math.floor(Math.random() * n);
 const inverseCoords = ([x, y], max) => !x ? [max, y] : !y ? [x, max] : x == max ? [0, y] : [x, 0];
 const roundUp = (num) => {
   const split = num.toString().split(".")[1];
@@ -20,11 +19,14 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
 
 const generateEnemies = (level, max, room) => {
   enemyPosition = [];
-  count = level % 2 === 0 ? Math.pow(level, 2) / 4 : count;
+
+  enemyCount = rng(level/2 + 2)
+
   lvl ++;
-  console.log("ENEMY COUNT: " + count);
-  for (let i = 0; i < count; i++) {
-    enemyPosition.push(getEnemyCoordinate(max, room));
+  console.log("ENEMY COUNT: " + enemyCount);
+  for (let i = 0; i < enemyCount; i++) {
+    // enemy.coords = getEnemyCoordinate(max, room)
+	enemyPosition.push(getEnemyCoordinate(max, room));
     const [x, y] = enemyPosition[i];
     ctx.fillStyle = room[x][y] && "#94040466";
     ctx.fillRect(x, y, TILE_WIDTH, TILE_HEIGHT);
