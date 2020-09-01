@@ -29,21 +29,99 @@
 
 			.container {
 				position: absolute;
-				top: 20px;
-				width: 100%;
-				padding: 0 5%;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
 				z-index: 500;
-				margin: auto;
-				transition: 0.3s ease-out opacity;
+				padding-top: 6vh;
 				display: flex;
-				justify-content: space-around;
+				justify-content: stretch;
 				align-items: flex-start;
+				flex-wrap: wrapsa;
+
+				transition: 0.3s ease-out opacity;
 			}
 
 			canvas {
-				max-width: 440px;
-				width: 100%;
+				width: 40vw;
 				background-color: #949494;
+			}
+
+			.player {
+				width: 25vw;
+				color: white;
+			}
+
+			.player h3 {
+				color: #16c551;
+				text-transform: capitalize;
+				font-size: 26px;
+			}
+
+			.player p {
+				font-size: 16px;
+				color: #B3FFCC;
+				text-transform: capitalize;
+			}
+
+			.player p span {
+				color: #16c551;
+			}
+
+			.player-stats,
+			.player-items {
+				border: 3px solid #16c551;
+				padding: 10px;
+				position: relative;
+			}
+
+			.player-level {
+				position: absolute;
+				right: 0;
+				top: 18px;
+				right: 12px;
+				text-align: right;
+			}
+
+			.player-info,
+			.player-fight-details {
+				margin: 10px 5px;
+			}
+
+			.player-fight-details {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: space-between;
+				color: #B3FFCC;
+			}
+
+			.player-fight-details div {
+				width: 50%;
+				margin-bottom: 10px;
+			}
+
+			.player-fight-details h4 {
+				text-transform: uppercase;
+			}
+
+			.player-fight-details p {
+				text-transform: capitalize;
+				margin-left: 30px;
+				color: #16c551;
+			}
+
+			.player-fight-details span {
+				color: #16c551;
+			}
+
+			.game-details {
+				text-align: center;
+				color: #B3FFCC;
+			}
+
+			.game-details span {
+				color: #B3FFCC !important;
 			}
 
 			.toggle-game {
@@ -95,38 +173,6 @@
 				animation-delay: -0.6s;
 			}
 
-			.stats {
-				border: solid 5px firebrick;
-				color: blanchedalmond;
-				width: 50%;
-				padding: 5px 5px 15px;
-				display: flex;
-				/* flex-direction: column; */
-				flex-wrap: wrap;
-				max-width: 500px;
-			}
-
-			.stats p {
-				margin: 5px 10px;
-				font-size: 24px;
-				width: 45%;
-			}
-			.stats-health,.stats-lvl,.stats-exp {
-				width: 100% !important;
-			}
-
-			.stats-attack,.stats-defense {
-				padding-top: 20px;
-				padding-bottom: 20px;
-			}
-
-			h3 {
-				text-transform: uppercase;
-				font-size: 37px;
-				margin: 10px;
-				width: 100%;
-			}
-
 			@keyframes upAndDown {
 				from {
 					transform: translateY(0);
@@ -140,34 +186,65 @@
 	</head>
 
 	<body>
-		<div class="container ">
+		<div class="container">
 			<canvas id="gameBG" width="256" height="256"></canvas>
-			<div class="stats font-regular">
-				<h3>stats</h3>
-				<p class="stats-health">
-					Health: <span id="healthpoints">0</span>
-				</p>
-				<p class="stats-attack">
-					Atk Power: <span id="attack">0</span>
-				</p>
-				<p class="stats-defense">
-					Def Power: <span id="defense">0</span>
-				</p>
-				<p class="stats-agility">
-					Agility: <span id="agility">0</span>
-				</p>
-				<p class="stats-speed">
-					Speed: <span id="speed">0</span>
-				</p>
-				<p class="stats-lvl">Level: <span id="lvl">0</span></p>
-				<p class="stats-exp">Experience: <span id="exp-current">0</span> / <span id="exp-next">100</span></p>
-				<p class="stats-dungeon">
-					Dungeon: <span id="dungeon">0</span>
-				</p>
-				<p class="stats-steps">
-					Steps Taken: <span id="steps">0</span>
-				</p>
+			<div class="player font-bold">
+				<section class="player-stats">
+					<h3 class="font-regular">player stats</h3>
+					<div class="player-level">
+						<p>Level: <span id="playerLvl">0</span></p>
+						<p>
+							Experience: <br><span id="playerExp">0</span>/<span
+								id="nextExp"
+								>100</span
+							>
+						</p>
+					</div>
+					<div class="player-info">
+						<p>🙂 Name: <span id="playerName">Jeff</span></p>
+						<p>
+							❤ Health:
+							<span id="playerHealthCurrent">100</span>/<span
+								id="playerHealthMax"
+								>100</span
+							>
+						</p>
+						<p>🧍 class: <span id="playerClass">Melee</span></p>
+					</div>
+					<div class="player-fight-details">
+						<div>
+							<h4>🔪 Attack:</h4>
+							<p>
+								strength:
+								<span id="playerAttackStrength">7</span>
+							</p>
+							<p>speed: <span id="playerAttackSpeed">7</span></p>
+						</div>
+						<div>
+							<h4>
+								🛡 Defense: <span id="playerDefense">5</span>
+							</h4>
+						</div>
+						<div>
+							<h4>
+								🏃 Agility: <span id="playerAgility">3</span>
+							</h4>
+						</div>
+						<div>
+							<h4>🔭 FOV: <span id="playerFOV">3</span></h4>
+						</div>
+					</div>
+					<div class="game-details">
+						<p>steps taken: <span id="steps">7</span></p>
+						<p>dungeon level: <span id="dungeon">7</span></p>
+					</div>
+				</section>
+				<section class="player-items">
+					<h3>items</h3>
+				</section>
 			</div>
+			<section class="enemy-stats"></section>
+			<section class="actions"></section>
 		</div>
 		<div class="headline invisible">
 			<h1 class="font-bold">
