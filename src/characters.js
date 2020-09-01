@@ -3,7 +3,7 @@ const weapons = [
 	[""],
 	["Pistol", "Rifle", "Sniper"],
 ];
-const enemies = [["Skeleton", "Vampire"], [""], [""]];
+// const enemies = [["Skeleton", "Vampire"], [""], [""]];
 
 // melee
 // range
@@ -87,19 +87,20 @@ const Character = function (name, clas) {
 
 // enemy constructor
 // difficulty === portion of totalEnemyPower
-const Enemy = function (enemyPower) {
+const Enemy = function (coords, enemyPower) {
 	const newClass = rng(100);
+	this.coords = coords;
 	// 0 = melee, 1 = magic, 2 = ranged
 	this.class = newClass < 60 ? 0 : newClass < 85 ? 2 : 1;
-	this.name = enemies[this.class][rng(3)];
-	this.hp =
-		Math.floor(Math.sqrt(enemyPower)) + ~~(enemyPower / 10);
+	// this.name = enemies[this.class][rng(3)];
+	this.hp =	Math.floor(Math.sqrt(enemyPower)) + ~~(enemyPower / 10);
 
 	this.attack = !this.class || this.class == 1 ? Math.ceil(enemyPower / (rng(11) + 10)) : ~~(enemyPower / (rng(11) + 20));
 	this.accuracy = !this.class ? 65 + rng(26) : this.class == 1 ? 60 + rng(41) : 75 + rng(6);
 	this.def = !this.class ? ~~(enemyPower / (rng(21) + 40)) : 0;
-	this.fov = !clas ? rng(2) + 2 : rng() + 4;
+	this.fov = !this.class ? rng(2) + 2 : rng() + 4;
 	this.speed = this.class == 0 ? 6 : this.class == 1 ? 3 : 4;
+
 	this.xp = enemyPower / 5;
 	this.atkChar = function (char) {
 		const willHit = char.agility < rng(100) && char.def < this.attack;
@@ -229,17 +230,22 @@ const Enemy = function (enemyPower) {
 
 
 // 0. add UI for player creation & additional options for user during game (attack, use item, etc.)
-	// DESKTOP ONLY (min-width: 1280px)
-	// landing page (optional)
-	// player create page
-	// 4 components for game
-		// 1. canvas
-		// 2. player stats
-		// 3. player actions
-		// 4. enemy stats
 
-	// reset/quit button?
-	// add modal for stat update
+	// DESKTOP ONLY (min-width: 1280px)
+
+	//* landing page (optional)
+	//! player create page
+
+	/* 4 components for game
+		* 1. canvas
+		* 2. player stats
+		? 3. player actions
+		* 4. enemy stats
+	*/
+	///////////////////////////////////
+
+	//! reset/quit button?
+	//! add modal for stat update
 
   ////////////// CHECK. DONE ////////////////
   // 1. get the player funct done with auto level up every 10 levels (before taking into account enemy interactions)
@@ -251,10 +257,11 @@ const Enemy = function (enemyPower) {
 
 
 // 2. assign enemy characteristics for each generated enemy (still no player/enemy interaction)
-			// 1. Each generated enemy gets pushed into global Array
-			// 2. Loop over enemy array to set init coords
-			// 3. Loop over enemy array to do movements/attacks for each enemy after player turn
-			// 4. 
+      // 1. split power between amount of random number of enemies
+			// 2. Each generated enemy gets pushed into global Array
+			// 3. Loop over enemy array to set init coords(find index of enemy)
+      // 4. Save current coords in enemy constructor for access later(onclick for stats)
+			// 5. Loop over enemy array to do movements/attacks for each enemy after player turn(find index of enemy)
 
 
 // 3. get enemies to follow player once player enters Field of Vision (fov)
