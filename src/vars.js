@@ -19,6 +19,8 @@ const _expCurrent = document.querySelector('#exp-current')
 const _expToNextLvl = document.querySelector('#exp-next')
 const _dungeon = document.querySelector('#dungeon')
 const _steps = document.querySelector('#steps')
+const _speed = document.querySelector('#speed')
+const _agility = document.querySelector('#agility')
 
 
 /* ==================================
