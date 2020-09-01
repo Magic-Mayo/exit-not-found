@@ -1,14 +1,14 @@
 ////////// TO DO ///////////
 // uncomment listener
 ////////// TO DO ///////////
-// _btn.addEventListener('click', e => {
-//     goFullScreen();
+_btnStart.addEventListener('click', e => {
+    goFullScreen();
 
-//     _container.classList.remove('invisible')
-//     _landing.classList.add('invisible')
-//     _btn.classList.add('invisible')
+    _container.classList.remove('invisible')
+    _landing.classList.add('invisible')
+    _btnStart.classList.add('invisible')
 
-//     console.log(player);
+    console.log(player);
     
     
     player = new Character("slimey",0 )
@@ -31,7 +31,14 @@
       );
       
       
-  // })
+  })
+
+
+_btnReset.addEventListener('click', e => {
+    const didExit = confirm("Are You Sure You Want To Quit? You're progress will not be saved")
+    didExit && location.reload()
+    
+})
       
       ////////// TO DO ///////////
       // uncomment listener
