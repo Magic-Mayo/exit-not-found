@@ -22,8 +22,7 @@ const generateEnemies = (level, max, room) => {
 
   enemyCount = rng(level/2 + 2)
 
-  lvl ++;
-  console.log("ENEMY COUNT: " + enemyCount);
+  // console.log("ENEMY COUNT: " + enemyCount);
   for (let i = 0; i < enemyCount; i++) {
     // enemy.coords = getEnemyCoordinate(max, room)
 	enemyPosition.push(getEnemyCoordinate(max, room));
@@ -36,7 +35,6 @@ const generateEnemies = (level, max, room) => {
 const getEnemyCoordinate = (max, room) => {
   const x = rng(NUMBER_OF_ROWS) * TILE_HEIGHT;
   const y = rng(NUMBER_OF_ROWS) * TILE_HEIGHT;
-console.log(max);
   return x != 0 && y != 0 && x != max && y != max && room[x] ?. [y] ? [x, y] : getEnemyCoordinate(max, room);
 };
 
@@ -82,6 +80,13 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
   }
   for (let i = 0; i < exits.length; i++) {
     if (nextX == exits[i][0] && nextY == exits[i][1]) {
+      console.log(player);
+      player.xp += lvl;
+      lvl++;
+      if(lvl % 10 == 0) player.autoLvl();
+      else if(player.toNextLvl() <= 0) player.lvlUp();
+      _expCurrent.textContent = player.xp;
+
       console.log("you win!");
       window.removeEventListener("keypress", handleKeyPress);
 
@@ -154,7 +159,7 @@ const handleEnemyMovement = (room, [
   ];
 
   const availableSurroundings = surroundings.filter((c) => c.available && !c.checkIfExit);
-  console.log(availableSurroundings);
+  // console.log(availableSurroundings);
 
   ctx.clearRect(x, y, TILE_WIDTH, TILE_HEIGHT);
   enemyPosition[i] = availableSurroundings.length > 0 ? availableSurroundings[rng(availableSurroundings.length)].coord : enemyPosition[i]
