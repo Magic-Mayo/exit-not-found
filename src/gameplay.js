@@ -12,12 +12,14 @@
     
     
     player = new Character("slimey",0 )
-    _healthpoints.innerHTML = player.hp
-    _lvl.innerHTML = player.lvl
-    _attack.innerHTML = player.attackStrength
-    _defense.innerHTML = player.def
-    _agility.innerHTML = player.agility
-    _speed.innerHTML = player.speed
+    _healthpointsCurrent.innerHTML = player.hp
+    _healthpointsMax.innerHTML = player.hp
+    _playerLvl.innerHTML = player.lvl
+    _playerAttackStrength.innerHTML = player.attackStrength
+    _playerAttackSpeed.innerHTML = player.speed
+    _playerDefense.innerHTML = player.def
+    _playerAgility.innerHTML = player.agility
+    _playerFOV.innerHTML = player.fov
     buildDungeon(
       CANVAS_HEIGHT,
       CANVAS_WIDTH,
