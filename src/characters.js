@@ -40,7 +40,7 @@ const Character = function (name, clas) {
   this.lvlUp = function(){
     this.nextLvl += this.nextLvl + Math.pow(this.lvl,3);
     this.lvl++;
-    _lvl.textContent = this.lvl;
+    _playerLvl.textContent = this.lvl;
     _expToNextLvl.textContent = player.nextLvl;
     this.addStat();
   }
