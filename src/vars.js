@@ -1,3 +1,4 @@
+const rng = (n = 4) => Math.floor(Math.random() * n);
 
 /* ==================================
 HTML ELEMENTS
@@ -60,15 +61,25 @@ let playerCoord = [];
 
 // ENEMY INFORMATION
 // # of enemies this dungeon
-let count = 1;
 // array of positions for each enemy
 let enemyPosition = [];
 
 let handleKeyPress;
+//   ENEMY POPULATION BY LEVEL:
+// 1-10. [0,2]
+// 11-20. [0,3]
+let enemyCount = 1;
+
+// 	 ENEMY **TOTAL** POWER LVL BY LEVEL
+// 1-5. 100 POINTS
+// 6-10. 150 POINTS
+// 11-15. 225 POINTS
+
+let totalEnemyPower = 100;
+const enemyPowerMult = (pow,lvl) => lvl % 5 ? pow * 1.5 : pow
+
 /* ==================================
 ==================================== */
-
-
 
 
 // const rooms = []
