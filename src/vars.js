@@ -7,20 +7,33 @@ const getEl = document.querySelector;
 const game = document.querySelector("#gameBG");
 const ctx = game.getContext("2d");
 const body = document.querySelector('body')
-
 const _btn = document.querySelector('.toggle-game')
 const _container = document.querySelector('.container')
 const _landing = document.querySelector('.headline')
-const _healthpoints = document.querySelector('#healthpoints')
-const _attack = document.querySelector('#attack')
-const _defense = document.querySelector('#defense')
-const _lvl = document.querySelector('#lvl')
-const _expCurrent = document.querySelector('#exp-current')
-const _expToNextLvl = document.querySelector('#exp-next')
+
+// ***** PLAYER STATS *****
+// Level
+const _playerLvl = document.querySelector('#playerLvl')
+const _expCurrent = document.querySelector('#playerExp')
+const _expToNextLvl = document.querySelector('#nextExp')
+
+// Info
+const _playerName = document.querySelector('#playerName')
+const _healthpointsCurrent = document.querySelector('#playerHealthCurrent')
+const _healthpointsMax = document.querySelector('#playerHealthMax')
+const playerClass = document.querySelector('#playerClass')
+
+// Fighting Details
+const _playerAttackStrength = document.querySelector('#playerAttackStrength')
+const _playerAttackSpeed = document.querySelector('#playerAttackSpeed')
+const _playerDefense = document.querySelector('#playerDefense')
+const _playerAgility = document.querySelector('#playerAgility')
+const _playerFOV = document.querySelector('#playerFOV')
+
+//  Game Details
 const _dungeon = document.querySelector('#dungeon')
 const _steps = document.querySelector('#steps')
-const _speed = document.querySelector('#speed')
-const _agility = document.querySelector('#agility')
+
 
 
 /* ==================================
