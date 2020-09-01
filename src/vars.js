@@ -7,7 +7,8 @@ const getEl = document.querySelector;
 const game = document.querySelector("#gameBG");
 const ctx = game.getContext("2d");
 const body = document.querySelector('body')
-const _btn = document.querySelector('.toggle-game')
+const _btnStart = document.querySelector('.toggle-game')
+const _btnReset = document.querySelector('.reset')
 const _container = document.querySelector('.container')
 const _landing = document.querySelector('.headline')
 
@@ -77,7 +78,7 @@ let playerCoord = [];
 // ENEMY INFORMATION
 // # of enemies this dungeon
 // array of positions for each enemy
-let enemyPosition = [];
+let enemies = [];
 
 let handleKeyPress;
 //   ENEMY POPULATION BY LEVEL:
@@ -91,7 +92,7 @@ let enemyCount = 1;
 // 11-15. 225 POINTS
 
 let totalEnemyPower = 100;
-const enemyPowerMult = (pow,lvl) => lvl % 5 ? pow * 1.5 : pow
+const enemyPowerMult = () => lvl % 5 ? totalEnemyPower = ~~(totalEnemyPower * 1.5) : 0;
 
 /* ==================================
 ==================================== */
