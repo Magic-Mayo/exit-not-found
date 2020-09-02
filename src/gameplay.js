@@ -8,7 +8,6 @@ _btnStart.addEventListener("click", (e) => {
 	_landing.classList.add("invisible");
 	_btnStart.classList.add("invisible");
 
-	console.log(player);
 
 	player = new Character("slimey", 0);
 	_healthpointsCurrent.innerHTML = player.hp;

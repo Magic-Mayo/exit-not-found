@@ -23,7 +23,7 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
 	window.addEventListener("keypress", handleKeyPress);
 };
 
-const generateEnemies = (max, room) => {
+const generateEnemies = (lvl, max, room, exits) => {
 	enemies = [];
 
   enemyCount = rng(lvl / 2 + 2);
