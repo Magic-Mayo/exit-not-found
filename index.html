@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" href="https://use.typekit.net/qkd3qrc.css" />
-		<title>Dungeon Not Found</title>
+		<title>Exit Not Found</title>
 		<style>
 			.font-regular {
 				font-family: lores-12, sans-serif;
@@ -69,7 +69,8 @@
 				font-size: 1.25vw;
 			}
 
-			.enemy-stats span {
+			.enemy-stats span,
+			.enemy-stats h4 {
 				color: #A70707;
 				font-size: 1.25vw;
 			}
@@ -191,7 +192,7 @@
 			}
 
 			#useItemBtn { background-color: #A76C07;}
-			#lvlUpBtn { background-color: #07A732;}
+			#moveBtn { background-color: #07A732;}
 			#blockBtn { background-color: #0787A7;}
 			#attackBtn { background-color: #A70707;}
 
@@ -244,6 +245,16 @@
 				animation-delay: -0.6s;
 			}
 
+			.reset {
+				position: absolute;
+				top: 0;
+				right: 0;
+				margin: 10px;
+				font-size: 12px;
+				background-color: cornsilk;
+				border: wheat solid 2px;
+			}
+
 			@keyframes upAndDown {
 				from {
 					transform: translateY(0);
@@ -258,7 +269,7 @@
 
 	<body>
 		<div class="container invisible">
-			<button type="reset" class="reset">quit</button>
+			<!-- <button type="reset" class="reset font-regular">quit</button> -->
 			<canvas id="gameBG" width="256" height="256"></canvas>
 			<div class="player font-bold">
 				<section class="player-stats">
@@ -321,33 +332,11 @@
 
 				<article class="enemy-details">
 
-					<section class="enemy-item">
-						<h4>
-							<span id="enemyNum">1</span>.
-							<span id="enemyType">LVL 2 Skeleton 💀</span>
-						</h4>
-						<p>🧍 Class: <span id="enemyClass">Melee</span></p>
-						<p>🔪 Attack Strength: <span id="enemyAttackStrength">6</span></p>
-						<p>🛡 Defense: <span id="enemyDefense">3</span></p>
-						<p>🔭 FOV: <span id="enemyFOV">2</span></p>
-					</section>
-
-					<section class="enemy-item">
-						<h4>
-							<span id="enemyNum">2</span>.
-							<span id="enemyType">LVL 2 Wizard 💀</span>
-						</h4>
-						<p>🧍 Class: <span id="enemyClass">Magic</span></p>
-						<p>🔪 Attack Strength: <span id="enemyAttackStrength">6</span></p>
-						<p>🛡 Defense: <span id="enemyDefense">0</span></p>
-						<p>🔭 FOV: <span id="enemyFOV">5</span></p>
-					</section>
-
 				</article>
 			</section>
 			<section class="actions font-bold">
 				<button id="useItemBtn">use item</button>
-				<button id="lvlUpBtn">Lvl Up</button>
+				<button id="moveBtn">move</button>
 				<button id="blockBtn">block</button>
 				<button id="attackBtn">attack</button>
 			</section>
