@@ -26,23 +26,35 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
 const generateEnemies = (lvl, max, room, exits) => {
 	enemies = [];
 
-  enemyCount = rng(lvl / 2 + 2);
+	enemyCount = rng(lvl / 2 + 2);
 	// console.log("ENEMY COUNT: " + enemyCount);
 	for (let i = 0; i < enemyCount; i++) {
-    const enemy = new Enemy(getEnemyCoordinate(max, room), ~~(totalEnemyPower/enemyCount));
+		const enemy = new Enemy(
+			getEnemyStartCoordinate(max, room),
+			~~(totalEnemyPower / enemyCount)
+		);
 		enemies.push(enemy);
-		const {coords: [x, y]} = enemy;
+		const {
+			coords: [x, y],
+		} = enemy;
+		
+		COORDINATES[x][y].occupied = 1;
 		ctx.fillStyle = room[x][y] && "#94040466";
 		ctx.fillRect(x, y, TILE_WIDTH, TILE_HEIGHT);
 	}
 };
 
-const getEnemyCoordinate = (max, room) => {
+const getEnemyStartCoordinate = (max, room) => {
 	const x = rng(NUMBER_OF_ROWS) * TILE_HEIGHT;
 	const y = rng(NUMBER_OF_ROWS) * TILE_HEIGHT;
-	return x != 0 && y != 0 && x != max && y != max && room[x]?.[y]
+	return x != 0 &&
+		y != 0 &&
+		x != max &&
+		y != max &&
+		room[x]?.[y]?.walkable &&
+		!room[x]?.[y]?.occupied
 		? [x, y]
-		: getEnemyCoordinate(max, room);
+		: getEnemyStartCoordinate(max, room);
 };
 
 const handlePlayerMovement = (event, room, tileSize, color, exits) => {
@@ -55,7 +67,6 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
 		)
 	)
 		return;
-
 	let { key } = event;
 	key = key.toLowerCase();
 	let [playerX, playerY] = playerCoord;
@@ -69,12 +80,14 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
 
 	const [nextX, nextY] = dir[key];
 
-	if (room[nextX]?.[nextY]) {
+	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
+		console.log("you moved!");
 		ctx.clearRect(playerX, playerY, tileSize, tileSize);
+		room[playerX][playerY].occupied = 0;
 
-		ctx.fillStyle = room[nextX][nextY] && color;
+		ctx.fillStyle = room[nextX][nextY].walkable && color;
 		ctx.fillRect(nextX, nextY, tileSize, tileSize);
-
+		room[nextX][nextY].occupied = 1;
 		_steps.innerHTML = steps++;
 		playerCoord = [nextX, nextY];
 		enemies.forEach(({ coords }, i) => {
@@ -86,7 +99,7 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
 			console.log(player);
 			player.xp += lvl;
 			lvl++;
-      enemyPowerMult();
+			enemyPowerMult();
 			if (lvl % 10 == 0) player.xp += 100;
 			player.checkIfNextLvl();
 			_expCurrent.textContent = player.xp;
@@ -118,43 +131,53 @@ const handleEnemyMovement = (room, [x, y], i, exits) => {
 		{
 			pos: "top",
 			coord: [x, y - TILE_WIDTH],
-			available: room[x]?.[y - TILE_WIDTH],
+			available: room[x]?.[y - TILE_WIDTH].walkable,
+			occupied: room[x]?.[y - TILE_WIDTH].occupied,
 			checkIfExit: isExit("top", [x, y - TILE_WIDTH]),
 		},
 		{
 			pos: "right",
 			coord: [x + TILE_WIDTH, y],
-			available: room[x + TILE_WIDTH]?.[y],
+			available: room[x + TILE_WIDTH]?.[y].walkable,
+			occupied: room[x + TILE_WIDTH]?.[y].occupied,
 			checkIfExit: isExit("right", [x + TILE_WIDTH, y]),
 		},
 		{
 			pos: "bottom",
 			coord: [x, y + TILE_WIDTH],
-			available: room[x]?.[y + TILE_WIDTH],
+			available: room[x]?.[y + TILE_WIDTH].walkable,
+			occupied: room[x]?.[y + TILE_WIDTH].occupied,
 			checkIfExit: isExit("bottom", [x, y + TILE_WIDTH]),
 		},
 		{
 			pos: "left",
 			coord: [x - TILE_WIDTH, y],
-			available: room[x - TILE_WIDTH]?.[y],
+			available: room[x - TILE_WIDTH]?.[y].walkable,
+			occupied: room[x]?.[y - TILE_WIDTH].occupied,
 			checkIfExit: isExit("left", [x - TILE_WIDTH, y]),
 		},
 	];
 
 	const availableSurroundings = surroundings.filter(
-		(c) => c.available && !c.checkIfExit
+		(c) => c.available && !c.checkIfExit && !c.occupied
 	);
 	// console.log(availableSurroundings);
+
+	const newCoords = rng(availableSurroundings.length);
+	COORDINATES[x][y].occupied = 0;
 
 	ctx.clearRect(x, y, TILE_WIDTH, TILE_HEIGHT);
 	enemies[i].coords =
 		availableSurroundings.length > 0
-			? availableSurroundings[rng(availableSurroundings.length)].coord
+			? availableSurroundings[newCoords].coord
 			: enemies[i].coords;
-	const {coords: [newX, newY]} = enemies[i];
+	const {
+		coords: [newX, newY],
+	} = enemies[i];
 
 	ctx.fillStyle = room[newX]?.[newY] ? "#94040466" : "transparent";
 	ctx.fillRect(newX, newY, TILE_WIDTH, TILE_HEIGHT);
+	COORDINATES[newX][newY].occupied = 1;
 };
 
 const goFullScreen = () => {

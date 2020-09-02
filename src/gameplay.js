@@ -8,7 +8,6 @@ _btnStart.addEventListener("click", (e) => {
 	_landing.classList.add("invisible");
 	_btnStart.classList.add("invisible");
 
-
 	player = new Character("slimey", 0);
 	_healthpointsCurrent.innerHTML = player.hp;
 	_healthpointsMax.innerHTML = player.hp;
@@ -52,23 +51,30 @@ game.addEventListener("click", (e) => {
 
 	const adjustedX = (e.clientX - left) * percentDiff;
 	const adjustedY = (e.clientY - top) * percentDiff;
-	console.log(`adjusted x: ${adjustedX}, adjusted y: ${adjustedY}`);
-	console.log(enemies);
+
 
 	// THIS SHOULD RETURN AN ARRAY OF ONE OR MORE ENEMIES THAT ARE IN THE CLICK LOCATION
-	enemies.forEach((enemy) =>
+	const clickedEnemies = enemies.filter((enemy) =>
 		checkIfEnemyCoord([adjustedX, adjustedY], enemy.coords)
 	);
+    showEnemyDetails(clickedEnemies)
 });
 
-const checkIfEnemyCoord = ([clickX, clickY], [enX, enY]) => {
+const showEnemyDetails = enemies => enemies.forEach(enemy => {
+    console.log(enemy);
+    
+    // CREATE CONTAINER
+    const section = document.createElement('section')
+    section.classList.add('enemy-item')
 
-	if (
-		clickX >= enX &&
-		clickY >= enY &&
-		clickX < enX + TILE_WIDTH &&
-		clickY < enY + TILE_WIDTH
-	) {
-        console.log('you clicked an enemy');
-	}
-};
+});
+
+const checkIfEnemyCoord = ([clickX, clickY], [enX, enY]) =>
+	clickX >= enX &&
+	clickY >= enY &&
+	clickX < enX + TILE_WIDTH &&
+	clickY < enY + TILE_WIDTH
+		? true
+		: false;
+
+
