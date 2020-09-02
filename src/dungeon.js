@@ -41,12 +41,13 @@ const buildDungeon = (
           eY = b;
         }
       })
+      COORDINATES[x][y] = {};
       // console.log(x,y);
 
 			// console.log('newX', newX);
 
       if(eX == x){
-        COORDINATES[x][y] = 1;
+        COORDINATES[x][y].walkable = 1;
         let exit;
         if(eX == 0){
           exit = ctx.createLinearGradient(-20,0,20,0);
@@ -69,15 +70,16 @@ const buildDungeon = (
         ctx.fillStyle = exit;
         ctx.fillRect(x,y,tWidth,tHeight)
       } else if(newX == 0 || newY == 0 || y == xyMax || x == xyMax){
-        COORDINATES[x][y] = sX == x && sY == y ? 1 : 0;
+        COORDINATES[x][y].walkable = sX == x && sY == y ? 1 : 0;
         ctx.fillStyle = sX == x && sY == y ? 'white' : '#1c1c1c'
         ctx.fillRect(x,y,tWidth,tHeight)
         
       } else if(x <= xyMax && y <= xyMax){
-        COORDINATES[x][y] =
+        COORDINATES[x][y].walkable =
         cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
+        COORDINATES[x][y].walkable ? null : COORDINATES[x][y].occupied = 1;
         
-        ctx.fillStyle = COORDINATES[x][y] === 1 ? "transparent" : "#2b2b2b";
+        ctx.fillStyle = COORDINATES[x][y].walkable === 1 ? "transparent" : "#2b2b2b";
         ctx.fillRect(x, y, tWidth, tHeight);
       }
 
