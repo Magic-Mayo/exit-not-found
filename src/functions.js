@@ -23,19 +23,15 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
 	window.addEventListener("keypress", handleKeyPress);
 };
 
-const generateEnemies = (level, max, room) => {
+const generateEnemies = (max, room) => {
 	enemies = [];
 
-	enemyCount = rng(level / 2 + 2);
-
+  enemyCount = rng(lvl / 2 + 2);
 	// console.log("ENEMY COUNT: " + enemyCount);
 	for (let i = 0; i < enemyCount; i++) {
-		const enemy = new Enemy(getEnemyCoordinate(max, room), totalEnemyPower);
+    const enemy = new Enemy(getEnemyCoordinate(max, room), ~~(totalEnemyPower/enemyCount));
 		enemies.push(enemy);
-		const {
-			coords: [x, y],
-		} = enemy;
-		console.log(x, y);
+		const {coords: [x, y]} = enemy;
 		ctx.fillStyle = room[x][y] && "#94040466";
 		ctx.fillRect(x, y, TILE_WIDTH, TILE_HEIGHT);
 	}
@@ -82,7 +78,6 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
 		_steps.innerHTML = steps++;
 		playerCoord = [nextX, nextY];
 		enemies.forEach(({ coords }, i) => {
-			console.log(coords);
 			handleEnemyMovement(room, coords, i, exits);
 		});
 	}
@@ -91,8 +86,8 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
 			console.log(player);
 			player.xp += lvl;
 			lvl++;
-			enemyPowerMult();
-			if (lvl % 10 == 0) player.autoLvl();
+      enemyPowerMult();
+			if (lvl % 10 == 0) player.xp += 100;
 			player.checkIfNextLvl();
 			_expCurrent.textContent = player.xp;
 
@@ -155,7 +150,7 @@ const handleEnemyMovement = (room, [x, y], i, exits) => {
 	enemies[i].coords =
 		availableSurroundings.length > 0
 			? availableSurroundings[rng(availableSurroundings.length)].coord
-			: enemies[i];
+			: enemies[i].coords;
 	const {coords: [newX, newY]} = enemies[i];
 
 	ctx.fillStyle = room[newX]?.[newY] ? "#94040466" : "transparent";
