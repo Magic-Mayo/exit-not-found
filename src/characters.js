@@ -44,10 +44,6 @@ const Character = function (name, clas) {
     _expToNextLvl.textContent = player.nextLvl;
     this.addStat();
   }
-  this.autoLvl = function(){
-    this.xp = this.nextLvl;
-    this.lvlUp();
-  }
 	this.weapons = weapons[this.class];
 	this.addStat = function (stat) {
     /////////////// TO DO //////////////

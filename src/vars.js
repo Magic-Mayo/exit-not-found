@@ -84,7 +84,7 @@ let handleKeyPress;
 //   ENEMY POPULATION BY LEVEL:
 // 1-10. [0,2]
 // 11-20. [0,3]
-let enemyCount = 1;
+let enemyCount;
 
 // 	 ENEMY **TOTAL** POWER LVL BY LEVEL
 // 1-5. 100 POINTS
@@ -92,7 +92,7 @@ let enemyCount = 1;
 // 11-15. 225 POINTS
 
 let totalEnemyPower = 100;
-const enemyPowerMult = () => lvl % 5 ? totalEnemyPower = ~~(totalEnemyPower * 1.5) : 0;
+const enemyPowerMult = () => lvl % 5 == 0 ? totalEnemyPower = ~~(totalEnemyPower * 1.5) : 0;
 
 /* ==================================
 ==================================== */
