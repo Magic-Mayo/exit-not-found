@@ -39,11 +39,10 @@ const checker = (
 	// ctx.fillRect(sX, sY, tileSize, tileSize);
 	// ctx.fillStyle = room[(eX, eY)] && "#39e363";
 	// ctx.fillRect(eX, eY, tileSize, tileSize);
-
-	const upOneAvail = room[cX]?.[cY - tileSize];
-	const rightOneAvail = room[cX + tileSize]?.[cY];
-	const leftOneAvail = room[cX - tileSize]?.[cY];
-	const downOneAvail = room[cX]?.[cY + tileSize];
+	const upOneAvail = room[cX]?.[cY - tileSize]?.walkable;
+	const rightOneAvail = room[cX + tileSize]?.[cY]?.walkable;
+	const leftOneAvail = room[cX - tileSize]?.[cY]?.walkable;
+	const downOneAvail = room[cX]?.[cY + tileSize]?.walkable;
 
 	const sameY = cY == pY;
 	const sameX = cX == pX;
