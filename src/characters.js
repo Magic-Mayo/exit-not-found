@@ -3,7 +3,7 @@ const weapons = [
 	[""],
 	["Pistol", "Rifle", "Sniper"],
 ];
-// const enemies = [["Skeleton", "Vampire"], [""], [""]];
+const enemyType = ["Skeleton", "Vampire", "Wizard", "Demon"];
 
 // melee
 // range
@@ -88,7 +88,7 @@ const Enemy = function (coords, enemyPower) {
 	this.coords = coords;
 	// 0 = melee, 1 = magic, 2 = ranged
 	this.class = newClass < 60 ? 0 : newClass < 85 ? 2 : 1;
-	// this.name = enemies[this.class][rng(3)];
+	this.name = enemyType[rng(3)];
 	this.hp =	Math.floor(Math.sqrt(enemyPower)) + ~~(enemyPower / 10);
 
 	this.attack = !this.class || this.class == 1 ? Math.ceil(enemyPower / (rng(11) + 10)) : ~~(enemyPower / (rng(11) + 20));
