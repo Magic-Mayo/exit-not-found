@@ -30,12 +30,16 @@ const _playerAttackSpeed = document.querySelector('#playerAttackSpeed')
 const _playerDefense = document.querySelector('#playerDefense')
 const _playerAgility = document.querySelector('#playerAgility')
 const _playerFOV = document.querySelector('#playerFOV')
+const _actionsTotal = document.querySelector('#actionsPerTurn')
+const _actionsLeft = document.querySelector('#actionsLeft')
 
+const _attackBtn = document.querySelector('#attackBtn')
 //  Game Details
 const _dungeon = document.querySelector('#dungeon')
 const _steps = document.querySelector('#steps')
 
-
+// ***** ENEMY STATS *****
+const _enemyDetails = document.querySelector('.enemy-details')
 
 /* ==================================
 CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS
