@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+M<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
@@ -202,8 +202,7 @@
 			}
 
 			.invisible {
-				opacity: 0;
-				pointer-events: none;
+				visibility: hidden;
 			}
 
 			.headline {
@@ -269,6 +268,16 @@
 
 	<body>
 		<div class="container invisible">
+			<aside class="level-up invisible">
+				<h5>you leveled up!</h5>
+				<h6>pick a skill to upgrade</h6>
+				<ul>
+					<li>Attack Strength</li>
+					<li>Defense</li>
+					<li>Agility</li>
+					<li>FOV</li>
+				</ul>
+			</aside>
 			<!-- <button type="reset" class="reset font-regular">quit</button> -->
 			<canvas id="gameBG" width="256" height="256"></canvas>
 			<div class="player font-bold">
@@ -318,6 +327,7 @@
 					<div class="game-details">
 						<p>steps taken: <span id="steps">7</span></p>
 						<p>dungeon level: <span id="dungeon">7</span></p>
+						<p>actions per turn: <span id="actionsLeft">0</span>/<span id="actionsPerTurn">0</span></p>
 					</div>
 				</section>
 				<section class="player-items">
@@ -328,6 +338,8 @@
 				<div class="enemy-summary">
 					<h3 class="font-regular">Enemy Stats</h3>
 					<p>Total Enemies: <span id="totalEnemies">0</span></p>
+					<button id="attackBtn" class="invisible">attack</button>
+
 				</div>
 
 				<article class="enemy-details">
@@ -335,10 +347,8 @@
 				</article>
 			</section>
 			<section class="actions font-bold">
-				<button id="useItemBtn">use item</button>
 				<button id="moveBtn">move</button>
 				<button id="blockBtn">block</button>
-				<button id="attackBtn">attack</button>
 			</section>
 		</div>
 		<div class="headline">
