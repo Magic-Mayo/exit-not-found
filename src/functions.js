@@ -1,3 +1,9 @@
+const asyncForEach = async (array, callback) => {
+	for (let index = 0; index < array.length; index++) {
+		await callback(array[index], index, array);
+	}
+};
+
 const inverseCoords = ([x, y], max) =>
 	!x ? [max, y] : !y ? [x, max] : x == max ? [0, y] : [x, 0];
 const roundUp = (num) => {
@@ -80,6 +86,7 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 	};
 
 	const [nextX, nextY] = dir[key];
+  let moveTimer;
 
 	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
     console.log("you moved!");
@@ -97,26 +104,31 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
 		if (!player.actionsLeft && enemies.length) {
       window.removeEventListener("keypress", handleKeyPress);
-      setTimeout(() =>
-      enemies.forEach((enemy, i) => {
-        let turns = enemy.speed;
-        const turn = setInterval(() => {
-          enemy.handleTurn(exits);
-          turns--;
-          if(turns < 1){
-            clearInterval(turn);
-            if(i == enemies.length - 1){
-              window.addEventListener("keypress", handleKeyPress);
-            }
-          }
-        }, 300);
-      })
+      player.resetActions();
+      moveTimer = setTimeout(() =>
+        asyncForEach(enemies, (enemy, i) => {
+          let turns = enemy.speed;
+          // const turn = 
+          return new Promise(resolve =>{
+            const turn = setInterval(() => {
+              enemy.handleTurn(exits);
+              turns--;
+              if(turns < 1){
+                clearInterval(turn);
+                if(i == enemies.length - 1){
+                  window.addEventListener("keypress", handleKeyPress);
+                }
+                resolve();
+              }
+            }, 300)
+          })
+        })
       , 500)
-			player.resetActions();
 		}
 	}
 	for (let i = 0; i < exits.length; i++) {
     if (nextX == exits[i][0] && nextY == exits[i][1]) {
+      clearTimeout(moveTimer);
       window.removeEventListener("keypress", handleKeyPress);
 			player.xp += lvl;
 			lvl++;
