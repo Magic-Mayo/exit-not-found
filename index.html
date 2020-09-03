@@ -1,0 +1,371 @@
+M<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="https://use.typekit.net/qkd3qrc.css" />
+		<title>Exit Not Found</title>
+		<style>
+			.font-regular {
+				font-family: lores-12, sans-serif;
+				font-weight: 400;
+				font-style: normal;
+			}
+
+			.font-bold {
+				font-family: lores-12, sans-serif;
+				font-weight: 700;
+				font-style: normal;
+			}
+
+			body {
+				background-color: black;
+			}
+
+			* {
+				margin: 0;
+				box-sizing: border-box;
+			}
+
+			.container {
+				position: absolute;
+				top: 0;
+				left: 0;
+				max-width: 100vw;
+				overflow-x: hidden;
+				max-height: 100vh;
+				z-index: 500;
+				padding-top: 6vh;
+				display: flex;
+				justify-content: space-evenly;
+				align-items: flex-start;
+				flex-wrap: wrap;
+ 
+				transition: 0.3s ease-out opacity;
+			}
+
+			canvas {
+				width: 33vw;
+
+				background-color: #949494;
+				margin: 10px;
+			}
+
+			.enemy-stats {
+				width: 26.5vw;
+				color: #A70707;
+				border: .24vw solid #A70707;
+				margin: 1.6vw;
+				position: relative;
+			}
+
+			.enemy-stats h3 {
+				text-transform: capitalize;
+				font-size: 2vw;
+			}
+
+			.enemy-stats p {
+				color: #F4B8B8;
+				font-size: 1.25vw;
+			}
+
+			.enemy-stats span,
+			.enemy-stats h4 {
+				color: #A70707;
+				font-size: 1.25vw;
+			}
+
+			.enemy-summary {
+				border-bottom: .24vw solid #A70707;
+				padding: .8vw 1.3vw .8vw;
+			}
+
+			.enemy-details {
+				padding: .8vw 1.3vw 3.2vw;
+			}
+
+			.enemy-item {
+				margin: .4vw .4vw .8vw;
+			}
+
+			.enemy-item p {
+				margin: .16vw 0 .16vw .8vw;
+			}
+
+			.player {
+				width: 25vw;
+				color: white;
+			}
+
+			.player h3 {
+				color: #16c551;
+				text-transform: capitalize;
+				font-size: 2vw;
+			}
+
+			.player p {
+				font-size: 1.25vw;
+				color: #b3ffcc;
+				text-transform: capitalize;
+			}
+
+			.player p span {
+				color: #16c551;
+			}
+
+			.player-stats,
+			.player-items {
+				border: .24vw solid #16c551;
+				padding: .8vw 1.37vw 3.2vw;
+				margin: 1.6vw;
+				position: relative;
+			}
+
+			.player-level {
+				position: absolute;
+				right: 0;
+				top: 1.4vw;
+				right: .94vw;
+				text-align: right;
+			}
+
+			.player-info,
+			.player-fight-details {
+				margin: .8vw .4vw;
+			}
+
+			.player-fight-details {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: space-between;
+				color: #b3ffcc;
+			}
+
+			.player-fight-details div {
+				width: 50%;
+				margin-bottom: .8vw;
+			}
+
+			.player-fight-details h4 {
+				text-transform: uppercase;
+				font-size: 1.25vw;
+			}
+
+			.player-fight-details p {
+				text-transform: capitalize;
+				margin-left: .012vw;
+				color: #16c551;
+			}
+
+			.player-fight-details span {
+				color: #16c551;
+			}
+
+			.game-details {
+				text-align: center;
+				color: #b3ffcc;
+			}
+
+			.game-details span {
+				color: #b3ffcc !important;
+			}
+
+
+			.actions {
+				width: 70%;
+				background-color: #1a1a1a;
+				display: flex;
+				height: 17.5vh;
+				max-height: 200px;
+				justify-content: space-evenly;
+				align-items: center;
+			}
+
+			.actions button {
+				font-size: 2.8vw;
+				font-family: inherit;
+				text-transform: uppercase;
+				cursor: pointer;
+				height: 60%;
+				width: 20%;
+				color: white;
+			}
+
+			#useItemBtn { background-color: #A76C07;}
+			#moveBtn { background-color: #07A732;}
+			#blockBtn { background-color: #0787A7;}
+			#attackBtn { background-color: #A70707;}
+
+			.toggle-game {
+				margin-top: 75px;
+				font-size: 50px;
+			}
+
+			.invisible {
+				visibility: hidden;
+			}
+
+			.headline {
+				text-align: center;
+				margin-top: 100px;
+			}
+
+			h1 {
+				font-size: 85px;
+				color: wheat;
+				position: relative;
+				display: inline-block;
+				height: 85px;
+				width: 200px;
+			}
+
+			h2 {
+				margin-top: 100px;
+				font-size: 60px;
+				color: firebrick;
+			}
+
+			h1 span {
+				position: absolute;
+				animation: upAndDown 1s ease-in-out infinite both alternate;
+			}
+
+			h1 span:first-child {
+				left: 0;
+			}
+
+			h1 span:nth-child(2) {
+				left: 37.5%;
+				animation-delay: -0.3s;
+			}
+
+			h1 span:last-child {
+				right: 0;
+				animation-delay: -0.6s;
+			}
+
+			.reset {
+				position: absolute;
+				top: 0;
+				right: 0;
+				margin: 10px;
+				font-size: 12px;
+				background-color: cornsilk;
+				border: wheat solid 2px;
+			}
+
+			@keyframes upAndDown {
+				from {
+					transform: translateY(0);
+				}
+
+				to {
+					transform: translateY(75%);
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container invisible">
+			<aside class="level-up invisible">
+				<h5>you leveled up!</h5>
+				<h6>pick a skill to upgrade</h6>
+				<ul>
+					<li>Attack Strength</li>
+					<li>Defense</li>
+					<li>Agility</li>
+					<li>FOV</li>
+				</ul>
+			</aside>
+			<!-- <button type="reset" class="reset font-regular">quit</button> -->
+			<canvas id="gameBG" width="256" height="256"></canvas>
+			<div class="player font-bold">
+				<section class="player-stats">
+					<h3 class="font-regular">player stats</h3>
+					<div class="player-level">
+						<p>Level: <span id="playerLvl">0</span></p>
+						<p>
+							Experience: <br /><span id="playerExp">0</span
+							>/<span id="nextExp">100</span>
+						</p>
+					</div>
+					<div class="player-info">
+						<p>🙂 Name: <span id="playerName">Jeff</span></p>
+						<p>
+							❤ Health:
+							<span id="playerHealthCurrent">100</span>/<span
+								id="playerHealthMax"
+								>100</span
+							>
+						</p>
+						<p>🧍 class: <span id="playerClass">Melee</span></p>
+					</div>
+					<div class="player-fight-details">
+						<div>
+							<h4>🔪 Attack:</h4>
+							<p>
+								strength:
+								<span id="playerAttackStrength">7</span>
+							</p>
+							<p>speed: <span id="playerAttackSpeed">7</span></p>
+						</div>
+						<div>
+							<h4>
+								🛡 Defense: <span id="playerDefense">5</span>
+							</h4>
+						</div>
+						<div>
+							<h4>
+								🏃 Agility: <span id="playerAgility">3</span>
+							</h4>
+						</div>
+						<div>
+							<h4>🔭 FOV: <span id="playerFOV">3</span></h4>
+						</div>
+					</div>
+					<div class="game-details">
+						<p>steps taken: <span id="steps">7</span></p>
+						<p>dungeon level: <span id="dungeon">7</span></p>
+						<p>actions per turn: <span id="actionsLeft">0</span>/<span id="actionsPerTurn">0</span></p>
+					</div>
+				</section>
+				<section class="player-items">
+					<h3>items</h3>
+				</section>
+			</div>
+			<section class="enemy-stats font-bold">
+				<div class="enemy-summary">
+					<h3 class="font-regular">Enemy Stats</h3>
+					<p>Total Enemies: <span id="totalEnemies">0</span></p>
+					<button id="attackBtn" class="invisible">attack</button>
+
+				</div>
+
+				<article class="enemy-details">
+
+				</article>
+			</section>
+			<section class="actions font-bold">
+				<button id="moveBtn">move</button>
+				<button id="blockBtn">block</button>
+			</section>
+		</div>
+		<div class="headline">
+			<h1 class="font-bold">
+				<span>4</span>
+				<span>0</span>
+				<span>4</span>
+			</h1>
+			<h2 class="font-bold">Exit Not Found</h2>
+			<button class="toggle-game font-regular">play</button>
+		</div>
+		<script src="./src/vars.js"></script>
+		<script src="./src/functions.js"></script>
+		<script src="./src/characters.js"></script>
+		<script src="./src/checker.js"></script>
+		<script src="./src/dungeon.js"></script>
+
+		<script src="./src/gameplay.js"></script>
+	</body>
+</html>

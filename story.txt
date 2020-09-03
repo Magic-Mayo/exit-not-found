@@ -34,9 +34,9 @@ enemies randomly walk around on their turn and can attack if character is in the
 
 playable characters
 --------------------
-melee -- high attack, high def, high hp, low fov, low agility, mid speed
+melee -- high attack, high def, high hp, low fov, mid agility, mid speed
 ranged -- low attack, mid def, mid hp, high agility, high fov, high speed
-mage -- high attack, low def, low hp, mid agility, high fov, low speed
+mage -- high attack, low def, low hp, low agility, high fov, low speed
 
 ----------------------------------------------------------------------------------------------------
 
