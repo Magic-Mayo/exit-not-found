@@ -66,11 +66,13 @@ const Character = function (name, clas) {
         (C.actionsPerTurn = Math.ceil(C.actionsPerTurn * 1.1));
         return _speed.textContent = C.actionsPerTurn;
 		}
-	};
+  };
+  C.currentCoord = [];
 	C.move = function (squares) {
-		const actionsPerTurn = C.actionsPerTurn;
 		// take amount of squares moved and see if character's speed is enough to cover
-		// if it is, subtract that amount from speed
+    // if it is, subtract that amount from speed
+    Math.abs(playerCoord[0] - C.currentCoord[0])/TILE_HEIGHT +
+    Math.abs(playerCoord[1] - C.currentCoord[1])/TILE_HEIGHT;
 	};
 	C.attackEnemy = function (enemy) {
 		const willHit = enemy.agility < rng(100) && C.attack > enemy.def;
@@ -92,7 +94,7 @@ const Character = function (name, clas) {
 				return C.inRange.push(enemy);
 			}
 		})
-		console.log('enemies in range', C.inRange)
+		// console.log('enemies in range', C.inRange)
 	}
 
 	C.block;
@@ -140,14 +142,14 @@ const Enemy = function (coords, enemyPower) {
 		: `${E.name} missed!`;
 	};
 
-	E.handleEnemyMovement = function (exits) {
+	E.handleTurn = function (exits) {
 			const [x,y] = E.coords;
 			const isExit = ([a, b]) => {
 				for (let i = 0; i < exits.length; i++) {
 					if (exits[i][0] == a && exits[i][1] == b) return true;
 				}
 			};
-		
+
 			const surroundings = [
 				{
 					pos: "top",
@@ -178,11 +180,13 @@ const Enemy = function (coords, enemyPower) {
 					checkIfExit: isExit("left", [x - TILE_WIDTH, y]),
 				},
 			];
-		
+
 			const availableSurroundings = surroundings.filter(
 				(c) => c.available && !c.checkIfExit && !c.occupied
-			);
-			player.checkFOV();
+      );
+
+      player.checkFOV();
+
 			if(!E.checkFOV()){
 				const newCoords = rng(availableSurroundings.length);
 				COORDINATES[x][y].occupied = 0;
@@ -195,14 +199,14 @@ const Enemy = function (coords, enemyPower) {
 				const {
 					coords: [newX, newY],
 				} = E;
-		
+
 				ctx.fillStyle = COORDINATES[newX]?.[newY] ? "#94040466" : "transparent";
 				ctx.fillRect(newX, newY, TILE_WIDTH, TILE_HEIGHT);
 				return COORDINATES[newX][newY].occupied = 1;
 			}
-		
-			E.atkChar();
-		};
+
+      E.atkChar();
+  };
 	E.checkFOV = function(){
 		const xDif = Math.abs(E.coords[0] - playerCoord[0])/TILE_HEIGHT;
 		const yDif = Math.abs(E.coords[1] - playerCoord[1])/TILE_HEIGHT;
@@ -362,7 +366,7 @@ const Enemy = function (coords, enemyPower) {
 	// set ENTERED_VISION (per enemy) to TRUE - then the enemy will move toward player
 		//* 1. Get difference on both axis and divide each by tile size then add together for distance
 		//* 2. If in FOV, prefer attack over moving
-		// 3. 
+		// 3. If player has been spotted by certain enemies always move toward player instead of random movement
 
 // 4. add turn "speed" funct (how many moves/attacks player can make before an enemy makes a move/attacks)
 		// 1. every move or attack we need to subtract speed
@@ -373,3 +377,6 @@ const Enemy = function (coords, enemyPower) {
 // 5. add funct for player to attack enemy
 
 // 6. add funct for enemy to attack player
+
+// 7. add allowable move area to hightlight canvas on player turn
+    // 1. get coords 
