@@ -42,6 +42,7 @@ const generateEnemies = (lvl, max, room, exits) => {
 		ctx.fillStyle = room[x][y] && "#94040466";
 		ctx.fillRect(x, y, TILE_WIDTH, TILE_HEIGHT);
 	}
+	player.checkFOV();
 };
 
 const getEnemyStartCoordinate = (max, room) => {
@@ -82,6 +83,8 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
 
 	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
 		console.log("you moved!");
+		player.actionsLeft--;
+		_actionsLeft.innerHTML = player.actionsLeft
 		ctx.clearRect(playerX, playerY, tileSize, tileSize);
 		room[playerX][playerY].occupied = 0;
 
@@ -90,9 +93,14 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
 		room[nextX][nextY].occupied = 1;
 		_steps.innerHTML = steps++;
 		playerCoord = [nextX, nextY];
-		enemies.forEach(({ coords }, i) => {
-			handleEnemyMovement(room, coords, i, exits);
-		});
+
+		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
+		if (!player.actionsLeft) {
+			enemies.forEach(enemy => {
+				enemy.handleEnemyMovement(exits);
+			});
+			player.resetActions()
+		}
 	}
 	for (let i = 0; i < exits.length; i++) {
 		if (nextX == exits[i][0] && nextY == exits[i][1]) {
@@ -118,66 +126,7 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
 			);
 		}
 	}
-};
-
-const handleEnemyMovement = (room, [x, y], i, exits) => {
-	const isExit = (pos, [a, b]) => {
-		for (let i = 0; i < exits.length; i++) {
-			if (exits[i][0] == a && exits[i][1] == b) return true;
-		}
-	};
-
-	const surroundings = [
-		{
-			pos: "top",
-			coord: [x, y - TILE_WIDTH],
-			available: room[x]?.[y - TILE_WIDTH].walkable,
-			occupied: room[x]?.[y - TILE_WIDTH].occupied,
-			checkIfExit: isExit("top", [x, y - TILE_WIDTH]),
-		},
-		{
-			pos: "right",
-			coord: [x + TILE_WIDTH, y],
-			available: room[x + TILE_WIDTH]?.[y].walkable,
-			occupied: room[x + TILE_WIDTH]?.[y].occupied,
-			checkIfExit: isExit("right", [x + TILE_WIDTH, y]),
-		},
-		{
-			pos: "bottom",
-			coord: [x, y + TILE_WIDTH],
-			available: room[x]?.[y + TILE_WIDTH].walkable,
-			occupied: room[x]?.[y + TILE_WIDTH].occupied,
-			checkIfExit: isExit("bottom", [x, y + TILE_WIDTH]),
-		},
-		{
-			pos: "left",
-			coord: [x - TILE_WIDTH, y],
-			available: room[x - TILE_WIDTH]?.[y].walkable,
-			occupied: room[x]?.[y - TILE_WIDTH].occupied,
-			checkIfExit: isExit("left", [x - TILE_WIDTH, y]),
-		},
-	];
-
-	const availableSurroundings = surroundings.filter(
-		(c) => c.available && !c.checkIfExit && !c.occupied
-	);
-	// console.log(availableSurroundings);
-
-	const newCoords = rng(availableSurroundings.length);
-	COORDINATES[x][y].occupied = 0;
-
-	ctx.clearRect(x, y, TILE_WIDTH, TILE_HEIGHT);
-	enemies[i].coords =
-		availableSurroundings.length > 0
-			? availableSurroundings[newCoords].coord
-			: enemies[i].coords;
-	const {
-		coords: [newX, newY],
-	} = enemies[i];
-
-	ctx.fillStyle = room[newX]?.[newY] ? "#94040466" : "transparent";
-	ctx.fillRect(newX, newY, TILE_WIDTH, TILE_HEIGHT);
-	COORDINATES[newX][newY].occupied = 1;
+	player.checkFOV();
 };
 
 const goFullScreen = () => {
