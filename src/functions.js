@@ -58,7 +58,7 @@ const getEnemyStartCoordinate = (max, room) => {
 		: getEnemyStartCoordinate(max, room);
 };
 
-const handlePlayerMovement = (event, room, tileSize, color, exits) => {
+const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 	if (
 		!(
 			event.code == "KeyW" ||
@@ -82,9 +82,9 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
 	const [nextX, nextY] = dir[key];
 
 	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
-		console.log("you moved!");
-		player.actionsLeft--;
-		_actionsLeft.innerHTML = player.actionsLeft
+    console.log("you moved!");
+    if(enemies.length) player.actionsLeft--;
+		_actionsLeft.innerHTML = player.actionsLeft;
 		ctx.clearRect(playerX, playerY, tileSize, tileSize);
 		room[playerX][playerY].occupied = 0;
 
@@ -95,26 +95,39 @@ const handlePlayerMovement = (event, room, tileSize, color, exits) => {
 		playerCoord = [nextX, nextY];
 
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
-		if (!player.actionsLeft) {
-			enemies.forEach(enemy => {
-				enemy.handleEnemyMovement(exits);
-			});
-			player.resetActions()
+		if (!player.actionsLeft && enemies.length) {
+      window.removeEventListener("keypress", handleKeyPress);
+      setTimeout(() =>
+      enemies.forEach((enemy, i) => {
+        let turns = enemy.speed;
+        const turn = setInterval(() => {
+          enemy.handleTurn(exits);
+          turns--;
+          if(turns < 1){
+            clearInterval(turn);
+            if(i == enemies.length - 1){
+              window.addEventListener("keypress", handleKeyPress);
+            }
+          }
+        }, 300);
+      })
+      , 500)
+			player.resetActions();
 		}
 	}
 	for (let i = 0; i < exits.length; i++) {
-		if (nextX == exits[i][0] && nextY == exits[i][1]) {
-			console.log(player);
+    if (nextX == exits[i][0] && nextY == exits[i][1]) {
+      window.removeEventListener("keypress", handleKeyPress);
 			player.xp += lvl;
 			lvl++;
 			enemyPowerMult();
 			if (lvl % 10 == 0) player.xp += 100;
 			player.checkIfNextLvl();
 			_expCurrent.textContent = player.xp;
-
+      
 			console.log("you win!");
-			window.removeEventListener("keypress", handleKeyPress);
-
+      
+      player.resetActions();
 			return buildDungeon(
 				CANVAS_HEIGHT,
 				CANVAS_WIDTH,
