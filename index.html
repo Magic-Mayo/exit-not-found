@@ -254,6 +254,40 @@
 				border: wheat solid 2px;
 			}
 
+			.level-up {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%,-50%);
+				background-color: #fff;
+				z-index: 1000;
+				width: 400px;
+				text-align: center;
+				text-transform: capitalize;
+				padding: 25px 15px;
+			}
+			.level-up div {
+				display: flex;
+				justify-content: space-around;
+				flex-wrap: wrap;
+				padding-top: 20px;
+			}
+
+			.level-up button {
+				width: 40%;
+				text-align: center;
+				list-style: none;
+				font-family: inherit;
+				font-size: 56px;
+				padding: 5px;
+				margin: 10px;
+				border: none;
+				cursor: pointer;
+			}
+
+			.level-up h5 { font-size: 27px;}
+			.level-up h6 { font-size: 21px;}
+
 			@keyframes upAndDown {
 				from {
 					transform: translateY(0);
@@ -268,15 +302,15 @@
 
 	<body>
 		<div class="container invisible">
-			<aside class="level-up invisible">
-				<h5>you leveled up!</h5>
+			<aside class="level-up font-bold invisible">
+				<h5>You Leveled Up!</h5>
 				<h6>pick a skill to upgrade</h6>
-				<ul>
-					<li>Attack Strength</li>
-					<li>Defense</li>
-					<li>Agility</li>
-					<li>FOV</li>
-				</ul>
+				<div class="font-regular">
+					<button id="lvlUpAtk">🔪</button>
+					<button id="lvlUpDef">🛡</button>
+					<button id="lvlUpAgil">🏃</button>
+					<button id="lvlUpFOV">🔭</button>
+				</div>
 			</aside>
 			<!-- <button type="reset" class="reset font-regular">quit</button> -->
 			<canvas id="gameBG" width="256" height="256"></canvas>
@@ -338,6 +372,7 @@
 				<div class="enemy-summary">
 					<h3 class="font-regular">Enemy Stats</h3>
 					<p>Total Enemies: <span id="totalEnemies">0</span></p>
+					<p id="enemySeesPlayer"></p>
 					<button id="attackBtn" class="invisible">attack</button>
 
 				</div>

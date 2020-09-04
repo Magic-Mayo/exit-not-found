@@ -17,6 +17,11 @@ const _landing = document.querySelector('.headline')
 const _playerLvl = document.querySelector('#playerLvl')
 const _expCurrent = document.querySelector('#playerExp')
 const _expToNextLvl = document.querySelector('#nextExp')
+const _lvlUpAtk = document.querySelector('#lvlUpAtk')
+const _lvlUpDef = document.querySelector('#lvlUpDef')
+const _lvlUpAgil = document.querySelector('#lvlUpAgil')
+const _lvlUpFOV = document.querySelector('#lvlUpFOV')
+
 
 // Info
 const _playerName = document.querySelector('#playerName')
@@ -32,7 +37,7 @@ const _playerAgility = document.querySelector('#playerAgility')
 const _playerFOV = document.querySelector('#playerFOV')
 const _actionsTotal = document.querySelector('#actionsPerTurn')
 const _actionsLeft = document.querySelector('#actionsLeft')
-
+const _lvlUp = document.querySelector('.level-up')
 const _attackBtn = document.querySelector('#attackBtn')
 //  Game Details
 const _dungeon = document.querySelector('#dungeon')
@@ -40,6 +45,7 @@ const _steps = document.querySelector('#steps')
 
 // ***** ENEMY STATS *****
 const _enemyDetails = document.querySelector('.enemy-details')
+const _enemySeesPlayer = document.querySelector('#enemySeesPlayer')
 
 /* ==================================
 CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS
