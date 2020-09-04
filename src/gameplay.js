@@ -110,8 +110,4 @@ const checkIfEnemyCoord = ([clickX, clickY], [enX, enY]) =>
 		? true
 		: false;
 
-
-_lvlUpAtk.addEventListener('click', e => player.addStat(0))
-_lvlUpAgil.addEventListener('click', e => player.addStat(1))
-_lvlUpDef.addEventListener('click', e => player.addStat(2))
-_lvlUpFOV.addEventListener('click', e => player.addStat(3))
+_lvlUp.addEventListener('click', e => player.addStat(e.target.dataset.stat))
