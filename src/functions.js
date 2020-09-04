@@ -26,8 +26,8 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
 	// );
 	ctx.fillStyle = room[coord[0]][coord[1]] && color;
   ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
-  
-  _moveBtn.addEventListener('click', player.hiliteMoveArea);
+  player.hiliteMoveArea()
+//   _moveBtn.addEventListener('click', player.hiliteMoveArea);
 
 	if (!player.currentlyLevelingUp) {
 		window.addEventListener("keypress", handleKeyPress);
@@ -78,58 +78,60 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 			event.code == "KeyA"
 		)
 	)
-		return;
+    return;
+    removeHighlight()
 	let { key } = event;
 	key = key.toLowerCase();
 	let [playerX, playerY] = playerCoord;
-
+    
 	const dir = {
-		w: [playerX, playerY - tileSize],
+        w: [playerX, playerY - tileSize],
 		d: [playerX + tileSize, playerY],
 		s: [playerX, playerY + tileSize],
 		a: [playerX - tileSize, playerY],
 	};
-
+    
 	const [nextX, nextY] = dir[key];
 	let moveTimer;
-
+    
 	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
-		if (enemies.length) player.actionsLeft--;
+        if (enemies.length) player.actionsLeft--;
 		_actionsLeft.innerHTML = player.actionsLeft;
-		ctx.clearRect(playerX, playerY, tileSize, tileSize);
+        ctx.clearRect(playerX, playerY, tileSize, tileSize);
+        ctx.fillStyle = room[playerX][playerY].highlighted ? '#08fa2566' : 'transparent';
+        ctx.fillRect(playerX, playerY, tileSize, tileSize);
 		room[playerX][playerY].occupied = 0;
 
 		ctx.fillStyle = room[nextX][nextY].walkable && color;
 		ctx.fillRect(nextX, nextY, tileSize, tileSize);
 		room[nextX][nextY].occupied = 1;
 		_steps.innerHTML = steps++;
-    playerCoord = [nextX, nextY];
-    player.currentCoord = playerCoord;
-
+        playerCoord = [nextX, nextY];
+        player.currentCoord = playerCoord;
+        player.hiliteMoveArea();
+        
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
 		if (!player.actionsLeft && enemies.length) {
-			window.removeEventListener("keypress", handleKeyPress);
-			player.resetActions();
+            window.removeEventListener("keypress", handleKeyPress);
+            player.resetActions();
 			moveTimer = setTimeout(
-				() =>
-					asyncForEach(enemies, (enemy, i) => {
-						let turns = enemy.speed;
-						// const turn =
+                () =>
+                asyncForEach(enemies, (enemy, i) => {
+                    let turns = enemy.speed;
 						return new Promise((resolve) => {
-							const turn = setInterval(() => {
-								enemy.handleTurn(exits);
+                            const turn = setInterval(() => {
+                                enemy.handleTurn(exits);
 								turns--;
 								if (turns < 1) {
-									clearInterval(turn);
+                                    clearInterval(turn);
 									if (i == enemies.length - 1) {
-										window.addEventListener(
-											"keypress",
-											handleKeyPress
-										);
-									}
-									resolve();
-								}
-							}, 300);
+                                        window.addEventListener("keypress",handleKeyPress);
+                                        setTimeout(player.hiliteMoveArea, 300)
+                                    }
+                                    
+                                    resolve();
+                                }
+                                }, 300);
 						});
 					}),
 				500
@@ -139,7 +141,7 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 	for (let i = 0; i < exits.length; i++) {
 		if (nextX == exits[i][0] && nextY == exits[i][1]) {
       clearTimeout(moveTimer);
-      _moveBtn.removeEventListener('click', player.hiliteMoveArea);
+    //   _moveBtn.removeEventListener('click', player.hiliteMoveArea);
 			window.removeEventListener("keypress", handleKeyPress);
 			player.xp += lvl;
 			lvl++;
@@ -218,3 +220,15 @@ const dir = ([sX, sY], tile, max) => {
 		else return 3;
 	}
 };
+
+const removeHighlight = () => {
+    for(let x in COORDINATES){
+        for(let y in COORDINATES[x]){
+            let {highlighted} = COORDINATES[x][y]
+            if(highlighted){
+                COORDINATES[x][y].highlighted = 0;
+                ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
+            }
+        }
+    }
+}
