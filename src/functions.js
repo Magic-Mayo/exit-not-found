@@ -1,6 +1,6 @@
 const asyncForEach = async (array, callback) => {
 	for (let index = 0; index < array.length; index++) {
-		await callback(array[index], index, array);
+		await callback(array[index], index);
 	}
 };
 
@@ -26,7 +26,9 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
 	ctx.fillStyle = room[coord[0]][coord[1]] && color;
 	ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
 
-	window.addEventListener("keypress", handleKeyPress);
+	if (!player.currentlyLevelingUp) {
+		window.addEventListener("keypress", handleKeyPress);
+	}
 };
 
 const generateEnemies = (lvl, max, room, exits) => {
@@ -43,7 +45,7 @@ const generateEnemies = (lvl, max, room, exits) => {
 		const {
 			coords: [x, y],
 		} = enemy;
-		
+
 		COORDINATES[x][y].occupied = 1;
 		ctx.fillStyle = room[x][y] && "#94040466";
 		ctx.fillRect(x, y, TILE_WIDTH, TILE_HEIGHT);
@@ -86,11 +88,10 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 	};
 
 	const [nextX, nextY] = dir[key];
-  let moveTimer;
+	let moveTimer;
 
 	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
-    console.log("you moved!");
-    if(enemies.length) player.actionsLeft--;
+		if (enemies.length) player.actionsLeft--;
 		_actionsLeft.innerHTML = player.actionsLeft;
 		ctx.clearRect(playerX, playerY, tileSize, tileSize);
 		room[playerX][playerY].occupied = 0;
@@ -103,43 +104,48 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
 		if (!player.actionsLeft && enemies.length) {
-      window.removeEventListener("keypress", handleKeyPress);
-      player.resetActions();
-      moveTimer = setTimeout(() =>
-        asyncForEach(enemies, (enemy, i) => {
-          let turns = enemy.speed;
-          // const turn = 
-          return new Promise(resolve =>{
-            const turn = setInterval(() => {
-              enemy.handleTurn(exits);
-              turns--;
-              if(turns < 1){
-                clearInterval(turn);
-                if(i == enemies.length - 1){
-                  window.addEventListener("keypress", handleKeyPress);
-                }
-                resolve();
-              }
-            }, 300)
-          })
-        })
-      , 500)
+			window.removeEventListener("keypress", handleKeyPress);
+			player.resetActions();
+			moveTimer = setTimeout(
+				() =>
+					asyncForEach(enemies, (enemy, i) => {
+						let turns = enemy.speed;
+						// const turn =
+						return new Promise((resolve) => {
+							const turn = setInterval(() => {
+								enemy.handleTurn(exits);
+								turns--;
+								if (turns < 1) {
+									clearInterval(turn);
+									if (i == enemies.length - 1) {
+										window.addEventListener(
+											"keypress",
+											handleKeyPress
+										);
+									}
+									resolve();
+								}
+							}, 300);
+						});
+					}),
+				500
+			);
 		}
 	}
 	for (let i = 0; i < exits.length; i++) {
-    if (nextX == exits[i][0] && nextY == exits[i][1]) {
-      clearTimeout(moveTimer);
-      window.removeEventListener("keypress", handleKeyPress);
+		if (nextX == exits[i][0] && nextY == exits[i][1]) {
+			clearTimeout(moveTimer);
+			window.removeEventListener("keypress", handleKeyPress);
 			player.xp += lvl;
 			lvl++;
 			enemyPowerMult();
 			if (lvl % 10 == 0) player.xp += 100;
 			player.checkIfNextLvl();
 			_expCurrent.textContent = player.xp;
-      
+
 			console.log("you win!");
-      
-      player.resetActions();
+
+			player.resetActions();
 			return buildDungeon(
 				CANVAS_HEIGHT,
 				CANVAS_WIDTH,
