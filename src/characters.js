@@ -23,30 +23,29 @@ const Character = function (name, clas) {
 
 	C.attackStrength = !clas || clas == 1 ? rng() + 3 : rng(3) + 1;
 	C.def = !clas ? rng() + 2 : clas == 1 ? rng(2) + 1 : rng(3) + 1;
-	
+
 	C.agility = !clas ? rng() + 2 : clas == 1 ? rng(2) + 1 : rng(5) + 3;
-	
+
 	C.actionsPerTurn = !clas ? rng() + 4 : clas == 1 ? rng(2) + 3 : rng() + 4;
 	C.actionsLeft = C.actionsPerTurn;
 	C.attackSpeed = Math.abs(C.attackStrength - C.actionsPerTurn);
-	
+
 	C.fov = !clas ? rng(2) + 2 : rng() + 4;
-	
+
 	// C.accuracy = TBD
 	C.items = [];
-	C.currentlyLevelingUp = false
+	C.currentlyLevelingUp = false;
 	C.checkIfNextLvl = function () {
 		C.nextLvl - C.xp <= 0 ? C.lvlUp() : null;
 	};
 	C.lvlUp = function () {
 		C.nextLvl += C.nextLvl + Math.pow(C.lvl, 3);
 		C.lvl++;
-		C.currentlyLevelingUp = true
+		C.currentlyLevelingUp = true;
 		_playerLvl.textContent = C.lvl;
 		_expToNextLvl.textContent = player.nextLvl;
-		_lvlUp.classList.remove('invisible')
+		_lvlUp.classList.remove("invisible");
 		window.removeEventListener("keypress", handleKeyPress);
-
 	};
 	C.weapons = weapons[C.class];
 	C.addStat = function (stat) {
@@ -56,41 +55,56 @@ const Character = function (name, clas) {
 		// to choose which stat to upgrade
 		/////////////// TO DO //////////////
 		if (!stat) {
-			console.log('you leveled up attack strength');
+			console.log("you leveled up attack strength");
 			C.attackStrength = Math.ceil(C.attackStrength * 1.2);
-			_playerAttackStrength.innerHTML = C.attackStrength
-		}
-		else if (stat == 1) {
-			console.log('you leveled up agility');
+			_playerAttackStrength.innerHTML = C.attackStrength;
+		} else if (stat == 1) {
+			console.log("you leveled up agility");
 			C.agility = Math.ceil(C.agility * 1.1);
-			_playerAgility.innerHTML = C.agility
-
-		}
-		else if (stat == 2) {
-			console.log('you leveled up defense');
+			_playerAgility.innerHTML = C.agility;
+		} else if (stat == 2) {
+			console.log("you leveled up defense");
 			C.def = Math.ceil(C.def * 1.15);
-			_playerDefense.innerHTML = C.def
-
-		}
-		else if (stat == 3) {
-			console.log('you leveled up fov');
+			_playerDefense.innerHTML = C.def;
+		} else if (stat == 3) {
+			console.log("you leveled up fov");
 			C.actionsPerTurn = Math.ceil(C.actionsPerTurn * 1.1);
-			_actionsTotal.innerHTML = C.actionsPerTurn
-			_actionsLeft.innerHTML = C.actionsPerTurn
+			_actionsTotal.innerHTML = C.actionsPerTurn;
+			_actionsLeft.innerHTML = C.actionsPerTurn;
 		}
 
-		_lvlUp.classList.add('invisible')
+		_lvlUp.classList.add("invisible");
 		C.currentlyLevelingUp = false;
 		window.addEventListener("keypress", handleKeyPress);
-
-
 	};
-	C.currentCoord = [];
-	C.hiliteMoveArea = function (squares) {
-		// take amount of squares moved and see if character's speed is enough to cover
-		// if it is, subtract that amount from speed
-		Math.abs(playerCoord[0] - C.currentCoord[0]) / TILE_HEIGHT +
-		Math.abs(playerCoord[1] - C.currentCoord[1]) / TILE_HEIGHT;
+	C.currentCoord = playerCoord;
+	C.hiliteMoveArea = function () {
+        const checkerCoord = [C.currentCoord];
+        const room = COORDINATES;
+        for (let i = 1; i <= C.actionsLeft; i++) {
+            checkerCoord.forEach(([cX,cY]) => {
+                const potentialHighlights = [
+                    [cX, cY - TILE_HEIGHT],
+					[cX + TILE_HEIGHT, cY],
+					[cX, cY + TILE_HEIGHT],
+					[cX - TILE_HEIGHT, cY],
+                ];
+                
+				potentialHighlights.filter(([x, y]) => 
+                    room[x]?.[y]?.walkable &&
+                    !room[x]?.[y]?.occupied &&
+                    !room[x]?.[y]?.highlighted
+                ).forEach(([x,y]) =>{
+                    room[x][y].highlighted = 1
+                    checkerCoord.push([x, y])
+                });
+            })
+        }
+        
+        checkerCoord.forEach(([x,y])=>{
+            ctx.fillStyle = "#08fa2566";
+            ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+        })
 	};
 	C.attackEnemy = function (enemy) {
 		const willHit = enemy.agility < rng(100) && C.attack > enemy.def;
@@ -217,20 +231,20 @@ const Enemy = function (coords, enemyPower) {
 		player.checkFOV();
 
 		if (!E.checkFOV(E.playerSpotted ? 2 : 1)) {
-			if(E.checkFOV()) return E.atkChar();
+			if (E.checkFOV()) return E.atkChar();
 
 			if (E.playerSpotted) {
 				console.log(availableSurroundings);
 				const [subX, subY] = [playerCoord[0] - x, playerCoord[1] - y];
 				console.log(`DIFF COORD: ${[subX, subY]}`);
-	
+
 				availableSurroundings = availableSurroundings.filter((c) => {
-					if (c.pos == "left") return subX < 0
-					if (c.pos == "right") return subX > 0
-					if (c.pos == "top") return subY < 0
-					if (c.pos == "bottom") return subY > 0
-				})
-	
+					if (c.pos == "left") return subX < 0;
+					if (c.pos == "right") return subX > 0;
+					if (c.pos == "top") return subY < 0;
+					if (c.pos == "bottom") return subY > 0;
+				});
+
 				console.log(availableSurroundings);
 			}
 			const newCoords = rng(availableSurroundings.length);
@@ -250,21 +264,22 @@ const Enemy = function (coords, enemyPower) {
 				: "transparent";
 			ctx.fillRect(newX, newY, TILE_WIDTH, TILE_HEIGHT);
 			return (COORDINATES[newX][newY].occupied = 1);
-		} 
-
+		}
 	};
 	E.checkFOV = function (spotRange = 1) {
-		const xDif = Math.abs(E.coords[0] - playerCoord[0]) / TILE_HEIGHT * spotRange;
-		const yDif = Math.abs(E.coords[1] - playerCoord[1]) / TILE_HEIGHT * spotRange;
+		const xDif =
+			(Math.abs(E.coords[0] - playerCoord[0]) / TILE_HEIGHT) * spotRange;
+		const yDif =
+			(Math.abs(E.coords[1] - playerCoord[1]) / TILE_HEIGHT) * spotRange;
 		const difTrig = ~~Math.sqrt(xDif * xDif + yDif * yDif);
 
 		if (difTrig <= this.fov) {
-			if(spotRange == 2) E.playerSpotted = 1;
-			_enemySeesPlayer.innerHTML = 'Gotcha!'
+			if (spotRange == 2) E.playerSpotted = 1;
+			_enemySeesPlayer.innerHTML = "Gotcha!";
 			return 1;
 		} else {
 			E.playerSpotted = 0;
-			_enemySeesPlayer.innerHTML = "Where'd you go??"
+			_enemySeesPlayer.innerHTML = "Where'd you go??";
 			return 0;
 		}
 	};
@@ -414,19 +429,30 @@ const Enemy = function (coords, enemyPower) {
 //* 2. If in FOV, prefer attack over moving
 // 3. If player has been spotted by certain enemies always move toward player instead of random movement
 
+// 3a. If player has been spotted by certain enemies always move toward player instead of random movement
+// 1. check player coords and subtract from enemy coords on each axis. difference will show what direction to move
+// 2. if more than one way to go choose randomly
+// 3. if stuck pick a direction that enemy can move in until we can start moving back to player
+
 // 4. add turn "speed" funct (how many moves/attacks player can make before an enemy makes a move/attacks)
-// 1. every move or attack we need to subtract speed
-// 2. will need current speed property on user and enemy
-// 3. enemy will
+//* 1. every move or attack we need to subtract speed
+//* 2. will need current speed property on user and enemy
 
 // 5. add funct for player to attack enemy
-
 // 6. add funct for enemy to attack player
+// 1. when attack is chosen, subtract player attack from enemy hp and add enemy defense
+// 2. potential animation on enemy and/or enemy stat block
 
 // 7. add allowable move area to hightlight canvas on player turn
-    // 1. store current coords on player - playerCoords[]
+    // 1. store current coords on player
     // 2. loop however many times total speed is and for each direction subtract/add tiles
     // 3. use these coords for highlighting area around player to show where they can move
     // 4. make user confirm before before setting coords of new position
     // 5. if user can make the move with the amount of speed left store new current on player
     // 6. if user can't make the move give a notification and leave player in current position
+
+
+    /*
+        get all possible moves in each direction from start position coords and push into array
+        
+    */
