@@ -19,12 +19,15 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
 	handleKeyPress = (e) =>
 		handlePlayerMovement(e, room, tileSize, color, exit);
 
-	playerCoord = coord;
+  playerCoord = coord;
+  player.currentCoord = coord;
 	// console.log(
 	// `The player will start at ${playerCoord} and will have the color ${color}`
 	// );
 	ctx.fillStyle = room[coord[0]][coord[1]] && color;
-	ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
+  ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
+  
+  _moveBtn.addEventListener('click', player.hiliteMoveArea);
 
 	if (!player.currentlyLevelingUp) {
 		window.addEventListener("keypress", handleKeyPress);
@@ -100,7 +103,8 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 		ctx.fillRect(nextX, nextY, tileSize, tileSize);
 		room[nextX][nextY].occupied = 1;
 		_steps.innerHTML = steps++;
-		playerCoord = [nextX, nextY];
+    playerCoord = [nextX, nextY];
+    player.currentCoord = playerCoord;
 
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
 		if (!player.actionsLeft && enemies.length) {
@@ -134,7 +138,8 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 	}
 	for (let i = 0; i < exits.length; i++) {
 		if (nextX == exits[i][0] && nextY == exits[i][1]) {
-			clearTimeout(moveTimer);
+      clearTimeout(moveTimer);
+      _moveBtn.removeEventListener('click', player.hiliteMoveArea);
 			window.removeEventListener("keypress", handleKeyPress);
 			player.xp += lvl;
 			lvl++;
