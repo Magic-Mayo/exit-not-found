@@ -70,7 +70,7 @@ const Character = function (name, clas) {
 			console.log("you leveled up fov");
 			C.actionsPerTurn = Math.ceil(C.actionsPerTurn * 1.1);
 			_actionsTotal.innerHTML = C.actionsPerTurn;
-			_actionsLeft.innerHTML = C.actionsPerTurn;
+            _actionsLeft.innerHTML = C.actionsPerTurn;
 		}
 
 		_lvlUp.classList.add("invisible");
@@ -80,53 +80,37 @@ const Character = function (name, clas) {
     C.currentCoord = playerCoord;
     C.highlighted = 0;
 	C.hiliteMoveArea = function () {
-        if(!C.highlighted){
-            C.highlighted = 1;
-            const checkerCoord = [C.currentCoord];
-            for (let i = 1; i <= C.actionsLeft; i++) {
-                checkerCoord.forEach(([cX,cY]) => {
-                    const potentialHighlights = [
-                        [cX, cY - TILE_HEIGHT],
-                        [cX + TILE_HEIGHT, cY],
-                        [cX, cY + TILE_HEIGHT],
-                        [cX - TILE_HEIGHT, cY],
-                    ];
-                    
-                    potentialHighlights.filter(([x, y]) => 
-                        COORDINATES[x]?.[y]?.walkable &&
-                        !COORDINATES[x]?.[y]?.occupied &&
-                        !COORDINATES[x]?.[y]?.highlighted
-                    ).forEach(([x,y]) =>{
-                        if(x == C.currentCoord[0] && y == C.currentCoord[1]) return;
-                        COORDINATES[x][y].highlighted = 1
-                        checkerCoord.push([x, y])
-                    });
-                })
-            }
-            
-            checkerCoord.forEach(([x,y], notStart)=>{
-                if(notStart){
-                    ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
-                    ctx.fillStyle = "#08fa2566";
-                    ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
-                }
+        const checkerCoord = [C.currentCoord];
+        for (let i = 1; i <= C.actionsLeft; i++) {
+            checkerCoord.forEach(([cX,cY]) => {
+                const potentialHighlights = [
+                    [cX, cY - TILE_HEIGHT],
+                    [cX + TILE_HEIGHT, cY],
+                    [cX, cY + TILE_HEIGHT],
+                    [cX - TILE_HEIGHT, cY],
+                ];
+                
+                potentialHighlights.filter(([x, y]) => 
+                    COORDINATES[x]?.[y]?.walkable &&
+                    !COORDINATES[x]?.[y]?.occupied &&
+                    !COORDINATES[x]?.[y]?.highlighted
+                ).forEach(([x,y]) =>{
+                    if(x == C.currentCoord[0] && y == C.currentCoord[1]) return;
+                    COORDINATES[x][y].highlighted = 1
+                    checkerCoord.push([x, y])
+                });
             })
-            console.log(checkerCoord)
-        } else {
-            C.highlighted = 0;
-            for(let x in COORDINATES){
-                for(let y in COORDINATES[x]){
-                    let {highlighted} = COORDINATES[x][y]
-                    if(highlighted){
-                        COORDINATES[x][y].highlighted = 0;
-                        ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
-                        ctx.fillStyle = 'transparent';
-                        ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
-                    }
-                }
-            }
         }
-	};
+        
+        checkerCoord.forEach(([x,y], notStart)=>{
+            if(notStart){
+                ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
+                ctx.fillStyle = "#08fa2566";
+                ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+            }
+        })
+        console.log(checkerCoord)
+    };
 	C.attackEnemy = function (enemy) {
 		const willHit = enemy.agility < rng(100) && C.attack > enemy.def;
 		willHit ? (enemy.hp = enemy.hp - C.attack + enemy.def) : 0;
