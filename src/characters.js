@@ -77,34 +77,55 @@ const Character = function (name, clas) {
 		C.currentlyLevelingUp = false;
 		window.addEventListener("keypress", handleKeyPress);
 	};
-	C.currentCoord = playerCoord;
+    C.currentCoord = playerCoord;
+    C.highlighted = 0;
 	C.hiliteMoveArea = function () {
-        const checkerCoord = [C.currentCoord];
-        const room = COORDINATES;
-        for (let i = 1; i <= C.actionsLeft; i++) {
-            checkerCoord.forEach(([cX,cY]) => {
-                const potentialHighlights = [
-                    [cX, cY - TILE_HEIGHT],
-					[cX + TILE_HEIGHT, cY],
-					[cX, cY + TILE_HEIGHT],
-					[cX - TILE_HEIGHT, cY],
-                ];
-                
-				potentialHighlights.filter(([x, y]) => 
-                    room[x]?.[y]?.walkable &&
-                    !room[x]?.[y]?.occupied &&
-                    !room[x]?.[y]?.highlighted
-                ).forEach(([x,y]) =>{
-                    room[x][y].highlighted = 1
-                    checkerCoord.push([x, y])
-                });
+        if(!C.highlighted){
+            C.highlighted = 1;
+            const checkerCoord = [C.currentCoord];
+            for (let i = 1; i <= C.actionsLeft; i++) {
+                checkerCoord.forEach(([cX,cY]) => {
+                    const potentialHighlights = [
+                        [cX, cY - TILE_HEIGHT],
+                        [cX + TILE_HEIGHT, cY],
+                        [cX, cY + TILE_HEIGHT],
+                        [cX - TILE_HEIGHT, cY],
+                    ];
+                    
+                    potentialHighlights.filter(([x, y]) => 
+                        COORDINATES[x]?.[y]?.walkable &&
+                        !COORDINATES[x]?.[y]?.occupied &&
+                        !COORDINATES[x]?.[y]?.highlighted
+                    ).forEach(([x,y]) =>{
+                        if(x == C.currentCoord[0] && y == C.currentCoord[1]) return;
+                        COORDINATES[x][y].highlighted = 1
+                        checkerCoord.push([x, y])
+                    });
+                })
+            }
+            
+            checkerCoord.forEach(([x,y], notStart)=>{
+                if(notStart){
+                    ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
+                    ctx.fillStyle = "#08fa2566";
+                    ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+                }
             })
+            console.log(checkerCoord)
+        } else {
+            C.highlighted = 0;
+            for(let x in COORDINATES){
+                for(let y in COORDINATES[x]){
+                    let {highlighted} = COORDINATES[x][y]
+                    if(highlighted){
+                        COORDINATES[x][y].highlighted = 0;
+                        ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
+                        ctx.fillStyle = 'transparent';
+                        ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
+                    }
+                }
+            }
         }
-        
-        checkerCoord.forEach(([x,y])=>{
-            ctx.fillStyle = "#08fa2566";
-            ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
-        })
 	};
 	C.attackEnemy = function (enemy) {
 		const willHit = enemy.agility < rng(100) && C.attack > enemy.def;
