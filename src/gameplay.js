@@ -19,6 +19,8 @@ _btnStart.addEventListener("click", (e) => {
 	_playerFOV.innerHTML = player.fov;
 	_actionsTotal.innerHTML = player.actionsPerTurn
 	_actionsLeft.innerHTML = player.actionsLeft
+	_expCurrent.innerHTML = player.xp
+	_expToNextLvl.innerHTML = player.nextLvl
 	buildDungeon(
 		CANVAS_HEIGHT,
 		CANVAS_WIDTH,
@@ -109,3 +111,7 @@ const checkIfEnemyCoord = ([clickX, clickY], [enX, enY]) =>
 		: false;
 
 
+_lvlUpAtk.addEventListener('click', e => player.addStat(0))
+_lvlUpAgil.addEventListener('click', e => player.addStat(1))
+_lvlUpDef.addEventListener('click', e => player.addStat(2))
+_lvlUpFOV.addEventListener('click', e => player.addStat(3))
