@@ -15,7 +15,7 @@ const buildDungeon = (
     ctx.clearRect(0, 0, cWidth, cHeight);
     const xyMax = tHeight * tWidth - tHeight;
     const [sX, sY] = inverseCoords([pExitX, pExitY], xyMax);
-    const exits = generateRandomEndpoint([sX, sY], tHeight, xyMax);
+    exits = generateRandomEndpoint([sX, sY], tHeight, xyMax);
 
   // SET UP COORDINATE PLANE
 	columns.forEach((vX, x, col) => {
@@ -81,12 +81,12 @@ const buildDungeon = (
   
 	// checks to make sure the dungeon can be completed.
   // if not build another one until you get one that can be
-    if (!checker(exits,[sX, sY])) return (
+    if (!checker([sX, sY])) return (
         buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX,pExitY])
     );
   
-  generatePlayer([sX, sY], "white", COORDINATES, tHeight, exits);
-  generateEnemies(lvl, xyMax, COORDINATES, exits);
+  generatePlayer([sX, sY], "white", COORDINATES, tHeight);
+  generateEnemies(lvl, xyMax, COORDINATES);
 
   _dungeon.innerHTML = dungeon++;
 };
