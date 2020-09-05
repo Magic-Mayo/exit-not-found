@@ -30,7 +30,7 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
 //   _moveBtn.addEventListener('click', player.hiliteMoveArea);
 
 	if (!player.currentlyLevelingUp) {
-		window.addEventListener("keypress", handleKeyPress);
+		window.onkeypress = handleKeyPress;
 	}
 };
 
@@ -112,12 +112,13 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
         
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
 		if (!player.actionsLeft && enemies.length) {
-            window.removeEventListener("keypress", handleKeyPress);
+            window.onkeypress = null;
             player.resetActions();
 			moveTimer = setTimeout(
                 () =>
                 asyncForEach(enemies, (enemy, i) => {
                     let turns = enemy.speed;
+                    showEnemyDetails(enemy);
 						return new Promise((resolve) => {
                             const turn = setInterval(() => {
                                 enemy.handleTurn(exits);
@@ -125,7 +126,7 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 								if (turns < 1) {
                                     clearInterval(turn);
 									if (i == enemies.length - 1) {
-                                        window.addEventListener("keypress",handleKeyPress);
+                                        window.onkeypress =handleKeyPress;
                                         setTimeout(player.hiliteMoveArea, 300)
                                     }
                                     
@@ -140,9 +141,9 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 	}
 	for (let i = 0; i < exits.length; i++) {
 		if (nextX == exits[i][0] && nextY == exits[i][1]) {
-      clearTimeout(moveTimer);
-    //   _moveBtn.removeEventListener('click', player.hiliteMoveArea);
-			window.removeEventListener("keypress", handleKeyPress);
+            clearTimeout(moveTimer);
+            // _moveBtn.removeEventListener('click', player.hiliteMoveArea);
+			window.onkeypress = null;
 			player.xp += lvl;
 			lvl++;
 			enemyPowerMult();
