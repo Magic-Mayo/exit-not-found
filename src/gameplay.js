@@ -59,16 +59,27 @@ game.addEventListener("click", (e) => {
 	const adjustedY = (e.clientY - top) * percentDiff;
 
 
-	// THIS SHOULD RETURN AN ARRAY OF ONE OR MORE ENEMIES THAT ARE IN THE CLICK LOCATION
-	const clickedEnemies = enemies.filter((enemy) =>
-		checkIfEnemyCoord([adjustedX, adjustedY], enemy.coords)
-    );
-    
-    !clickedEnemies.length ? _attackBtn.classList.add('invisible') : showEnemyDetails(clickedEnemies)
+    // THIS SHOULD RETURN AN ARRAY OF ONE OR MORE ENEMIES THAT ARE IN THE CLICK LOCATION
+    let index;
+	const [clickedEnemy] = enemies.filter((enemy, i) => {
+        if(checkIfEnemyCoord([adjustedX, adjustedY], enemy.coords)){
+            console.log('got heer')
+            index = i;
+            return 1;
+        }
+    });
+
+    !clickedEnemy ? _attackBtn.classList.add('invisible') : showEnemyDetails(clickedEnemy, index)
 });
 
-const showEnemyDetails = enemies => enemies.map(enemy => {
-    
+_attackBtn.addEventListener('click', e => {
+    const i = e.target.dataset.enemy;
+    const enemy = enemies[i];
+    console.log(player.attackEnemy(enemy, i))
+})
+
+const showEnemyDetails = (enemy, i) => {
+    _enemyDetails.innerHTML = ''
     // CREATE CONTAINER
     const _section = document.createElement('section')
     _section.classList.add('enemy-item')
@@ -81,6 +92,8 @@ const showEnemyDetails = enemies => enemies.map(enemy => {
     // CREATE 'CLASS' & APPEND TO CONTAINER
     const enemyClass = !enemy.class ? 'melee' : enemy.class == 1 ? 'magic' : 'ranged'
     _section.append(createParSpanPair('🧍 Class: ', enemyClass))
+    // CREATE 'HP' & APPEND TO CONTAINER
+    _section.append(createParSpanPair('❤ HP: ', enemy.hp))
     // CREATE 'ATTACK STRENGTH' & APPEND TO CONTAINER
     _section.append(createParSpanPair('🔪 Attack Strength: ', enemy.attack))
     // CREATE 'DEFENSE' & APPEND TO CONTAINER
@@ -88,10 +101,15 @@ const showEnemyDetails = enemies => enemies.map(enemy => {
     // CREATE 'FOV' & APPEND TO CONTAINER
     _section.append(createParSpanPair('🔭 FOV: ', enemy.fov))
 
-    player.inRange.length > 0 ?  _attackBtn.classList.remove('invisible') : _attackBtn.classList.add('invisible')
+    if(player.inRange.length && window.onkeypress){
+        _attackBtn.classList.remove('invisible');
+        _attackBtn.setAttribute('data-enemy', i);
+    } else {
+        _attackBtn.classList.add('invisible');
+    }
 
     _enemyDetails.append(_section)
-});
+}
 
 const createParSpanPair = (title, data) => {
     const _p = document.createElement('p')
