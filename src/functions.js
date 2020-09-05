@@ -18,7 +18,8 @@ const roundUp = (num) => {
 
 const checker = ([sX, sY]) => {
     const checkerCoord = [[sX,sY]];
-    while (checkerCoord.length < 196){
+    // let exitsFound = 0;
+    while (checkerCoord.length < 200 ){
         checkerCoord.forEach(([cX,cY]) => {
             const potentialHighlights = [
                 [cX, cY - TILE_HEIGHT],
@@ -36,7 +37,7 @@ const checker = ([sX, sY]) => {
             });
         });
 
-        if(checkerCoord.length < 2) return;
+        if(checkerCoord.length < 2) break;
         
         for(let i=0; i<exits.length;i++){
             const [eX,eY] = exits[i];
@@ -44,12 +45,14 @@ const checker = ([sX, sY]) => {
                 const [cX,cY] = checkerCoord[j]
                 if(cX == eX && cY == eY){
                     return 1;
+                    // exitsFound++;
+					// if (exitsFound == exits.length) return 1
                 }
             }
         }
     }
     
-    return;    
+    return;
 }
 
 const generatePlayer = (coord, color, room, tileSize) => {
@@ -63,7 +66,8 @@ const generatePlayer = (coord, color, room, tileSize) => {
 	// );
 	ctx.fillStyle = room[coord[0]][coord[1]] && color;
   ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
-  player.hiliteMoveArea()
+  player.hiliteMoveArea();
+  player.hiliteFOV();
 //   _moveBtn.addEventListener('click', player.hiliteMoveArea);
 
 	if (!player.awaitingUser) {
@@ -130,7 +134,7 @@ const handlePlayerMovement = async (event, room, tileSize, color) => {
     const [nextX, nextY] = dir[key];
     
 	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
-        removeHighlight()
+        removeHighlight();
         if (enemies.length) player.actionsLeft--;
 		_actionsLeft.innerHTML = player.actionsLeft;
         ctx.clearRect(playerX, playerY, tileSize, tileSize);
@@ -145,14 +149,21 @@ const handlePlayerMovement = async (event, room, tileSize, color) => {
         playerCoord = [nextX, nextY];
         player.currentCoord = playerCoord;
         player.hiliteMoveArea();
+        player.hiliteFOV();
+        player.checkFOV();
         
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
 		if (!player.actionsLeft && enemies.length) {
-            enemyTurn();
+            playersTurn = false
+            game.classList.remove('p-turn')
+            game.classList.add('e-turn')
+            return enemyTurn();
         }
     }
 	for (let i = 0; i < exits.length; i++) {
 		if (nextX == exits[i][0] && nextY == exits[i][1]) {
+            game.classList.remove('e-turn')
+            game.classList.add('p-turn')
             clearTimeout(moveTimer);
             // _moveBtn.removeEventListener('click', player.hiliteMoveArea);
 			window.onkeypress = null;
@@ -177,7 +188,6 @@ const handlePlayerMovement = async (event, room, tileSize, color) => {
 			);
 		}
 	}
-	player.checkFOV();
 };
 
 const goFullScreen = () => {
@@ -249,10 +259,28 @@ const dir = ([sX, sY], tile, max) => {
 const removeHighlight = () => {
     for(let x in COORDINATES){
         for(let y in COORDINATES[x]){
-            let {highlighted} = COORDINATES[x][y]
+            let {highlighted, occupied, walkable} = COORDINATES[x][y]
+            ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
             if(highlighted){
                 COORDINATES[x][y].highlighted = 0;
-                ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
+            }
+
+            if(!walkable){
+                ctx.fillStyle = 'transparent'
+                ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
+            } else if(x == playerCoord[0] && y == playerCoord[1]){
+                ctx.fillStyle = 'white'
+                ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
+            } else if(walkable){
+                if(occupied){
+                    ctx.fillStyle = '#94040466'
+                }
+                else if(exits.some(([eX,eY]) => eX == x && eY == y)){
+                    ctx.fillStyle = getExitGradient(x,y)
+                } else {
+                    ctx.fillStyle = '#2b2b2b'
+                }
+                ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
             }
         }
     }
@@ -274,7 +302,13 @@ const enemyTurn = () => {
                             clearInterval(turn);
                             if (i == enemies.length - 1) {
                                 window.onkeypress =handleKeyPress;
-                                setTimeout(player.hiliteMoveArea, 300)
+                                setTimeout(() =>{
+									playersTurn = true
+                                    game.classList.remove('e-turn')
+                                    game.classList.add('p-turn')                                    
+                                    player.hiliteMoveArea();
+                                    player.hiliteFOV()
+                                }, 300)
                             }
                             
                             resolve();
@@ -287,3 +321,26 @@ const enemyTurn = () => {
 }
 
 const checkIfWaiting = () => new Promise(resolve => setTimeout(() => player.awaitingUser ? resolve(true) : resolve(false), 500))
+
+const getExitGradient = (x,y) => {
+    let exit;
+    if(x == 0){
+        exit = ctx.createLinearGradient(-20,0,20,0);
+    } else if(x == xyMax){
+        exit = ctx.createLinearGradient(240,0,260,0);
+    } else if(y == 0){
+        exit = ctx.createLinearGradient(0,-20,0,20);
+    } else if(y == xyMax){
+        exit = ctx.createLinearGradient(0,240,0,260);
+    }
+    
+    if(x == 0 || y == 0){
+        exit.addColorStop(0.2, 'black');
+        exit.addColorStop(1, 'yellow');
+    } else {
+        exit.addColorStop(1, 'black');
+        exit.addColorStop(0, 'yellow');
+    }
+
+    return exit;
+}
