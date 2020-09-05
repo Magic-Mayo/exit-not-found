@@ -129,6 +129,7 @@ const Character = function (name, clas) {
             ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
             enemies.splice(i,1);
             C.xp += enemy.xp;
+            if(!enemies.length) C.actionsLeft = C.actionsPerTurn;
             C.checkIfNextLvl();
         }
         
