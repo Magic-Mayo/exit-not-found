@@ -6,17 +6,17 @@ _btnStart.addEventListener("click", (e) => {
 
 	_container.classList.remove("invisible");
 	_landing.classList.add("invisible");
-	_btnStart.classList.add("invisible");
-
+    _btnStart.classList.add("invisible");
+    game.classList.add('p-turn')
 	player = new Character("slimey", 0);
 	_healthpointsCurrent.innerHTML = player.hp;
 	_healthpointsMax.innerHTML = player.hp;
 	_playerLvl.innerHTML = player.lvl;
 	_playerAttackStrength.innerHTML = player.attackStrength;
-	_playerAttackSpeed.innerHTML = player.speed;
+	_playerAttackSpeed.innerHTML = player.attackSpeed;
 	_playerDefense.innerHTML = player.def;
 	_playerAgility.innerHTML = player.agility;
-	_playerFOV.innerHTML = player.fov;
+	_playerFOV.innerHTML = Math.round(player.fov);
 	_actionsTotal.innerHTML = player.actionsPerTurn
 	_actionsLeft.innerHTML = player.actionsLeft
 	_expCurrent.innerHTML = player.xp
@@ -100,7 +100,11 @@ const showEnemyDetails = (enemy, i) => {
     // CREATE 'FOV' & APPEND TO CONTAINER
     _section.append(createParSpanPair('🔭 FOV: ', enemy.fov))
 
-    if(player.inRange.length && window.onkeypress){
+    if(
+        player.inRange.some(({coords : [x,y]}) =>
+            x == enemies[i]?.coords[0] && y == enemies[i]?.coords[1]) &&
+        window.onkeypress
+    ){
         _attackBtn.classList.remove('invisible');
         _attackBtn.setAttribute('data-enemy', i);
     } else {
