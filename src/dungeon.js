@@ -39,6 +39,7 @@ const buildDungeon = (
 
       if(eX == x){
         COORDINATES[x][y].walkable = 1;
+        COORDINATES[x][y].exit = 1;
         let exit;
         if(eX == 0){
           exit = ctx.createLinearGradient(-20,0,20,0);
