@@ -30,7 +30,8 @@ const Character = function (name, clas) {
 	C.actionsLeft = C.actionsPerTurn;
     C.attackSpeed = ~~(C.attackStrength / 2) || 1;
 
-	C.fov = !clas ? rng(2) + 2 : rng() + 4;
+    C.fov = !clas ? rng(2) + 2 : rng() + 4, 2
+    C.fov = Math.ceil(Math.sqrt(C.fov * C.fov + C.fov * C.fov));
 
 	C.accuracy = !C.class
     ? 65 + rng(26)
@@ -82,10 +83,26 @@ const Character = function (name, clas) {
 		window.onkeypress = handleKeyPress;
 	};
     C.currentCoord = playerCoord;
-    C.highlighted = 0;
+	C.highlighted = 0;
+	
+	C.hiliteFOV = function () {
+		const [x,y] = [
+            C.currentCoord[0] + (TILE_WIDTH / 2),
+            C.currentCoord[1] + (TILE_WIDTH / 2)
+        ]
+		console.log(x,y)
+		ctx.fillStyle = "#3370d422"
+        ctx.beginPath();
+        ctx.arc(x,y,C.fov * TILE_HEIGHT, 0, Math.PI * 2);
+        // ctx.clip()
+		// ctx.closePath();
+		ctx.fill();
+	}
+
+
 	C.hiliteMoveArea = function () {
         const checkerCoord = [C.currentCoord];
-        for (let i = 1; i <= C.actionsLeft; i++) {
+        for (let i = 0; i < C.actionsLeft; i++) {
             checkerCoord.forEach(([cX,cY]) => {
                 const potentialHighlights = [
                     [cX, cY - TILE_HEIGHT],
@@ -130,6 +147,7 @@ const Character = function (name, clas) {
             ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
             enemies.splice(i,1);
             C.xp += enemy.xp;
+            _enemyDetails.innerHTML = '';
             if(!enemies.length) C.actionsLeft = C.actionsPerTurn;
             C.checkIfNextLvl();
         }
@@ -138,6 +156,7 @@ const Character = function (name, clas) {
             removeHighlight();
             C.hiliteMoveArea();
         }
+        C.hiliteFOV();
 
         if(C.actionsLeft == 0){
             while(C.awaitingUser){
@@ -155,17 +174,16 @@ const Character = function (name, clas) {
 
 	C.inRange = [];
 	C.checkFOV = function () {
-		C.inRange = [];
+        C.inRange = []
 		enemies.forEach((enemy) => {
 			const xDif = Math.abs(enemy.coords[0] - playerCoord[0]) / TILE_HEIGHT;
 			const yDif = Math.abs(enemy.coords[1] - playerCoord[1]) / TILE_HEIGHT;
-			const difTrig = Math.sqrt(xDif * xDif + yDif * yDif);
+            const difTrig = ~~Math.sqrt(xDif * xDif + yDif * yDif);
 
 			if (difTrig <= C.fov) {
-				return C.inRange.push(enemy);
+                C.inRange.push(enemy);
 			}
 		});
-		// console.log('enemies in range', C.inRange)
 	};
 
 	C.block;
@@ -173,9 +191,13 @@ const Character = function (name, clas) {
 		C.actionsLeft = C.actionsPerTurn;
 		_actionsLeft.innerHTML = C.actionsLeft;
 	};
-	C.defStance = function () {
+	C.defStance = async function () {
         C.block = C.actionsLeft;
-        enemyTurn()
+        while(C.awaitingUser){
+            const waiting = await checkIfWaiting();
+            if(waiting) continue;
+        }
+        enemyTurn();
 	};
 };
 
