@@ -115,7 +115,7 @@ const Character = function (name, clas) {
             }
         })
     };
-	C.attackEnemy = function (enemy, i) {
+	C.attackEnemy = async function (enemy, i) {
         if(C.attackSpeed > C.actionsLeft) return "You don't have enough energy left to attack!  Try another action";
 
 		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def;
@@ -140,7 +140,11 @@ const Character = function (name, clas) {
         }
 
         if(C.actionsLeft == 0){
-            enemyTurn(exits);
+            while(C.currentlyLevelingUp){
+                const waiting = await checkIfLeveling();
+                if(waiting) continue;
+            }
+            enemyTurn(exits)
         }
 
 		return willHit && enemy.hp < 1 ?
@@ -153,10 +157,8 @@ const Character = function (name, clas) {
 	C.checkFOV = function () {
 		C.inRange = [];
 		enemies.forEach((enemy) => {
-			const xDif =
-				Math.abs(enemy.coords[0] - playerCoord[0]) / TILE_HEIGHT;
-			const yDif =
-				Math.abs(enemy.coords[1] - playerCoord[1]) / TILE_HEIGHT;
+			const xDif = Math.abs(enemy.coords[0] - playerCoord[0]) / TILE_HEIGHT;
+			const yDif = Math.abs(enemy.coords[1] - playerCoord[1]) / TILE_HEIGHT;
 			const difTrig = Math.sqrt(xDif * xDif + yDif * yDif);
 
 			if (difTrig <= C.fov) {
