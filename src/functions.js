@@ -19,7 +19,7 @@ const roundUp = (num) => {
 const checker = ([sX, sY]) => {
     const checkerCoord = [[sX,sY]];
     // let exitsFound = 0;
-    while (checkerCoord.length < 200 ){
+    while (checkerCoord.length < CHECKER_INT){
         checkerCoord.forEach(([cX,cY]) => {
             const potentialHighlights = [
                 [cX, cY - TILE_HEIGHT],
