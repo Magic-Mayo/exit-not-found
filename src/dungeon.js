@@ -11,17 +11,11 @@ const buildDungeon = (
 	tWidth,
 	[pExitX, pExitY]
 ) => {
-
-	// clear board of previous paint...if any
-	ctx.clearRect(0, 0, cWidth, cHeight);
-	const xyMax = tHeight * tWidth - tHeight;
-  const [sX, sY] = inverseCoords([pExitX, pExitY], xyMax);
-  const exits = [];
-  // TO GENERATE A NEW EXIT COORDINATE:
-  // 1. RULES:
-  //     A. since exit will always be on the perimeter, one value MUST be zero (either X or Y)
-  //     B. exit cannot be straight across from the exit
-  for(let i = rng(3) + 1; i>0;i--) exits.push(generateRandomEndpoint([sX, sY], tHeight, xyMax, exits))
+    // clear board of previous paint...if any
+    ctx.clearRect(0, 0, cWidth, cHeight);
+    const xyMax = tHeight * tWidth - tHeight;
+    const [sX, sY] = inverseCoords([pExitX, pExitY], xyMax);
+    const exits = generateRandomEndpoint([sX, sY], tHeight, xyMax);
 
   // SET UP COORDINATE PLANE
 	columns.forEach((vX, x, col) => {
@@ -42,9 +36,6 @@ const buildDungeon = (
         }
       })
       COORDINATES[x][y] = {};
-      // console.log(x,y);
-
-			// console.log('newX', newX);
 
       if(eX == x){
         COORDINATES[x][y].walkable = 1;
@@ -86,38 +77,12 @@ const buildDungeon = (
 		});
 	});
 
-  // console.log(COORDINATES)
   
 	// checks to make sure the dungeon can be completed.
   // if not build another one until you get one that can be
-  let exitReached;
-  for(let i=0;i<exits.length;i++){
-    if (
-      checker(
-        COORDINATES,
-        [sX, sY],
-        // [0,240],
-        [sX, sY],
-        // [0, 240],
-        exits[i],
-        [sX, sY],
-        // [0,240],
-        dir([sX, sY], tHeight, xyMax),
-        tHeight,
-        [xyMax, xyMax]
-      )
-    ) {
-      exitReached = true;
-      break;
-    }
-  }
-  
-  if(!exitReached){
-    return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [
-      pExitX,
-      pExitY,
-    ]);
-  }
+    if (!checker(exits,[sX, sY])) return (
+        buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX,pExitY])
+    );
   
   generatePlayer([sX, sY], "white", COORDINATES, tHeight, exits);
   generateEnemies(lvl, xyMax, COORDINATES, exits);
