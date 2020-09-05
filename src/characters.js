@@ -28,7 +28,7 @@ const Character = function (name, clas) {
 
 	C.actionsPerTurn = !clas ? rng() + 4 : clas == 1 ? rng(2) + 3 : rng() + 4;
 	C.actionsLeft = C.actionsPerTurn;
-	C.attackSpeed = Math.abs(C.attackStrength - C.actionsPerTurn);
+    C.attackSpeed = ~~(C.attackStrength / 2) || 1;
 
 	C.fov = !clas ? rng(2) + 2 : rng() + 4;
 
@@ -40,7 +40,7 @@ const Character = function (name, clas) {
 	C.items = [];
 	C.currentlyLevelingUp = false;
 	C.checkIfNextLvl = function () {
-		C.nextLvl - C.xp <= 0 ? C.lvlUp() : null;
+		C.nextLvl - C.xp <= 0 && C.lvlUp();
 	};
 	C.lvlUp = function () {
 		C.nextLvl += C.nextLvl + Math.pow(C.lvl, 3);
@@ -115,13 +115,32 @@ const Character = function (name, clas) {
         })
     };
 	C.attackEnemy = function (enemy, i) {
-		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def;
-        willHit ? (enemy.hp -= C.attackStrength + enemy.def) : 0;
-        showEnemyDetails(enemy, i);
+        if(C.attackSpeed > C.actionsLeft) return "You don't have enough energy left to attack!  Try another action";
 
-		return willHit
-			? `You hit the ${enemy.name} for ${C.attackStrength - enemy.def}!`
-			: `You missed the ${enemy.name}!`;
+		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def;
+        C.actionsLeft -= C.attackSpeed;
+        _actionsLeft.innerHTML = C.actionsLeft;
+        willHit && (enemy.hp -= C.attackStrength + enemy.def);
+        showEnemyDetails(enemy, i);
+        
+        if(enemy.hp < 1){
+            const [x,y] = enemy.coords;
+            COORDINATES[x][y].occupied = 0;
+            ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
+            enemies.splice(i,1);
+            C.xp += enemy.xp;
+            C.checkIfNextLvl();
+        }
+        
+        if(willHit){
+            removeHighlight();
+            C.hiliteMoveArea();
+        }
+
+		return willHit && enemy.hp < 1 ?
+            `You defeated the ${enemy.name}!` :
+            willHit ? `You hit the ${enemy.name} for ${C.attackStrength - enemy.def}!` :
+			`You missed the ${enemy.name}!`;
 	};
 
 	C.inRange = [];
