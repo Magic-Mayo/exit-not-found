@@ -74,7 +74,7 @@ game.addEventListener("click", (e) => {
 _attackBtn.addEventListener('click', e => {
     const i = e.target.dataset.enemy;
     const enemy = enemies[i];
-    console.log(player.attackEnemy(enemy, i))
+    player.attackEnemy(enemy, i)
 })
 
 const showEnemyDetails = (enemy, i) => {
