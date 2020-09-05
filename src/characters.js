@@ -32,7 +32,11 @@ const Character = function (name, clas) {
 
 	C.fov = !clas ? rng(2) + 2 : rng() + 4;
 
-	// C.accuracy = TBD
+	C.accuracy = !C.class
+    ? 65 + rng(26)
+    : C.class == 1
+    ? 60 + rng(41)
+    : 75 + rng(6);
 	C.items = [];
 	C.currentlyLevelingUp = false;
 	C.checkIfNextLvl = function () {
@@ -45,7 +49,7 @@ const Character = function (name, clas) {
 		_playerLvl.textContent = C.lvl;
 		_expToNextLvl.textContent = player.nextLvl;
 		_lvlUp.classList.remove("invisible");
-		window.removeEventListener("keypress", handleKeyPress);
+		window.onkeypress = null;
 	};
 	C.weapons = weapons[C.class];
 	C.addStat = function (stat) {
@@ -75,7 +79,7 @@ const Character = function (name, clas) {
 
 		_lvlUp.classList.add("invisible");
 		C.currentlyLevelingUp = false;
-		window.addEventListener("keypress", handleKeyPress);
+		window.onkeypress = handleKeyPress;
 	};
     C.currentCoord = playerCoord;
     C.highlighted = 0;
@@ -109,14 +113,15 @@ const Character = function (name, clas) {
                 ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
             }
         })
-        console.log(checkerCoord)
     };
-	C.attackEnemy = function (enemy) {
-		const willHit = enemy.agility < rng(100) && C.attack > enemy.def;
-		willHit ? (enemy.hp = enemy.hp - C.attack + enemy.def) : 0;
+	C.attackEnemy = function (enemy, i) {
+		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def;
+        willHit ? (enemy.hp -= C.attackStrength + enemy.def) : 0;
+        showEnemyDetails(enemy, i);
+
 		return willHit
-			? `You hit for ${C.attack - enemy.def}!`
-			: `${C.name} missed!`;
+			? `You hit the ${enemy.name} for ${C.attackStrength - enemy.def}!`
+			: `You missed the ${enemy.name}!`;
 	};
 
 	C.inRange = [];
@@ -162,7 +167,8 @@ const Enemy = function (coords, enemyPower) {
 	// 0 = melee, 1 = magic, 2 = ranged
 	E.class = newClass < 60 ? 0 : newClass < 85 ? 2 : 1;
 	E.name = enemyType[rng(3)];
-	E.hp = Math.floor(Math.sqrt(enemyPower)) + ~~(enemyPower / 10);
+    E.hp = Math.floor(Math.sqrt(enemyPower)) + ~~(enemyPower / 10);
+    E.agility = !E.class ? rng() + 2 : E.class == 1 ? rng(2) + 1 : rng(5) + 3;
 
 	E.attack =
 		!E.class || E.class == 1
