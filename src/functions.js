@@ -6,6 +6,7 @@ const asyncForEach = async (array, callback) => {
 
 const inverseCoords = ([x, y], max) =>
 	!x ? [max, y] : !y ? [x, max] : x == max ? [0, y] : [x, 0];
+
 const roundUp = (num) => {
 	const split = num.toString().split(".")[1];
 	return split
@@ -14,6 +15,42 @@ const roundUp = (num) => {
 			: num
 		: num;
 };
+
+const checker = (exits, [sX, sY]) => {
+    const checkerCoord = [[sX,sY]];
+    while (checkerCoord.length < 196){
+        checkerCoord.forEach(([cX,cY]) => {
+            const potentialHighlights = [
+                [cX, cY - TILE_HEIGHT],
+                [cX + TILE_HEIGHT, cY],
+                [cX, cY + TILE_HEIGHT],
+                [cX - TILE_HEIGHT, cY],
+            ];
+            
+            potentialHighlights
+            .filter(([x, y]) => COORDINATES[x]?.[y]?.walkable)
+            .filter(([x,y]) => checkerCoord.some(([cX,cY]) => x != cX ? 1 : y == cY ? 0 : 1))
+            .forEach(([x,y]) =>{
+                if(x == sX && y == sY) return;
+                checkerCoord.push([x, y])
+            });
+        });
+
+        if(checkerCoord.length < 2) return;
+        
+        for(let i=0; i<exits.length;i++){
+            const [eX,eY] = exits[i];
+            for(let j=0;j<checkerCoord.length;j++){
+                const [cX,cY] = checkerCoord[j]
+                if(cX == eX && cY == eY){
+                    return 1;
+                }
+            }
+        }
+    }
+    
+    return;    
+}
 
 const generatePlayer = (coord, color, room, tileSize, exit) => {
 	handleKeyPress = (e) =>
@@ -90,8 +127,8 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 		a: [playerX - tileSize, playerY],
 	};
     
-	const [nextX, nextY] = dir[key];
-	let moveTimer;
+    const [nextX, nextY] = dir[key];
+    let moveTimer;
     
 	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
         removeHighlight()
@@ -114,31 +151,31 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 		if (!player.actionsLeft && enemies.length) {
             window.onkeypress = null;
             player.resetActions();
-			moveTimer = setTimeout(
-                () =>
+            moveTimer = setTimeout(() =>
                 asyncForEach(enemies, (enemy, i) => {
                     let turns = enemy.speed;
                     showEnemyDetails(enemy);
-						return new Promise((resolve) => {
+                    return (
+                        new Promise((resolve) => {
                             const turn = setInterval(() => {
                                 enemy.handleTurn(exits);
-								turns--;
-								if (turns < 1) {
+                                turns--;
+                                if (turns < 1) {
                                     clearInterval(turn);
-									if (i == enemies.length - 1) {
+                                    if (i == enemies.length - 1) {
                                         window.onkeypress =handleKeyPress;
                                         setTimeout(player.hiliteMoveArea, 300)
                                     }
                                     
                                     resolve();
                                 }
-                                }, 300);
-						});
-					}),
-				500
-			);
-		}
-	}
+                            }, 300);
+                        })
+                    )
+                }
+            ), 500);
+        }
+    }
 	for (let i = 0; i < exits.length; i++) {
 		if (nextX == exits[i][0] && nextY == exits[i][1]) {
             clearTimeout(moveTimer);
@@ -185,28 +222,40 @@ const goFullScreen = () => {
 
 // must not be in a corner
 // must not be on the same side as another exit or the start
-const generateRandomEndpoint = ([sX, sY], tile, max, exit) => {
-	const exitStart =
-		exit.length > 0
-			? [[sX, sY], ...exit.filter(([a, b]) => a != sX && b != sY)]
-			: [[sX, sY]];
-	const x = rng(tile) * tile;
-	const y = x == 0 || x == max ? rng(tile) * tile : rng() > 1 ? 0 : max;
-	// console.log(exitStart);
+const generateRandomEndpoint = (start, tile, max) => {
+    let xZero = start[0] == 0 ? 1 : 0;
+    let xMax = start[0] == max ? 1 : 0;
+    let yZero = start[1] == 0 ? 1 : 0;
+    let yMax = start[1] == max ? 1 : 0;
+    const amountExits = rng(100) > 75 ? rng(3) + 1 : rng(2) + 1;
+    const exits = [];
 
-	const newExit = exitStart.some(([eX, eY]) => {
-		if (
-			((x == max || x == 0) && x == eX) ||
-			((y == max || y == 0) && y == eY)
-		)
-			return true;
+    const getRandCoord = () => {
+        let coord = rng(tile) * tile;
+        while(coord == max || coord == 0){
+            coord = rng(tile) * tile;
+        }
+        return coord;
+    }
 
-		return false;
-	});
+    while(xMax + xZero + yMax + yZero <= amountExits){
+        const randAxis = rng(4);
+        if(!randAxis && !xZero){
+            xZero++;
+            exits.push([0,getRandCoord()]);
+        } else if(randAxis == 1 && !xMax){
+            xMax++;
+            exits.push([max,getRandCoord()])
+        } else if(randAxis == 2 && !yZero){
+            yZero++;
+            exits.push([getRandCoord(), 0]);
+        } else if(randAxis == 3 && !yMax){
+            yMax++;
+            exits.push([getRandCoord(), max]);
+        }
+    }
 
-	if (!newExit) return [x, y];
-
-	return generateRandomEndpoint([sX, sY], tile, max, exitStart);
+    return exits;
 };
 
 const dir = ([sX, sY], tile, max) => {
