@@ -38,14 +38,14 @@ const Character = function (name, clas) {
     ? 60 + rng(41)
     : 75 + rng(6);
 	C.items = [];
-	C.currentlyLevelingUp = false;
+	C.awaitingUser = false;
 	C.checkIfNextLvl = function () {
 		C.nextLvl - C.xp <= 0 && C.lvlUp();
 	};
 	C.lvlUp = function () {
 		C.nextLvl += C.nextLvl + Math.pow(C.lvl, 3);
 		C.lvl++;
-		C.currentlyLevelingUp = true;
+		C.awaitingUser = true;
 		_playerLvl.textContent = C.lvl;
 		_expToNextLvl.textContent = player.nextLvl;
 		_lvlUp.classList.remove("invisible");
@@ -78,7 +78,7 @@ const Character = function (name, clas) {
 		}
 
 		_lvlUp.classList.add("invisible");
-		C.currentlyLevelingUp = false;
+		C.awaitingUser = false;
 		window.onkeypress = handleKeyPress;
 	};
     C.currentCoord = playerCoord;
@@ -140,8 +140,8 @@ const Character = function (name, clas) {
         }
 
         if(C.actionsLeft == 0){
-            while(C.currentlyLevelingUp){
-                const waiting = await checkIfLeveling();
+            while(C.awaitingUser){
+                const waiting = await checkIfWaiting();
                 if(waiting) continue;
             }
             enemyTurn(exits)
@@ -173,15 +173,9 @@ const Character = function (name, clas) {
 		C.actionsLeft = C.actionsPerTurn;
 		_actionsLeft.innerHTML = C.actionsLeft;
 	};
-	C.turn = function (action, enemy = 0, coords) {
-		C.block = 0;
-		if (!action) {
-			C.block += C.turnSpeed;
-		} else if (action == 1) {
-			C.attackEnemy(enemy);
-		} else if (action == 2) {
-			C.move(coords);
-		}
+	C.defStance = function () {
+        C.block = C.actionsLeft;
+        enemyTurn()
 	};
 };
 

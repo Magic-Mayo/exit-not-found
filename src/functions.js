@@ -66,7 +66,7 @@ const generatePlayer = (coord, color, room, tileSize) => {
   player.hiliteMoveArea()
 //   _moveBtn.addEventListener('click', player.hiliteMoveArea);
 
-	if (!player.currentlyLevelingUp) {
+	if (!player.awaitingUser) {
 		window.onkeypress = handleKeyPress;
 	}
 };
@@ -286,4 +286,4 @@ const enemyTurn = () => {
     ), 500);
 }
 
-const checkIfLeveling = () => new Promise(resolve => setTimeout(() => player.currentlyLevelingUp ? resolve(true) : resolve(false), 500))
+const checkIfWaiting = () => new Promise(resolve => setTimeout(() => player.awaitingUser ? resolve(true) : resolve(false), 500))
