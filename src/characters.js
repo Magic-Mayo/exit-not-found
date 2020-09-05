@@ -139,6 +139,10 @@ const Character = function (name, clas) {
             C.hiliteMoveArea();
         }
 
+        if(C.actionsLeft == 0){
+            enemyTurn(exits);
+        }
+
 		return willHit && enemy.hp < 1 ?
             `You defeated the ${enemy.name}!` :
             willHit ? `You hit the ${enemy.name} for ${C.attackStrength - enemy.def}!` :
@@ -216,7 +220,7 @@ const Enemy = function (coords, enemyPower) {
 			: `${E.name} missed!`;
 	};
 
-	E.handleTurn = function (exits) {
+	E.handleTurn = function () {
 		const [x, y] = E.coords;
 
 		const isExit = ([a, b]) => {
