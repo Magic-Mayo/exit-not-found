@@ -97,7 +97,8 @@ const Character = function (name, clas) {
                 potentialHighlights.filter(([x, y]) => 
                     COORDINATES[x]?.[y]?.walkable &&
                     !COORDINATES[x]?.[y]?.occupied &&
-                    !COORDINATES[x]?.[y]?.highlighted
+                    !COORDINATES[x]?.[y]?.highlighted &&
+                    !COORDINATES[x]?.[y]?.exit
                 ).forEach(([x,y]) =>{
                     if(x == C.currentCoord[0] && y == C.currentCoord[1]) return;
                     COORDINATES[x][y].highlighted = 1
