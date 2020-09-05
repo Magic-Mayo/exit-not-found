@@ -13,7 +13,6 @@ const buildDungeon = (
 ) => {
     // clear board of previous paint...if any
     ctx.clearRect(0, 0, cWidth, cHeight);
-    const xyMax = tHeight * tWidth - tHeight;
     const [sX, sY] = inverseCoords([pExitX, pExitY], xyMax);
     exits = generateRandomEndpoint([sX, sY], tHeight, xyMax);
 
@@ -35,35 +34,19 @@ const buildDungeon = (
           eY = b;
         }
       })
-      COORDINATES[x][y] = {};
+      COORDINATES[x][y] = {
+        seen: "ff"
+      };
 
       if(eX == x){
         COORDINATES[x][y].walkable = 1;
         COORDINATES[x][y].exit = 1;
-        let exit;
-        if(eX == 0){
-          exit = ctx.createLinearGradient(-20,0,20,0);
-        } else if(eX == xyMax){
-          exit = ctx.createLinearGradient(240,0,260,0);
-        } else if(eY == 0){
-          exit = ctx.createLinearGradient(0,-20,0,20);
-        } else if(eY == xyMax){
-          exit = ctx.createLinearGradient(0,240,0,260);
-        }
         
-        if(x == 0 || y == 0){
-          exit.addColorStop(0.2, 'black');
-          exit.addColorStop(1, 'yellow');
-        } else {
-          exit.addColorStop(1, 'black');
-          exit.addColorStop(0, 'yellow');
-        }
-        
-        ctx.fillStyle = exit;
+        ctx.fillStyle = getExitGradient(x,y);
         ctx.fillRect(x,y,tWidth,tHeight)
       } else if(newX == 0 || newY == 0 || y == xyMax || x == xyMax){
         COORDINATES[x][y].walkable = sX == x && sY == y ? 1 : 0;
-        ctx.fillStyle = sX == x && sY == y ? 'white' : '#1c1c1c'
+        ctx.fillStyle = sX == x && sY == y ? 'white' : `transparent`
         ctx.fillRect(x,y,tWidth,tHeight)
         
       } else if(x <= xyMax && y <= xyMax){
@@ -71,7 +54,7 @@ const buildDungeon = (
         cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
         COORDINATES[x][y].walkable ? null : COORDINATES[x][y].occupied = 1;
         
-        ctx.fillStyle = COORDINATES[x][y].walkable === 1 ? "transparent" : "#2b2b2b";
+        ctx.fillStyle = COORDINATES[x][y].walkable === 0 ? "transparent" : "#2b2b2b";
         ctx.fillRect(x, y, tWidth, tHeight);
       }
 
