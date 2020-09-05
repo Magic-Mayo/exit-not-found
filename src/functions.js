@@ -79,7 +79,6 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 		)
 	)
     return;
-    removeHighlight()
 	let { key } = event;
 	key = key.toLowerCase();
 	let [playerX, playerY] = playerCoord;
@@ -95,6 +94,7 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 	let moveTimer;
     
 	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
+        removeHighlight()
         if (enemies.length) player.actionsLeft--;
 		_actionsLeft.innerHTML = player.actionsLeft;
         ctx.clearRect(playerX, playerY, tileSize, tileSize);
