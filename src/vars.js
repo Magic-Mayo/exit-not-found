@@ -108,5 +108,9 @@ const enemyPowerMult = () => lvl % 5 == 0 ? totalEnemyPower = ~~(totalEnemyPower
 /* ==================================
 ==================================== */
 
+// TIMER FOR ENEMY MOVEMENT
+let moveTimer;
 
+// EXITS FOR DUNGEON
+let exits;
 // const rooms = []
