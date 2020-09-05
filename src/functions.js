@@ -16,7 +16,7 @@ const roundUp = (num) => {
 		: num;
 };
 
-const checker = (exits, [sX, sY]) => {
+const checker = ([sX, sY]) => {
     const checkerCoord = [[sX,sY]];
     while (checkerCoord.length < 196){
         checkerCoord.forEach(([cX,cY]) => {
@@ -52,9 +52,9 @@ const checker = (exits, [sX, sY]) => {
     return;    
 }
 
-const generatePlayer = (coord, color, room, tileSize, exit) => {
+const generatePlayer = (coord, color, room, tileSize) => {
 	handleKeyPress = (e) =>
-		handlePlayerMovement(e, room, tileSize, color, exit);
+		handlePlayerMovement(e, room, tileSize, color);
 
   playerCoord = coord;
   player.currentCoord = coord;
@@ -71,7 +71,7 @@ const generatePlayer = (coord, color, room, tileSize, exit) => {
 	}
 };
 
-const generateEnemies = (lvl, max, room, exits) => {
+const generateEnemies = (lvl, max, room) => {
 	enemies = [];
 
 	enemyCount = rng(lvl / 2 + 2);
@@ -106,7 +106,7 @@ const getEnemyStartCoordinate = (max, room) => {
 		: getEnemyStartCoordinate(max, room);
 };
 
-const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
+const handlePlayerMovement = async (event, room, tileSize, color) => {
 	if (
 		!(
 			event.code == "KeyW" ||
@@ -128,7 +128,6 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
 	};
     
     const [nextX, nextY] = dir[key];
-    let moveTimer;
     
 	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
         removeHighlight()
@@ -149,31 +148,7 @@ const handlePlayerMovement = async (event, room, tileSize, color, exits) => {
         
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
 		if (!player.actionsLeft && enemies.length) {
-            window.onkeypress = null;
-            player.resetActions();
-            moveTimer = setTimeout(() =>
-                asyncForEach(enemies, (enemy, i) => {
-                    let turns = enemy.speed;
-                    showEnemyDetails(enemy);
-                    return (
-                        new Promise((resolve) => {
-                            const turn = setInterval(() => {
-                                enemy.handleTurn(exits);
-                                turns--;
-                                if (turns < 1) {
-                                    clearInterval(turn);
-                                    if (i == enemies.length - 1) {
-                                        window.onkeypress =handleKeyPress;
-                                        setTimeout(player.hiliteMoveArea, 300)
-                                    }
-                                    
-                                    resolve();
-                                }
-                            }, 300);
-                        })
-                    )
-                }
-            ), 500);
+            enemyTurn();
         }
     }
 	for (let i = 0; i < exits.length; i++) {
@@ -281,4 +256,32 @@ const removeHighlight = () => {
             }
         }
     }
+}
+
+const enemyTurn = () => {
+    window.onkeypress = null;
+        player.resetActions();
+        moveTimer = setTimeout(() =>
+            asyncForEach(enemies, (enemy, i) => {
+                let turns = enemy.speed;
+                showEnemyDetails(enemy);
+                return (
+                    new Promise((resolve) => {
+                        const turn = setInterval(() => {
+                            enemy.handleTurn();
+                            turns--;
+                            if (turns < 1) {
+                                clearInterval(turn);
+                                if (i == enemies.length - 1) {
+                                    window.onkeypress =handleKeyPress;
+                                    setTimeout(player.hiliteMoveArea, 300)
+                                }
+                                
+                                resolve();
+                            }
+                        }, 300);
+                    })
+                )
+            }
+        ), 500);
 }
