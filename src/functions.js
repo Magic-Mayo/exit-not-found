@@ -260,28 +260,30 @@ const removeHighlight = () => {
 
 const enemyTurn = () => {
     window.onkeypress = null;
-        player.resetActions();
-        moveTimer = setTimeout(() =>
-            asyncForEach(enemies, (enemy, i) => {
-                let turns = enemy.speed;
-                showEnemyDetails(enemy);
-                return (
-                    new Promise((resolve) => {
-                        const turn = setInterval(() => {
-                            enemy.handleTurn();
-                            turns--;
-                            if (turns < 1) {
-                                clearInterval(turn);
-                                if (i == enemies.length - 1) {
-                                    window.onkeypress =handleKeyPress;
-                                    setTimeout(player.hiliteMoveArea, 300)
-                                }
-                                
-                                resolve();
+    player.resetActions();
+    moveTimer = setTimeout(() =>
+        asyncForEach(enemies, (enemy, i) => {
+            let turns = enemy.speed;
+            showEnemyDetails(enemy);
+            return (
+                new Promise((resolve) => {
+                    const turn = setInterval(() => {
+                        enemy.handleTurn();
+                        turns--;
+                        if (turns < 1) {
+                            clearInterval(turn);
+                            if (i == enemies.length - 1) {
+                                window.onkeypress =handleKeyPress;
+                                setTimeout(player.hiliteMoveArea, 300)
                             }
-                        }, 300);
-                    })
-                )
-            }
-        ), 500);
+                            
+                            resolve();
+                        }
+                    }, 300);
+                })
+            )
+        }
+    ), 500);
 }
+
+const checkIfLeveling = () => new Promise(resolve => setTimeout(() => player.currentlyLevelingUp ? resolve(true) : resolve(false), 500))
