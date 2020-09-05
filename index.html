@@ -78,6 +78,9 @@
 			.enemy-summary {
 				border-bottom: .24vw solid #A70707;
 				padding: .8vw 1.3vw .8vw;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
 			}
 
 			.enemy-details {
@@ -194,7 +197,11 @@
 			#useItemBtn { background-color: #A76C07;}
 			#moveBtn { background-color: #07A732;}
 			#blockBtn { background-color: #0787A7;}
-			#attackBtn { background-color: #A70707;}
+			#attackBtn {
+                background-color: #A70707;
+                width: 5.1vw;
+                height: 3vw;
+            }
 
 			.toggle-game {
 				margin-top: 75px;
@@ -370,9 +377,11 @@
 			<canvas id="gameBG" width="256" height="256"></canvas>
 			<section class="enemy-stats font-bold">
 				<div class="enemy-summary">
-					<h3 class="font-regular">Enemy Stats</h3>
-					<p>Total Enemies: <span id="totalEnemies">0</span></p>
-					<p id="enemySeesPlayer"></p>
+                    <div>
+                        <h3 class="font-regular">Enemy Stats</h3>
+                        <p>Total Enemies: <span id="totalEnemies">0</span></p>
+                        <p id="enemySeesPlayer"></p>
+                    </div>
 					<button id="attackBtn" class="invisible">attack</button>
 
 				</div>
