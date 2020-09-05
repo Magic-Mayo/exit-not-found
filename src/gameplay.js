@@ -63,7 +63,6 @@ game.addEventListener("click", (e) => {
     let index;
 	const [clickedEnemy] = enemies.filter((enemy, i) => {
         if(checkIfEnemyCoord([adjustedX, adjustedY], enemy.coords)){
-            console.log('got heer')
             index = i;
             return 1;
         }
@@ -90,12 +89,12 @@ const showEnemyDetails = (enemy, i) => {
     _section.append(_h4)
 
     // CREATE 'CLASS' & APPEND TO CONTAINER
-    const enemyClass = !enemy.class ? 'melee' : enemy.class == 1 ? 'magic' : 'ranged'
-    _section.append(createParSpanPair('🧍 Class: ', enemyClass))
+    // const enemyClass = !enemy.class ? 'melee' : enemy.class == 1 ? 'magic' : 'ranged'
+    // _section.append(createParSpanPair('🧍 Class: ', enemyClass))
     // CREATE 'HP' & APPEND TO CONTAINER
     _section.append(createParSpanPair('❤ HP: ', enemy.hp))
     // CREATE 'ATTACK STRENGTH' & APPEND TO CONTAINER
-    _section.append(createParSpanPair('🔪 Attack Strength: ', enemy.attack))
+    _section.append(createParSpanPair('🔪 Attack: ', enemy.attack))
     // CREATE 'DEFENSE' & APPEND TO CONTAINER
     _section.append(createParSpanPair('🛡 Defense: ', enemy.def))
     // CREATE 'FOV' & APPEND TO CONTAINER
