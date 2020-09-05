@@ -53,6 +53,7 @@ CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS
 ==================================== */
 const NUMBER_OF_ROWS = 16;
 const NUMBER_OF_COLUMNS = 16; 
+const CHECKER_INT = Math.pow(NUMBER_OF_COLUMNS - 2, 2) + 4;
 const CANVAS_HEIGHT = NUMBER_OF_COLUMNS * NUMBER_OF_COLUMNS;
 const CANVAS_WIDTH = NUMBER_OF_ROWS * NUMBER_OF_ROWS;
 const ROWS = new Array(NUMBER_OF_ROWS).fill();
@@ -60,6 +61,7 @@ const COLUMNS = new Array(NUMBER_OF_COLUMNS).fill();
 const TILE_HEIGHT = (CANVAS_HEIGHT / NUMBER_OF_ROWS);
 const TILE_WIDTH = (CANVAS_WIDTH / NUMBER_OF_ROWS);
 const WALKABLE_TILE_CHANCE = 0.8;
+const xyMax = TILE_HEIGHT * TILE_HEIGHT - TILE_HEIGHT;
 /* ==================================
 ==================================== */
 
@@ -85,7 +87,7 @@ let player;
 let lvl = 1;
 // current coordinate of the player
 let playerCoord = [];
-
+let playersTurn = true
 // ENEMY INFORMATION
 // # of enemies this dungeon
 // array of positions for each enemy
