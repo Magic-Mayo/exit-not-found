@@ -1,5 +1,19 @@
 const rng = (n = 4) => Math.floor(Math.random() * n);
 
+
+const colors = {
+    player: '#fff',
+    walkable: {
+        seen: "transparent",
+        unseen: '#000000'
+    },
+    // walkable: "transparent",
+    unwalkable: '#000',
+    enemy: '#940404',
+    fovHighlight: "#3370d422",
+    walkHighlight: '#08fa2566'
+}
+
 /* ==================================
 HTML ELEMENTS
 ==================================== */
@@ -64,6 +78,7 @@ const WALKABLE_TILE_CHANCE = 0.8;
 const xyMax = TILE_HEIGHT * TILE_HEIGHT - TILE_HEIGHT;
 /* ==================================
 ==================================== */
+
 
 game.setAttribute('width', CANVAS_WIDTH)
 game.setAttribute('height', CANVAS_HEIGHT)
