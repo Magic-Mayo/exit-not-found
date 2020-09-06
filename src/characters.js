@@ -313,7 +313,7 @@ const Enemy = function (coords, enemyPower) {
 			const {
 				coords: [newX, newY],
 			} = E;
-
+			eMove.play()
 			ctx.fillStyle = COORDINATES[newX]?.[newY]
 				? colors.enemy
 				: colors.walkable.seen;

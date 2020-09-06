@@ -123,6 +123,7 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 		)
 	)
 		return;
+	pMove.play()
 	let { key } = event;
 	key = key.toLowerCase();
 	let [playerX, playerY] = playerCoord;
