@@ -35,7 +35,7 @@ const buildDungeon = (
         }
       })
       COORDINATES[x][y] = {
-        seen: "ff"
+        seen: false
       };
 
       if(eX == x){
@@ -46,7 +46,7 @@ const buildDungeon = (
         ctx.fillRect(x,y,tWidth,tHeight)
       } else if(newX == 0 || newY == 0 || y == xyMax || x == xyMax){
         COORDINATES[x][y].walkable = sX == x && sY == y ? 1 : 0;
-        ctx.fillStyle = sX == x && sY == y ? 'white' : `transparent`
+        ctx.fillStyle = sX == x && sY == y ? colors.player : colors.unwalkable
         ctx.fillRect(x,y,tWidth,tHeight)
         
       } else if(x <= xyMax && y <= xyMax){
@@ -54,7 +54,7 @@ const buildDungeon = (
         cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
         COORDINATES[x][y].walkable ? null : COORDINATES[x][y].occupied = 1;
         
-        ctx.fillStyle = COORDINATES[x][y].walkable === 0 ? "transparent" : "#2b2b2b";
+        ctx.fillStyle = COORDINATES[x][y].walkable === 0 ? colors.unwalkable : COORDINATES[x][y].seen ? colors.walkable.seen : colors.walkable.unseen;
         ctx.fillRect(x, y, tWidth, tHeight);
       }
 
@@ -68,7 +68,7 @@ const buildDungeon = (
         buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX,pExitY])
     );
   
-  generatePlayer([sX, sY], "white", COORDINATES, tHeight);
+  generatePlayer([sX, sY], COORDINATES, tHeight);
   generateEnemies(lvl, xyMax, COORDINATES);
 
   _dungeon.innerHTML = dungeon++;

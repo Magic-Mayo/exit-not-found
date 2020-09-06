@@ -91,7 +91,7 @@ const Character = function (name, clas) {
             C.currentCoord[1] + (TILE_WIDTH / 2)
         ]
 		console.log(x,y)
-		ctx.fillStyle = "#3370d422"
+		ctx.fillStyle = colors.fovHighlight
         ctx.beginPath();
         ctx.arc(x,y,C.fov * TILE_HEIGHT, 0, Math.PI * 2);
         // ctx.clip()
@@ -118,7 +118,8 @@ const Character = function (name, clas) {
                     !COORDINATES[x]?.[y]?.exit
                 ).forEach(([x,y]) =>{
                     if(x == C.currentCoord[0] && y == C.currentCoord[1]) return;
-                    COORDINATES[x][y].highlighted = 1
+					COORDINATES[x][y].highlighted = 1
+					COORDINATES[x][y].seen = true
                     checkerCoord.push([x, y])
                 });
             })
@@ -127,7 +128,7 @@ const Character = function (name, clas) {
         checkerCoord.forEach(([x,y], notStart)=>{
             if(notStart){
                 ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
-                ctx.fillStyle = "#08fa2566";
+                ctx.fillStyle = colors.walkHighlight;
                 ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
             }
         })
@@ -314,8 +315,8 @@ const Enemy = function (coords, enemyPower) {
 			} = E;
 
 			ctx.fillStyle = COORDINATES[newX]?.[newY]
-				? "#94040466"
-				: "transparent";
+				? colors.enemy
+				: colors.walkable.seen;
 			ctx.fillRect(newX, newY, TILE_WIDTH, TILE_HEIGHT);
 			return (COORDINATES[newX][newY].occupied = 1);
 		}

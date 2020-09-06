@@ -17,58 +17,61 @@ const roundUp = (num) => {
 };
 
 const checker = ([sX, sY]) => {
-    const checkerCoord = [[sX,sY]];
-    // let exitsFound = 0;
-    while (checkerCoord.length < CHECKER_INT){
-        checkerCoord.forEach(([cX,cY]) => {
-            const potentialHighlights = [
-                [cX, cY - TILE_HEIGHT],
-                [cX + TILE_HEIGHT, cY],
-                [cX, cY + TILE_HEIGHT],
-                [cX - TILE_HEIGHT, cY],
-            ];
-            
-            potentialHighlights
-            .filter(([x, y]) => COORDINATES[x]?.[y]?.walkable)
-            .filter(([x,y]) => checkerCoord.some(([cX,cY]) => x != cX ? 1 : y == cY ? 0 : 1))
-            .forEach(([x,y]) =>{
-                if(x == sX && y == sY) return;
-                checkerCoord.push([x, y])
-            });
-        });
+	const checkerCoord = [[sX, sY]];
+	// let exitsFound = 0;
+	while (checkerCoord.length < CHECKER_INT) {
+		checkerCoord.forEach(([cX, cY]) => {
+			const potentialHighlights = [
+				[cX, cY - TILE_HEIGHT],
+				[cX + TILE_HEIGHT, cY],
+				[cX, cY + TILE_HEIGHT],
+				[cX - TILE_HEIGHT, cY],
+			];
 
-        if(checkerCoord.length < 2) break;
-        
-        for(let i=0; i<exits.length;i++){
-            const [eX,eY] = exits[i];
-            for(let j=0;j<checkerCoord.length;j++){
-                const [cX,cY] = checkerCoord[j]
-                if(cX == eX && cY == eY){
-                    return 1;
-                    // exitsFound++;
+			potentialHighlights
+				.filter(([x, y]) => COORDINATES[x]?.[y]?.walkable)
+				.filter(([x, y]) =>
+					checkerCoord.some(([cX, cY]) =>
+						x != cX ? 1 : y == cY ? 0 : 1
+					)
+				)
+				.forEach(([x, y]) => {
+					if (x == sX && y == sY) return;
+					checkerCoord.push([x, y]);
+				});
+		});
+
+		if (checkerCoord.length < 2) break;
+
+		for (let i = 0; i < exits.length; i++) {
+			const [eX, eY] = exits[i];
+			for (let j = 0; j < checkerCoord.length; j++) {
+				const [cX, cY] = checkerCoord[j];
+				if (cX == eX && cY == eY) {
+					return 1;
+					// exitsFound++;
 					// if (exitsFound == exits.length) return 1
-                }
-            }
-        }
-    }
-    
-    return;
-}
+				}
+			}
+		}
+	}
 
-const generatePlayer = (coord, color, room, tileSize) => {
-	handleKeyPress = (e) =>
-		handlePlayerMovement(e, room, tileSize, color);
+	return;
+};
 
-  playerCoord = coord;
-  player.currentCoord = coord;
+const generatePlayer = (coord, room, tileSize) => {
+	handleKeyPress = (e) => handlePlayerMovement(e, room, tileSize);
+
+	playerCoord = coord;
+	player.currentCoord = coord;
 	// console.log(
 	// `The player will start at ${playerCoord} and will have the color ${color}`
 	// );
-	ctx.fillStyle = room[coord[0]][coord[1]] && color;
-  ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
-  player.hiliteMoveArea();
-  player.hiliteFOV();
-//   _moveBtn.addEventListener('click', player.hiliteMoveArea);
+	ctx.fillStyle = room[coord[0]][coord[1]] && colors.player;
+	ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
+	player.hiliteMoveArea();
+	player.hiliteFOV();
+	//   _moveBtn.addEventListener('click', player.hiliteMoveArea);
 
 	if (!player.awaitingUser) {
 		window.onkeypress = handleKeyPress;
@@ -91,7 +94,7 @@ const generateEnemies = (lvl, max, room) => {
 		} = enemy;
 
 		COORDINATES[x][y].occupied = 1;
-		ctx.fillStyle = room[x][y] && "#94040466";
+		ctx.fillStyle = room[x][y] && colors.enemy;
 		ctx.fillRect(x, y, TILE_WIDTH, TILE_HEIGHT);
 	}
 	player.checkFOV();
@@ -110,7 +113,7 @@ const getEnemyStartCoordinate = (max, room) => {
 		: getEnemyStartCoordinate(max, room);
 };
 
-const handlePlayerMovement = async (event, room, tileSize, color) => {
+const handlePlayerMovement = async (event, room, tileSize) => {
 	if (
 		!(
 			event.code == "KeyW" ||
@@ -119,53 +122,26 @@ const handlePlayerMovement = async (event, room, tileSize, color) => {
 			event.code == "KeyA"
 		)
 	)
-    return;
+		return;
 	let { key } = event;
 	key = key.toLowerCase();
 	let [playerX, playerY] = playerCoord;
-    
+
 	const dir = {
-        w: [playerX, playerY - tileSize],
+		w: [playerX, playerY - tileSize],
 		d: [playerX + tileSize, playerY],
 		s: [playerX, playerY + tileSize],
 		a: [playerX - tileSize, playerY],
 	};
-    
+
     const [nextX, nextY] = dir[key];
     
-	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
-        removeHighlight();
-        if (enemies.length) player.actionsLeft--;
-		_actionsLeft.innerHTML = player.actionsLeft;
-        ctx.clearRect(playerX, playerY, tileSize, tileSize);
-        ctx.fillStyle = room[playerX][playerY].highlighted ? '#08fa2566' : 'transparent';
-        ctx.fillRect(playerX, playerY, tileSize, tileSize);
-		room[playerX][playerY].occupied = 0;
-
-		ctx.fillStyle = room[nextX][nextY].walkable && color;
-		ctx.fillRect(nextX, nextY, tileSize, tileSize);
-		room[nextX][nextY].occupied = 1;
-		_steps.innerHTML = steps++;
-        playerCoord = [nextX, nextY];
-        player.currentCoord = playerCoord;
-        player.hiliteMoveArea();
-        player.hiliteFOV();
-        player.checkFOV();
-        
-		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
-		if (!player.actionsLeft && enemies.length) {
-            playersTurn = false
-            game.classList.remove('p-turn')
-            game.classList.add('e-turn')
-            return enemyTurn();
-        }
-    }
-	for (let i = 0; i < exits.length; i++) {
+    for (let i = 0; i < exits.length; i++) {
 		if (nextX == exits[i][0] && nextY == exits[i][1]) {
-            game.classList.remove('e-turn')
-            game.classList.add('p-turn')
-            clearTimeout(moveTimer);
-            // _moveBtn.removeEventListener('click', player.hiliteMoveArea);
+			game.classList.remove("e-turn");
+			game.classList.add("p-turn");
+			clearTimeout(moveTimer);
+			// _moveBtn.removeEventListener('click', player.hiliteMoveArea);
 			window.onkeypress = null;
 			player.xp += lvl;
 			lvl++;
@@ -188,6 +164,37 @@ const handlePlayerMovement = async (event, room, tileSize, color) => {
 			);
 		}
 	}
+
+	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
+		removeHighlight();
+		if (enemies.length) player.actionsLeft--;
+		_actionsLeft.innerHTML = player.actionsLeft;
+		ctx.clearRect(playerX, playerY, tileSize, tileSize);
+		ctx.fillStyle = room[playerX][playerY].highlighted
+            ? colors.playerHighlight
+			: colors.walkable.seen;
+		ctx.fillRect(playerX, playerY, tileSize, tileSize);
+		room[playerX][playerY].occupied = 0;
+
+		ctx.fillStyle = room[nextX][nextY].walkable && colors.player;
+		ctx.fillRect(nextX, nextY, tileSize, tileSize);
+		room[nextX][nextY].occupied = 1;
+		_steps.innerHTML = steps++;
+		playerCoord = [nextX, nextY];
+		player.currentCoord = playerCoord;
+		player.hiliteMoveArea();
+		player.hiliteFOV();
+		player.checkFOV();
+
+		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
+		if (!player.actionsLeft && enemies.length) {
+			playersTurn = false;
+			game.classList.remove("p-turn");
+			game.classList.add("e-turn");
+			return enemyTurn();
+		}
+	}
+
 };
 
 const goFullScreen = () => {
@@ -208,39 +215,39 @@ const goFullScreen = () => {
 // must not be in a corner
 // must not be on the same side as another exit or the start
 const generateRandomEndpoint = (start, tile, max) => {
-    let xZero = start[0] == 0 ? 1 : 0;
-    let xMax = start[0] == max ? 1 : 0;
-    let yZero = start[1] == 0 ? 1 : 0;
-    let yMax = start[1] == max ? 1 : 0;
-    const amountExits = rng(100) > 75 ? rng(3) + 1 : rng(2) + 1;
-    const exits = [];
+	let xZero = start[0] == 0 ? 1 : 0;
+	let xMax = start[0] == max ? 1 : 0;
+	let yZero = start[1] == 0 ? 1 : 0;
+	let yMax = start[1] == max ? 1 : 0;
+	const amountExits = rng(100) > 75 ? rng(3) + 1 : rng(2) + 1;
+	const exits = [];
 
-    const getRandCoord = () => {
-        let coord = rng(tile) * tile;
-        while(coord == max || coord == 0){
-            coord = rng(tile) * tile;
-        }
-        return coord;
-    }
+	const getRandCoord = () => {
+		let coord = rng(tile) * tile;
+		while (coord == max || coord == 0) {
+			coord = rng(tile) * tile;
+		}
+		return coord;
+	};
 
-    while(xMax + xZero + yMax + yZero <= amountExits){
-        const randAxis = rng(4);
-        if(!randAxis && !xZero){
-            xZero++;
-            exits.push([0,getRandCoord()]);
-        } else if(randAxis == 1 && !xMax){
-            xMax++;
-            exits.push([max,getRandCoord()])
-        } else if(randAxis == 2 && !yZero){
-            yZero++;
-            exits.push([getRandCoord(), 0]);
-        } else if(randAxis == 3 && !yMax){
-            yMax++;
-            exits.push([getRandCoord(), max]);
-        }
-    }
+	while (xMax + xZero + yMax + yZero <= amountExits) {
+		const randAxis = rng(4);
+		if (!randAxis && !xZero) {
+			xZero++;
+			exits.push([0, getRandCoord()]);
+		} else if (randAxis == 1 && !xMax) {
+			xMax++;
+			exits.push([max, getRandCoord()]);
+		} else if (randAxis == 2 && !yZero) {
+			yZero++;
+			exits.push([getRandCoord(), 0]);
+		} else if (randAxis == 3 && !yMax) {
+			yMax++;
+			exits.push([getRandCoord(), max]);
+		}
+	}
 
-    return exits;
+	return exits;
 };
 
 const dir = ([sX, sY], tile, max) => {
@@ -257,90 +264,94 @@ const dir = ([sX, sY], tile, max) => {
 };
 
 const removeHighlight = () => {
-    for(let x in COORDINATES){
-        for(let y in COORDINATES[x]){
-            let {highlighted, occupied, walkable} = COORDINATES[x][y]
-            ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
-            if(highlighted){
+	for (let x in COORDINATES) {
+		for (let y in COORDINATES[x]) {
+			let { highlighted, occupied, walkable,seen } = COORDINATES[x][y];
+			ctx.clearRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+			if (highlighted) {
                 COORDINATES[x][y].highlighted = 0;
-            }
+			}
 
-            if(!walkable){
-                ctx.fillStyle = 'transparent'
-                ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
-            } else if(x == playerCoord[0] && y == playerCoord[1]){
-                ctx.fillStyle = 'white'
-                ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
-            } else if(walkable){
-                if(occupied){
-                    ctx.fillStyle = '#94040466'
-                }
-                else if(exits.some(([eX,eY]) => eX == x && eY == y)){
-                    ctx.fillStyle = getExitGradient(x,y)
-                } else {
-                    ctx.fillStyle = '#2b2b2b'
-                }
-                ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
-            }
-        }
-    }
-}
+			if (!walkable) {
+				ctx.fillStyle = colors.unwalkable;
+				ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+			} else if (x == playerCoord[0] && y == playerCoord[1]) {
+				ctx.fillStyle = colors.player;
+			} else if (walkable) {
+				if (occupied) {
+					ctx.fillStyle = colors.enemy;
+				} else if (exits.some(([eX, eY]) => eX == x && eY == y)) {
+					ctx.fillStyle = getExitGradient(x, y);
+				} else if (seen) {
+					ctx.fillStyle = colors.walkable.seen;
+				} else ctx.fillStyle = colors.walkable.unseen
+				ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+			}
+		}
+	}
+};
 
 const enemyTurn = () => {
-    window.onkeypress = null;
-    player.resetActions();
-    moveTimer = setTimeout(() =>
-        asyncForEach(enemies, (enemy, i) => {
-            let turns = enemy.speed;
-            showEnemyDetails(enemy);
-            return (
-                new Promise((resolve) => {
-                    const turn = setInterval(() => {
-                        enemy.handleTurn();
-                        turns--;
-                        if (turns < 1) {
-                            clearInterval(turn);
-                            if (i == enemies.length - 1) {
-                                window.onkeypress =handleKeyPress;
-                                setTimeout(() =>{
-									playersTurn = true
-                                    game.classList.remove('e-turn')
-                                    game.classList.add('p-turn')                                    
-                                    player.hiliteMoveArea();
-                                    player.hiliteFOV()
-                                }, 300)
-                            }
-                            
-                            resolve();
-                        }
-                    }, 300);
-                })
-            )
-        }
-    ), 500);
-}
+	window.onkeypress = null;
+	player.resetActions();
+	moveTimer = setTimeout(
+		() =>
+			asyncForEach(enemies, (enemy, i) => {
+				let turns = enemy.speed;
+				showEnemyDetails(enemy);
+				return new Promise((resolve) => {
+					const turn = setInterval(() => {
+						enemy.handleTurn();
+						turns--;
+						if (turns < 1) {
+							clearInterval(turn);
+							if (i == enemies.length - 1) {
+								window.onkeypress = handleKeyPress;
+								setTimeout(() => {
+									playersTurn = true;
+									game.classList.remove("e-turn");
+									game.classList.add("p-turn");
+									player.hiliteMoveArea();
+									player.hiliteFOV();
+								}, 300);
+							}
 
-const checkIfWaiting = () => new Promise(resolve => setTimeout(() => player.awaitingUser ? resolve(true) : resolve(false), 500))
+							resolve();
+						}
+					}, 300);
+				});
+			}),
+		500
+	);
+};
 
-const getExitGradient = (x,y) => {
-    let exit;
-    if(x == 0){
-        exit = ctx.createLinearGradient(-20,0,20,0);
-    } else if(x == xyMax){
-        exit = ctx.createLinearGradient(240,0,260,0);
-    } else if(y == 0){
-        exit = ctx.createLinearGradient(0,-20,0,20);
-    } else if(y == xyMax){
-        exit = ctx.createLinearGradient(0,240,0,260);
-    }
-    
-    if(x == 0 || y == 0){
-        exit.addColorStop(0.2, 'black');
-        exit.addColorStop(1, 'yellow');
-    } else {
-        exit.addColorStop(1, 'black');
-        exit.addColorStop(0, 'yellow');
-    }
+const checkIfWaiting = () =>
+	new Promise((resolve) =>
+		setTimeout(
+			() => (player.awaitingUser ? resolve(true) : resolve(false)),
+			500
+		)
+	);
 
-    return exit;
-}
+const getExitGradient = (x, y) => {
+	let exit;
+	if (x == 0) {
+		exit = ctx.createLinearGradient(-20, 0, 20, 0);
+	} else if (x == xyMax) {
+		exit = ctx.createLinearGradient(240, 0, 260, 0);
+	} else if (y == 0) {
+		exit = ctx.createLinearGradient(0, -20, 0, 20);
+	} else if (y == xyMax) {
+		exit = ctx.createLinearGradient(0, 240, 0, 260);
+	}
+
+	if (x == 0 || y == 0) {
+		exit.addColorStop(0.2, "black");
+		exit.addColorStop(1, "yellow");
+	} else {
+		exit.addColorStop(1, "black");
+		exit.addColorStop(0, "yellow");
+	}
+
+	return exit;
+};
