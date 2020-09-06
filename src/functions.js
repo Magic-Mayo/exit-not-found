@@ -150,7 +150,7 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 			if (lvl % 10 == 0) player.xp += 100;
 			player.checkIfNextLvl();
 			_expCurrent.textContent = player.xp;
-
+			passDungeonSound.play()
 			console.log("you win!");
 
 			player.resetActions();

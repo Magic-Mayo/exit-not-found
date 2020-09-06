@@ -1,4 +1,8 @@
 const pMove = new Audio('./src/sounds/Move.wav')
 const eMove = new Audio('./src/sounds/enemyMove.wav')
 const levelUpSound = new Audio('./src/sounds/Powerup.wav')
+const magicDamageSound = new Audio('./src/sounds/Magic.wav')
+const meleeDamageSound = new Audio('./src/sounds/Melee.wav')
+const rangedDamageSound = new Audio('./src/sounds/Ranged.wav')
+const passDungeonSound = new Audio('./src/sounds/PassDungeon.wav')
 // move.load()
