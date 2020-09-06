@@ -50,6 +50,7 @@ const Character = function (name, clas) {
 		_playerLvl.textContent = C.lvl;
 		_expToNextLvl.textContent = player.nextLvl;
 		_lvlUp.classList.remove("invisible");
+		levelUpSound.play()
 		window.onkeypress = null;
 	};
 	C.weapons = weapons[C.class];
