@@ -5,7 +5,7 @@ const colors = {
     player: '#fff',
     walkable: {
         seen: "transparent",
-        unseen: '#000000'
+        unseen: '#000000dd'
     },
     // walkable: "transparent",
     unwalkable: '#000',
