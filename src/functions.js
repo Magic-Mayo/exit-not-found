@@ -59,16 +59,23 @@ const checker = ([sX, sY]) => {
 	return;
 };
 
+const inRange = ([aX,aY], [bX,bY], fov) => {
+    const xDif = Math.abs(aX - bX) / TILE_HEIGHT;
+    const yDif = Math.abs(aY - bY) / TILE_HEIGHT;
+    return ~~Math.sqrt(xDif * xDif + yDif * yDif) <= fov;
+}
+
+const getCenterOfCoords = character => ([character.coords[0] + (TILE_WIDTH /2), character.coords[1] + (TILE_WIDTH /2)]);
+
 const generatePlayer = (coord, room, tileSize) => {
 	handleKeyPress = (e) => handlePlayerMovement(e, room, tileSize);
 
 	playerCoord = coord;
-	player.currentCoord = coord;
+	player.coords = coord;
 	// console.log(
 	// `The player will start at ${playerCoord} and will have the color ${color}`
-	// );
-	ctx.fillStyle = room[coord[0]][coord[1]] && colors.player;
-	ctx.fillRect(coord[0], coord[1], tileSize, tileSize);
+    // );
+    paintCanvas();
 	player.hiliteMoveArea();
 	player.hiliteFOV();
 	//   _moveBtn.addEventListener('click', player.hiliteMoveArea);
@@ -94,8 +101,6 @@ const generateEnemies = (lvl, max, room) => {
 		} = enemy;
 
 		COORDINATES[x][y].occupied = 1;
-		ctx.fillStyle = room[x][y] && colors.enemy;
-		ctx.fillRect(x, y, TILE_WIDTH, TILE_HEIGHT);
 	}
 	player.checkFOV();
 };
@@ -167,24 +172,18 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 	}
 
 	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
-		removeHighlight();
-		if (enemies.length) player.actionsLeft--;
-		_actionsLeft.innerHTML = player.actionsLeft;
-		ctx.clearRect(playerX, playerY, tileSize, tileSize);
-		ctx.fillStyle = room[playerX][playerY].highlighted
-            ? colors.playerHighlight
-			: colors.walkable.seen;
-		ctx.fillRect(playerX, playerY, tileSize, tileSize);
+        if (enemies.length) player.actionsLeft--;
 		room[playerX][playerY].occupied = 0;
-
-		ctx.fillStyle = room[nextX][nextY].walkable && colors.player;
-		ctx.fillRect(nextX, nextY, tileSize, tileSize);
 		room[nextX][nextY].occupied = 1;
-		_steps.innerHTML = steps++;
+        
+		_actionsLeft.innerHTML = player.actionsLeft;
+        _steps.innerHTML = steps++;
+        
 		playerCoord = [nextX, nextY];
-		player.currentCoord = playerCoord;
+        player.coords = playerCoord;
+        
+		paintCanvas();
 		player.hiliteMoveArea();
-		player.hiliteFOV();
 		player.checkFOV();
 
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
@@ -251,45 +250,61 @@ const generateRandomEndpoint = (start, tile, max) => {
 	return exits;
 };
 
-const dir = ([sX, sY], tile, max) => {
-	if (sX == 0) {
-		if (sY > 0) return 0;
-		else return 1;
-	} else if (sY == 0) {
-		if (sX < max + tile) return 1;
-		else return 2;
-	} else if (sX == max) {
-		if (sY < max + tile) return 2;
-		else return 3;
-	}
-};
-
-const removeHighlight = () => {
+const paintCanvas = () => {
 	for (let x in COORDINATES) {
 		for (let y in COORDINATES[x]) {
-			let { highlighted, occupied, walkable,seen } = COORDINATES[x][y];
+            if(inRange(player.coords, [x,y],player.fov)){
+                COORDINATES[x][y].hasBeenSeen = 1;
+                COORDINATES[x][y].inSight = 1;
+            }
+            else COORDINATES[x][y].inSight = 0;
+            let { highlighted, occupied, walkable, hasBeenSeen, inSight, border, exit } = COORDINATES[x][y];
+            const current = player.coords[0] == x && player.coords[1] == y;
 			ctx.clearRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
 			if (highlighted) {
                 COORDINATES[x][y].highlighted = 0;
-			}
+            }
+            
+            if(inSight){
+                if (!walkable) {
+                    ctx.fillStyle = colors.unseenOrUnwalkable;
+                    ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+                } else if (x == playerCoord[0] && y == playerCoord[1]) {
+                    ctx.fillStyle = colors.player;
+                } else if (walkable) {
+                    if (occupied) {
+                        ctx.fillStyle = colors.inSight.enemy;
+                    } else if (exit) {
+                        ctx.fillStyle = getExitGradient(x, y);
+                    } else if (hasBeenSeen) {
+                        ctx.fillStyle = colors.inSight.walkable;
+                    } else ctx.fillStyle = colors.unseenOrUnwalkable
+                    ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+                }
+            } else if(hasBeenSeen){
+                if(!walkable){
+                    ctx.fillStyle = colors.unseenOrUnwalkable;
+                }
+                else ctx.fillStyle = colors.outOfSight;
+                
+                ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+            } else {
+                ctx.fillStyle = colors.unseenOrUnwalkable;
+                ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+            }
 
-			if (!walkable) {
-				ctx.fillStyle = colors.unwalkable;
-				ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
-			} else if (x == playerCoord[0] && y == playerCoord[1]) {
-				ctx.fillStyle = colors.player;
-			} else if (walkable) {
-				if (occupied) {
-					ctx.fillStyle = colors.enemy;
-				} else if (exits.some(([eX, eY]) => eX == x && eY == y)) {
-					ctx.fillStyle = getExitGradient(x, y);
-				} else if (seen) {
-					ctx.fillStyle = colors.walkable.seen;
-				} else ctx.fillStyle = colors.walkable.unseen
-				ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
-			}
+            if(border){
+                ctx.fillStyle = colors.unseenOrUnwalkable;
+                ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT);
+            }
+
+            if(current){
+                ctx.fillStyle = colors.player;
+                ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+            }
 		}
-	}
+    }
+    player.hiliteFOV()
 };
 
 const enemyTurn = () => {
@@ -313,7 +328,6 @@ const enemyTurn = () => {
 									game.classList.remove("e-turn");
 									game.classList.add("p-turn");
 									player.hiliteMoveArea();
-									player.hiliteFOV();
 								}, 300);
 							}
 
