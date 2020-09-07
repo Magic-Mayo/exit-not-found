@@ -219,7 +219,7 @@ const Enemy = function (coords, enemyPower) {
 	E.atkChar = function () {
 		const willHit =
 			E.accuracy - player.agility > rng(100) && player.def < E.attack;
-		willHit ? (player.hp = player.hp - E.attack + ~~player.def) : 0;
+        willHit ? (player.hp = player.hp - E.attack + ~~player.def) : 0;
 		return player.def >= E.attack
 			? `You blocked ${E.name}'s attack!`
 			: willHit
@@ -274,8 +274,6 @@ const Enemy = function (coords, enemyPower) {
 		player.checkFOV();
 
 		if (!E.checkFOV(E.playerSpotted ? 2 : 1)) {
-			if (E.checkFOV()) return E.atkChar();
-
 			if (E.playerSpotted) {
 				console.log(availableSurroundings);
 				const [subX, subY] = [playerCoord[0] - x, playerCoord[1] - y];
@@ -301,7 +299,8 @@ const Enemy = function (coords, enemyPower) {
 			eMove.play()
             COORDINATES[newX][newY].occupied = 1;
             return paintCanvas();
-		}
+        }
+        E.atkChar();
 	};
 	E.checkFOV = function (spotRange = 1) {
 		if (inRange(E.coords,player.coords,E.fov)) {
