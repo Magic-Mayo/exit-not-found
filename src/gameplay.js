@@ -2,9 +2,9 @@
 // uncomment listener
 ////////// TO DO ///////////
 _btnStart.addEventListener("click", (e) => {
+    window.removeEventListener('keydown', typeName)
 	// goFullScreen();
 	// *** CREATE PLAYER ELEMENTS***
-	const _createNameInput = document.querySelector("#createName");
 	const _createClassInput = document.querySelector(
 		'input[name="class"]:checked'
     );
@@ -132,6 +132,20 @@ const showEnemyDetails = (enemy, i) => {
 	_enemyDetails.append(_section);
 };
 
+
+const typeName = e => {
+    if(_createNameInput.textContent.length > 20  && e.keyCode != 8 && e.keyCode != 46) {
+        e.preventDefault()
+    } else if (e.key.match(/[A-Za-z0-9]/g) && e.key.length == 1) {
+        console.log(e.key)
+        _createNameInput.textContent = _createNameInput.textContent + e.key
+    } else if (e.keyCode == 8) {
+        _createNameInput.textContent = _createNameInput.textContent.substr(0,_createNameInput.textContent.length - 1)
+    }
+
+}
+
+window.addEventListener('keydown', typeName)
 const createParSpanPair = (title, data) => {
 	const _p = document.createElement("p");
 	const _span = document.createElement("span");
