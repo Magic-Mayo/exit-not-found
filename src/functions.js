@@ -75,34 +75,34 @@ const generatePlayer = (coord, room, tileSize) => {
 	// console.log(
 	// `The player will start at ${playerCoord} and will have the color ${color}`
     // );
-    paintCanvas();
-	player.hiliteMoveArea();
-	player.hiliteFOV();
 	//   _moveBtn.addEventListener('click', player.hiliteMoveArea);
-
+    
 	if (!player.awaitingUser) {
-		window.onkeypress = handleKeyPress;
+        window.onkeypress = handleKeyPress;
 	}
 };
 
 const generateEnemies = (lvl, max, room) => {
-	enemies = [];
-
+    enemies = [];
+    
 	enemyCount = rng(lvl / 2 + 2);
 	// console.log("ENEMY COUNT: " + enemyCount);
 	for (let i = 0; i < enemyCount; i++) {
-		const enemy = new Enemy(
-			getEnemyStartCoordinate(max, room),
+        const enemy = new Enemy(
+            getEnemyStartCoordinate(max, room),
 			~~(totalEnemyPower / enemyCount)
-		);
-		enemies.push(enemy);
-		const {
-			coords: [x, y],
-		} = enemy;
-
-		COORDINATES[x][y].occupied = 1;
-	}
-	player.checkFOV();
+            );
+        enemies.push(enemy);
+        const {
+            coords: [x, y],
+        } = enemy;
+        
+        COORDINATES[x][y].occupied = 1;
+    }
+    player.checkFOV();
+    paintCanvas()
+	player.hiliteMoveArea();
+	player.hiliteFOV();
 };
 
 const getEnemyStartCoordinate = (max, room) => {
@@ -189,8 +189,6 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
 		if (!player.actionsLeft && enemies.length) {
 			playersTurn = false;
-			game.classList.remove("p-turn");
-			game.classList.add("e-turn");
 			return enemyTurn();
 		}
 	}
@@ -256,77 +254,75 @@ const paintCanvas = () => {
             if(inRange(player.coords, [x,y],player.fov)){
                 COORDINATES[x][y].hasBeenSeen = 1;
                 COORDINATES[x][y].inSight = 1;
-            }
-            else COORDINATES[x][y].inSight = 0;
+            } else COORDINATES[x][y].inSight = 0;
+            
             let { highlighted, occupied, walkable, hasBeenSeen, inSight, border, exit } = COORDINATES[x][y];
             const current = player.coords[0] == x && player.coords[1] == y;
-			ctx.clearRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+            
+            ctx.clearRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
+
 			if (highlighted) {
                 COORDINATES[x][y].highlighted = 0;
             }
-            
+
             if(inSight){
                 if (!walkable) {
                     ctx.fillStyle = colors.unseenOrUnwalkable;
-                    ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
-                } else if (x == playerCoord[0] && y == playerCoord[1]) {
-                    ctx.fillStyle = colors.player;
+                } else if(occupied){
+                    ctx.fillStyle = colors.inSight.enemy;
                 } else if (walkable) {
-                    if (occupied) {
-                        ctx.fillStyle = colors.inSight.enemy;
-                    } else if (exit) {
+                    if (exit) {
                         ctx.fillStyle = getExitGradient(x, y);
                     } else if (hasBeenSeen) {
                         ctx.fillStyle = colors.inSight.walkable;
                     } else ctx.fillStyle = colors.unseenOrUnwalkable
-                    ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
-                }
+                } 
             } else if(hasBeenSeen){
                 if(!walkable){
                     ctx.fillStyle = colors.unseenOrUnwalkable;
                 }
                 else ctx.fillStyle = colors.outOfSight;
                 
-                ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
             } else {
                 ctx.fillStyle = colors.unseenOrUnwalkable;
-                ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
             }
 
             if(border){
                 ctx.fillStyle = colors.unseenOrUnwalkable;
-                ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT);
             }
 
             if(current){
                 ctx.fillStyle = colors.player;
-                ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
             }
+            ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
 		}
     }
     player.hiliteFOV()
 };
 
 const enemyTurn = () => {
-	window.onkeypress = null;
-	player.resetActions();
+    window.onkeypress = null;
+    game.classList.remove("p-turn");
+    game.classList.add("e-turn");
+    
 	moveTimer = setTimeout(
-		() =>
-			asyncForEach(enemies, (enemy, i) => {
-				let turns = enemy.speed;
-				showEnemyDetails(enemy);
-				return new Promise((resolve) => {
-					const turn = setInterval(() => {
-						enemy.handleTurn();
-						turns--;
-						if (turns < 1) {
-							clearInterval(turn);
-							if (i == enemies.length - 1) {
-								window.onkeypress = handleKeyPress;
-								setTimeout(() => {
+        () =>
+        asyncForEach(enemies, (enemy, i) => {
+            let turns = enemy.speed;
+            showEnemyDetails(enemy);
+            return new Promise((resolve) => {
+                const turn = setInterval(() => {
+                    enemy.handleTurn();
+                    turns--;
+                    if (turns < 1) {
+                        clearInterval(turn);
+                        if (i == enemies.length - 1) {
+                            window.onkeypress = handleKeyPress;
+                            setTimeout(() => {
 									playersTurn = true;
 									game.classList.remove("e-turn");
 									game.classList.add("p-turn");
+                                    player.resetActions();
 									player.hiliteMoveArea();
 								}, 300);
 							}
