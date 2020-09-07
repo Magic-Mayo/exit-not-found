@@ -128,7 +128,9 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 		)
 	)
 		return;
-	pMove.play()
+	// pMove.play()
+	zzfxP(pMove[rng(pMove.length -1)]); // playerMove
+	// zzfx(...[,.25,144,,,.07,2,.1,-95.1,43.9,191,.1,.01,,,.1,.03,,.04])
 	let { key } = event;
 	key = key.toLowerCase();
 	let [playerX, playerY] = playerCoord;

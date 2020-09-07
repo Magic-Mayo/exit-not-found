@@ -4,6 +4,8 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" href="https://use.typekit.net/qkd3qrc.css" />
+		<script src="./src/zzfx.js"></script>
+		<script src="./src/zzfxm.min.js"></script>
 		<title>Exit Not Found</title>
 		<style>
 			.font-regular {
@@ -30,26 +32,27 @@
 			.container {
 				position: absolute;
 				top: 0;
-				left: 0;
-				max-width: 100vw;
+				left: 50%;
+				transform: translateX(-50%);
+				width: 100vw;
 				overflow-x: hidden;
 				max-height: 100vh;
 				z-index: 500;
 				padding-top: 6vh;
+				padding-bottom: 6vh;
 				display: flex;
 				justify-content: space-evenly;
 				align-items: flex-start;
-				flex-wrap: wrap;
- 
+
 				transition: 0.3s ease-out opacity;
 			}
-			
-            .p-turn {
+
+			.p-turn {
 				box-shadow: 0 0 25px 10px #16c551;
 			}
 
 			.e-turn {
-				box-shadow: 0 0 25px 10px #A70707;
+				box-shadow: 0 0 25px 10px #a70707;
 			}
 
 			canvas {
@@ -60,8 +63,8 @@
 
 			.enemy-stats {
 				width: 26.5vw;
-				color: #A70707;
-				border: .24vw solid #A70707;
+				color: #a70707;
+				border: 0.24vw solid #a70707;
 				margin: 1.6vw;
 				position: relative;
 			}
@@ -72,34 +75,34 @@
 			}
 
 			.enemy-stats p {
-				color: #F4B8B8;
+				color: #f4b8b8;
 				font-size: 1.25vw;
 			}
 
 			.enemy-stats span,
 			.enemy-stats h4 {
-				color: #A70707;
+				color: #a70707;
 				font-size: 1.25vw;
 			}
 
 			.enemy-summary {
-				border-bottom: .24vw solid #A70707;
-				padding: .8vw 1.3vw .8vw;
-                display: flex;
-                justify-content: space-around;
-                align-items: center;
+				border-bottom: 0.24vw solid #a70707;
+				padding: 0.8vw 1.3vw 0.8vw;
+				display: flex;
+				justify-content: space-around;
+				align-items: center;
 			}
 
 			.enemy-details {
-				padding: .8vw 1.3vw 3.2vw;
+				padding: 0.8vw 1.3vw 3.2vw;
 			}
 
 			.enemy-item {
-				margin: .4vw .4vw .8vw;
+				margin: 0.4vw 0.4vw 0.8vw;
 			}
 
 			.enemy-item p {
-				margin: .16vw 0 .16vw .8vw;
+				margin: 0.16vw 0 0.16vw 0.8vw;
 			}
 
 			.player {
@@ -125,8 +128,8 @@
 
 			.player-stats,
 			.player-items {
-				border: .24vw solid #16c551;
-				padding: .8vw 1.37vw 3.2vw;
+				border: 0.24vw solid #16c551;
+				padding: 0.8vw 1.37vw 3.2vw;
 				margin: 1.6vw;
 				position: relative;
 			}
@@ -135,13 +138,13 @@
 				position: absolute;
 				right: 0;
 				top: 1.4vw;
-				right: .94vw;
+				right: 0.94vw;
 				text-align: right;
 			}
 
 			.player-info,
 			.player-fight-details {
-				margin: .8vw .4vw;
+				margin: 0.8vw 0.4vw;
 			}
 
 			.player-fight-details {
@@ -153,7 +156,7 @@
 
 			.player-fight-details div {
 				width: 50%;
-				margin-bottom: .8vw;
+				margin-bottom: 0.8vw;
 			}
 
 			.player-fight-details h4 {
@@ -163,7 +166,7 @@
 
 			.player-fight-details p {
 				text-transform: capitalize;
-				margin-left: .012vw;
+				margin-left: 0.012vw;
 				color: #16c551;
 			}
 
@@ -180,35 +183,11 @@
 				color: #b3ffcc !important;
 			}
 
-
-			.actions {
-				width: 70%;
-				background-color: #1a1a1a;
-				display: flex;
-				height: 17.5vh;
-				max-height: 200px;
-				justify-content: space-evenly;
-				align-items: center;
-			}
-
-			.actions button {
-				font-size: 2.8vw;
-				font-family: inherit;
-				text-transform: uppercase;
-				cursor: pointer;
-				height: 60%;
-				width: 20%;
-				color: white;
-			}
-
-			#useItemBtn { background-color: #A76C07;}
-			#moveBtn { background-color: #07A732;}
-			#blockBtn { background-color: #0787A7;}
 			#attackBtn {
-                background-color: #A70707;
-                width: 5.1vw;
-                height: 3vw;
-            }
+				background-color: #a70707;
+				width: 5.1vw;
+				height: 3vw;
+			}
 
 			.toggle-game {
 				margin-top: 75px;
@@ -221,10 +200,10 @@
 
 			.headline {
 				text-align: center;
-				margin-top: 100px;
+				margin-top: 80px;
 			}
 
-			h1 {
+			.headline h1 {
 				font-size: 85px;
 				color: wheat;
 				position: relative;
@@ -233,10 +212,16 @@
 				width: 200px;
 			}
 
-			h2 {
+			.headline h2 {
 				margin-top: 100px;
 				font-size: 60px;
 				color: firebrick;
+			}
+
+			.headline h3 {
+				margin-top: 25px;
+				font-size: 44px;
+				color: white;
 			}
 
 			h1 span {
@@ -258,21 +243,11 @@
 				animation-delay: -0.6s;
 			}
 
-			.reset {
-				position: absolute;
-				top: 0;
-				right: 0;
-				margin: 10px;
-				font-size: 12px;
-				background-color: cornsilk;
-				border: wheat solid 2px;
-			}
-
 			.level-up {
 				position: absolute;
 				top: 50%;
 				left: 50%;
-				transform: translate(-50%,-50%);
+				transform: translate(-50%, -50%);
 				background-color: #fff;
 				z-index: 1000;
 				width: 400px;
@@ -299,8 +274,83 @@
 				cursor: pointer;
 			}
 
-			.level-up h5 { font-size: 27px;}
-			.level-up h6 { font-size: 21px;}
+			.level-up h5 {
+				font-size: 27px;
+			}
+			.level-up h6 {
+				font-size: 21px;
+			}
+
+			.player-create-wrapper {
+				width: 40vw;
+				margin: 0 auto;
+			}
+
+			.create-name-wrapper,
+			.create-class-wrapper {
+				color: #fff;
+				font-size: 24px;
+				margin-top: 20px;
+				text-align: left;
+			}
+			#createName {
+				outline: none;
+				color: #08fa25;
+				/* border: 2px solid #fff; */
+				padding: 4px 8px;
+			}
+			#blink {
+				display: inline-block;
+				width: 12px;
+				height: 18px;
+				background-color: chartreuse;
+				animation: blink 0.5s linear infinite both alternate;
+			}
+
+			.create-class-wrapper label {
+				margin: 4px 8px;
+				padding: 10px;
+			}
+
+			input[type="radio"] {
+				display: none;
+			}
+
+			label[for="meleeClass"] {
+				background-color: rgba(245, 79, 79, 0.45);
+			}
+			label[for="magicClass"] {
+				background-color: rgba(51, 51, 216, 0.45);
+			}
+			label[for="rangedClass"] {
+				background-color: rgba(17, 194, 17, 0.45);
+			}
+
+			input[id="meleeClass"]:checked+label {
+				background-color: rgba(245, 79, 79, 1);
+			}
+			input[id="magicClass"]:checked+label {
+				background-color: rgba(51, 51, 216, 1);
+			}
+			input[id="rangedClass"]:checked+label {
+				background-color: rgba(17, 194, 17, 1);
+			}
+
+
+			@keyframes blink {
+				from {
+					opacity: 0.1;
+				}
+				40% {
+					opacity: 0.1;
+				}
+				75% {
+					opacity: 1;
+				}
+				to {
+					opacity: 1;
+				}
+			}
 
 			@keyframes upAndDown {
 				from {
@@ -320,8 +370,8 @@
 				<h5>You Leveled Up!</h5>
 				<h6>pick a skill to upgrade</h6>
 				<div class="font-regular lvlUp">
-					<button id="lvlUpAtk" data-stat=0>🔪</button>
-					<button id="lvlUpDef"data-stat="2">🛡</button>
+					<button id="lvlUpAtk" data-stat="0">🔪</button>
+					<button id="lvlUpDef" data-stat="2">🛡</button>
 					<button id="lvlUpAgil" data-stat="1">🏃</button>
 					<button id="lvlUpFOV" data-stat="3">🔭</button>
 				</div>
@@ -374,7 +424,13 @@
 					<div class="game-details">
 						<p>steps taken: <span id="steps">7</span></p>
 						<p>dungeon level: <span id="dungeon">7</span></p>
-						<p>actions per turn: <span id="actionsLeft">0</span>/<span id="actionsPerTurn">0</span></p>
+						<p>
+							actions per turn:
+							<span id="actionsLeft">0</span>/<span
+								id="actionsPerTurn"
+								>0</span
+							>
+						</p>
 					</div>
 				</section>
 				<!-- <section class="player-items">
@@ -384,22 +440,15 @@
 			<canvas id="gameBG" width="256" height="256"></canvas>
 			<section class="enemy-stats font-bold">
 				<div class="enemy-summary">
-                    <div>
-                        <h3 class="font-regular">Enemy Stats</h3>
-                        <p>Total Enemies: <span id="totalEnemies">0</span></p>
-                        <p id="enemySeesPlayer"></p>
-                    </div>
+					<div>
+						<h3 class="font-regular">Enemy Stats</h3>
+						<p>Total Enemies: <span id="totalEnemies">0</span></p>
+						<p id="enemySeesPlayer"></p>
+					</div>
 					<button id="attackBtn" class="invisible">attack</button>
-
 				</div>
 
-				<article class="enemy-details">
-
-				</article>
-			</section>
-			<section class="actions font-bold">
-				<button id="moveBtn">move</button>
-				<button id="blockBtn">block</button>
+				<article class="enemy-details"></article>
 			</section>
 		</div>
 		<div class="headline">
@@ -409,9 +458,48 @@
 				<span>4</span>
 			</h1>
 			<h2 class="font-bold">Exit Not Found</h2>
+			<h3 class="font-bold">Create Your Player</h3>
+			<div class="player-create-wrapper">
+				<div class="create-name-wrapper font-regular">
+					Choose Your Name:
+					<span id="createName" contenteditable="true"
+						>Bob The Destroyer</span
+					>
+					<div id="blink"></div>
+				</div>
+				<div class="create-class-wrapper font-regular">
+					Choose Your Class:
+					<input
+						type="radio"
+						name="class"
+						id="meleeClass"
+						value=0
+						class="class-radio"
+						checked
+					/>
+					<label for="meleeClass">Melee</label>
+					<input
+						type="radio"
+						name="class"
+						id="magicClass"
+						value=1
+						class="class-radio"
+					/>
+					<label for="magicClass">Magic</label>
+					<input
+						type="radio"
+						name="class"
+						id="rangedClass"
+						value=2
+						class="class-radio"
+					/>
+					<label for="rangedClass">Ranged</label>
+				</div>
+			</div>
 			<button class="toggle-game font-regular">play</button>
-        </div>
-        <script src="./src/audio.js"></script>
+		</div>
+
+		<script src="./src/audio.js"></script>
 		<script src="./src/vars.js"></script>
 		<script src="./src/functions.js"></script>
 		<script src="./src/characters.js"></script>

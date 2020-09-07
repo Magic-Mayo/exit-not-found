@@ -307,10 +307,8 @@ const Enemy = function (coords, enemyPower) {
 				availableSurroundings.length > 0
 					? availableSurroundings[newCoords].coord
 					: E.coords;
-            const {coords: [newX, newY]} = E;
-            eMove.pause()
-            eMove.currentTime = 0;
-			eMove.play()
+			const {coords: [newX, newY]} = E;
+			zzfxP(eMove[rng(eMove.length -1)]);
             COORDINATES[newX][newY].occupied = 1;
             return paintCanvas();
         }
