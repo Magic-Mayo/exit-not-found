@@ -3,15 +3,15 @@ const rng = (n = 4) => Math.floor(Math.random() * n);
 
 const colors = {
     player: '#fff',
-    walkable: {
-        seen: "transparent",
-        unseen: '#000000dd'
+    inSight: {
+        walkable: "transparent",
+        unwalkable: "#000",
+        enemy: '#940404'
     },
-    // walkable: "transparent",
-    unwalkable: '#000',
-    enemy: '#940404',
+    unseenOrUnwalkable: "#000",
+    outOfSight: "#00000066",
     fovHighlight: "#3370d422",
-    walkHighlight: '#08fa2566'
+    walkHighlight: '#08fa2555'
 }
 
 /* ==================================
