@@ -18,6 +18,7 @@ const colors = {
 HTML ELEMENTS
 ==================================== */
 
+const _createNameInput = document.querySelector("#createName");
 
 const game = document.querySelector("#gameBG");
 const ctx = game.getContext("2d");
