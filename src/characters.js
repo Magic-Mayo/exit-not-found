@@ -148,11 +148,6 @@ const Character = function (name, clas) {
             C.checkIfNextLvl();
         }
         
-        if(willHit){
-            paintCanvas();
-            C.hiliteMoveArea();
-        }
-
         if(C.actionsLeft == 0){
             while(C.awaitingUser){
                 const waiting = await checkIfWaiting();
@@ -160,6 +155,9 @@ const Character = function (name, clas) {
             }
             enemyTurn(exits)
         }
+
+        paintCanvas();
+        C.hiliteMoveArea();
 
 		return willHit && enemy.hp < 1 ?
             `You defeated the ${enemy.name}!` :
