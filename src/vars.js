@@ -17,7 +17,8 @@ const colors = {
 /* ==================================
 HTML ELEMENTS
 ==================================== */
-const getEl = document.querySelector;
+
+
 const game = document.querySelector("#gameBG");
 const ctx = game.getContext("2d");
 const body = document.querySelector('body')
@@ -36,12 +37,12 @@ const _lvlUpDef = document.querySelector('#lvlUpDef')
 const _lvlUpAgil = document.querySelector('#lvlUpAgil')
 const _lvlUpFOV = document.querySelector('#lvlUpFOV')
 
-
 // Info
 const _playerName = document.querySelector('#playerName')
+const _playerClass = document.querySelector('#playerClass')
 const _healthpointsCurrent = document.querySelector('#playerHealthCurrent')
 const _healthpointsMax = document.querySelector('#playerHealthMax')
-const playerClass = document.querySelector('#playerClass')
+
 
 // Fighting Details
 const _playerAttackStrength = document.querySelector('#playerAttackStrength')
@@ -53,7 +54,6 @@ const _actionsTotal = document.querySelector('#actionsPerTurn')
 const _actionsLeft = document.querySelector('#actionsLeft')
 const _lvlUp = document.querySelector('.level-up')
 const _attackBtn = document.querySelector('#attackBtn')
-const _moveBtn = document.querySelector('#moveBtn')
 //  Game Details
 const _dungeon = document.querySelector('#dungeon')
 const _steps = document.querySelector('#steps')
