@@ -35,7 +35,6 @@ const buildDungeon = (
             };
 
             if(exits.some(([a,b]) => a == x && b == y)){
-                console.log('exit')
                 COORDINATES[x][y].walkable = 1;
                 COORDINATES[x][y].exit = 1;
                 
