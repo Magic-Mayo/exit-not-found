@@ -296,7 +296,7 @@ const Enemy = function (coords, enemyPower) {
 					? availableSurroundings[newCoords].coord
 					: E.coords;
 			const {coords: [newX, newY]} = E;
-			eMove.play()
+			zzfxP(eMove[rng(eMove.length -1)]);
             COORDINATES[newX][newY].occupied = 1;
             return paintCanvas();
         }
