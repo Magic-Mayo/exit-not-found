@@ -135,7 +135,7 @@ const Character = function (name, clas) {
 		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def;
         C.actionsLeft -= C.attackSpeed;
         _actionsLeft.innerHTML = C.actionsLeft;
-        willHit && (enemy.hp -= C.attackStrength + enemy.def);
+        willHit && (enemy.hp -= C.attackStrength - enemy.def);
         showEnemyDetails(enemy, i);
         
         if(enemy.hp < 1){
@@ -202,10 +202,11 @@ const Enemy = function (coords, enemyPower) {
     E.hp = Math.floor(Math.sqrt(enemyPower)) + ~~(enemyPower / 10);
     E.agility = !E.class ? rng() + 2 : E.class == 1 ? rng(2) + 1 : rng(5) + 3;
 
-	E.attack =
+	E.attackStrength =
 		!E.class || E.class == 1
 			? Math.ceil(enemyPower / (rng(11) + 10))
-			: ~~(enemyPower / (rng(11) + 20));
+            : ~~(enemyPower / (rng(11) + 20));
+    E.attackSpeed = ~~(E.attackStrength/2)
 	E.accuracy = !E.class
 		? 65 + rng(26)
 		: E.class == 1
@@ -213,17 +214,27 @@ const Enemy = function (coords, enemyPower) {
 		: 75 + rng(6);
 	E.def = !E.class ? ~~(enemyPower / (rng(21) + 40)) : 0;
 	E.fov = !E.class ? rng(2) + 2 : rng() + 4;
-	E.speed = E.class == 0 ? 6 : E.class == 1 ? 3 : 4;
+    E.speed = E.class == 0 ? 6 : E.class == 1 ? 3 : 4;
+    E.speedLeft = E.speed;
 	E.playerSpotted = 0;
-	E.xp = enemyPower / 5;
+	E.xp = ~~(enemyPower / 5);
 	E.atkChar = function () {
+        const toHit = rng(100)
 		const willHit =
-			E.accuracy - player.agility > rng(100) && player.def < E.attack;
-        willHit ? (player.hp = player.hp - E.attack + ~~player.def) : 0;
-		return player.def >= E.attack
+			E.accuracy - player.agility >= toHit && player.def < E.attackStrength;
+        willHit ? (player.hp -= E.attackStrength - ~~player.def) : 0;
+        E.speedLeft -= E.attackSpeed;
+        _healthpointsCurrent.innerHTML = player.hp;
+        
+        // GAME OVER SCENARIO FOR PLAYER
+        if(player.hp < 1){
+            return gameOver();
+        }
+
+		return player.def >= E.attackStrength
 			? `You blocked ${E.name}'s attack!`
 			: willHit
-			? `${E.name} hit for ${E.attack}!`
+			? `${E.name} hit for ${E.attackStrength}!`
 			: `${E.name} missed!`;
 	};
 
@@ -274,10 +285,11 @@ const Enemy = function (coords, enemyPower) {
 		player.checkFOV();
 
 		if (!E.checkFOV(E.playerSpotted ? 2 : 1)) {
-			if (E.playerSpotted) {
+            E.speedLeft--;
+			if (E.playerSpotted && inRange(E.coords, player.coords, E.fov)) {
 				console.log(availableSurroundings);
 				const [subX, subY] = [playerCoord[0] - x, playerCoord[1] - y];
-				console.log(`DIFF COORD: ${[subX, subY]}`);
+				// console.log(`DIFF COORD: ${[subX, subY]}`);
 
 				availableSurroundings = availableSurroundings.filter((c) => {
 					if (c.pos == "left") return subX < 0;
@@ -286,7 +298,7 @@ const Enemy = function (coords, enemyPower) {
 					if (c.pos == "bottom") return subY > 0;
 				});
 
-				console.log(availableSurroundings);
+				// console.log(availableSurroundings);
 			}
 			const newCoords = rng(availableSurroundings.length);
 			COORDINATES[x][y].occupied = 0;
@@ -295,13 +307,25 @@ const Enemy = function (coords, enemyPower) {
 				availableSurroundings.length > 0
 					? availableSurroundings[newCoords].coord
 					: E.coords;
-			const {coords: [newX, newY]} = E;
+            const {coords: [newX, newY]} = E;
+            eMove.pause()
+            eMove.currentTime = 0;
 			eMove.play()
             COORDINATES[newX][newY].occupied = 1;
             return paintCanvas();
         }
-        E.atkChar();
-	};
+
+        if(E.speedLeft - E.attackSpeed >= 0){
+            return E.atkChar();
+        }
+
+        E.defStance();
+    };
+    E.block = 0;
+    E.defStance = function(){
+        E.block = E.speedLeft;
+        E.speedLeft = 0;
+    }
 	E.checkFOV = function (spotRange = 1) {
 		if (inRange(E.coords,player.coords,E.fov)) {
 			if (spotRange == 2) E.playerSpotted = 1;
@@ -312,7 +336,10 @@ const Enemy = function (coords, enemyPower) {
 			_enemySeesPlayer.innerHTML = "Where'd you go??";
 			return 0;
 		}
-	};
+    };
+    E.resetActions = function(){
+        E.speedLeft = E.speed;
+    }
 };
 
 //========================= PLAYER ======================
