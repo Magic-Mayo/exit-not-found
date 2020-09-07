@@ -83,26 +83,21 @@ const Character = function (name, clas) {
 		C.awaitingUser = false;
 		window.onkeypress = handleKeyPress;
 	};
-    C.currentCoord = playerCoord;
+    C.coords = playerCoord;
 	C.highlighted = 0;
 	
 	C.hiliteFOV = function () {
-		const [x,y] = [
-            C.currentCoord[0] + (TILE_WIDTH / 2),
-            C.currentCoord[1] + (TILE_WIDTH / 2)
-        ]
-		console.log(x,y)
+		const [cX,cY] = getCenterOfCoords(C);
 		ctx.fillStyle = colors.fovHighlight
         ctx.beginPath();
-        ctx.arc(x,y,C.fov * TILE_HEIGHT, 0, Math.PI * 2);
+        ctx.arc(cX,cY,C.fov * TILE_HEIGHT, 0, Math.PI * 2);
         // ctx.clip()
 		// ctx.closePath();
-		ctx.fill();
+        ctx.fill();
 	}
 
-
 	C.hiliteMoveArea = function () {
-        const checkerCoord = [C.currentCoord];
+        const checkerCoord = [C.coords];
         for (let i = 0; i < C.actionsLeft; i++) {
             checkerCoord.forEach(([cX,cY]) => {
                 const potentialHighlights = [
@@ -116,17 +111,17 @@ const Character = function (name, clas) {
                     COORDINATES[x]?.[y]?.walkable &&
                     !COORDINATES[x]?.[y]?.occupied &&
                     !COORDINATES[x]?.[y]?.highlighted &&
-                    !COORDINATES[x]?.[y]?.exit
+                    !COORDINATES[x]?.[y]?.exit &&
+                    (COORDINATES[x]?.[y]?.hasBeenSeen || inRange([x,y],C.coords, C.fov))
                 ).forEach(([x,y]) =>{
-                    if(x == C.currentCoord[0] && y == C.currentCoord[1]) return;
-					COORDINATES[x][y].highlighted = 1
-					COORDINATES[x][y].seen = true
+                    if(x == C.coords[0] && y == C.coords[1]) return;
+					COORDINATES[x][y].highlighted = 1;
                     checkerCoord.push([x, y])
                 });
             })
         }
         
-        checkerCoord.forEach(([x,y], notStart)=>{
+        checkerCoord.forEach(([x,y], notStart) => {
             if(notStart){
                 ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
                 ctx.fillStyle = colors.walkHighlight;
@@ -146,7 +141,6 @@ const Character = function (name, clas) {
         if(enemy.hp < 1){
             const [x,y] = enemy.coords;
             COORDINATES[x][y].occupied = 0;
-            ctx.clearRect(x,y,TILE_HEIGHT,TILE_HEIGHT)
             enemies.splice(i,1);
             C.xp += enemy.xp;
             _enemyDetails.innerHTML = '';
@@ -155,10 +149,9 @@ const Character = function (name, clas) {
         }
         
         if(willHit){
-            removeHighlight();
+            paintCanvas();
             C.hiliteMoveArea();
         }
-        C.hiliteFOV();
 
         if(C.actionsLeft == 0){
             while(C.awaitingUser){
@@ -178,14 +171,10 @@ const Character = function (name, clas) {
 	C.checkFOV = function () {
         C.inRange = []
 		enemies.forEach((enemy) => {
-			const xDif = Math.abs(enemy.coords[0] - playerCoord[0]) / TILE_HEIGHT;
-			const yDif = Math.abs(enemy.coords[1] - playerCoord[1]) / TILE_HEIGHT;
-            const difTrig = ~~Math.sqrt(xDif * xDif + yDif * yDif);
-
-			if (difTrig <= C.fov) {
+			if (inRange(C.coords, enemy.coords, C.fov)) {
                 C.inRange.push(enemy);
 			}
-		});
+        });
 	};
 
 	C.block;
@@ -306,30 +295,18 @@ const Enemy = function (coords, enemyPower) {
 			const newCoords = rng(availableSurroundings.length);
 			COORDINATES[x][y].occupied = 0;
 
-			ctx.clearRect(x, y, TILE_WIDTH, TILE_HEIGHT);
 			E.coords =
 				availableSurroundings.length > 0
 					? availableSurroundings[newCoords].coord
 					: E.coords;
-			const {
-				coords: [newX, newY],
-			} = E;
+			const {coords: [newX, newY]} = E;
 			eMove.play()
-			ctx.fillStyle = COORDINATES[newX]?.[newY]
-				? colors.enemy
-				: colors.walkable.seen;
-			ctx.fillRect(newX, newY, TILE_WIDTH, TILE_HEIGHT);
-			return (COORDINATES[newX][newY].occupied = 1);
+            COORDINATES[newX][newY].occupied = 1;
+            return paintCanvas();
 		}
 	};
 	E.checkFOV = function (spotRange = 1) {
-		const xDif =
-			(Math.abs(E.coords[0] - playerCoord[0]) / TILE_HEIGHT) * spotRange;
-		const yDif =
-			(Math.abs(E.coords[1] - playerCoord[1]) / TILE_HEIGHT) * spotRange;
-		const difTrig = ~~Math.sqrt(xDif * xDif + yDif * yDif);
-
-		if (difTrig <= this.fov) {
+		if (inRange(E.coords,player.coords,E.fov)) {
 			if (spotRange == 2) E.playerSpotted = 1;
 			_enemySeesPlayer.innerHTML = "Gotcha!";
 			return 1;
