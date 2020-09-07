@@ -305,16 +305,14 @@ const enemyTurn = () => {
     game.classList.remove("p-turn");
     game.classList.add("e-turn");
     
-	moveTimer = setTimeout(
-        () =>
+	moveTimer = setTimeout(() =>
         asyncForEach(enemies, (enemy, i) => {
-            let turns = enemy.speed;
             showEnemyDetails(enemy);
+            enemy.block = 0;
             return new Promise((resolve) => {
                 const turn = setInterval(() => {
                     enemy.handleTurn();
-                    turns--;
-                    if (turns < 1) {
+                    if (enemy.speedLeft == 0) {
                         clearInterval(turn);
                         if (i == enemies.length - 1) {
                             window.onkeypress = handleKeyPress;
@@ -327,13 +325,15 @@ const enemyTurn = () => {
 								}, 300);
 							}
 
-							resolve();
+							setTimeout(() =>{
+                                enemy.resetActions();
+                                resolve()
+                            }, 300);
 						}
 					}, 300);
-				});
-			}),
-		500
-	);
+            });
+        })
+    , 500);
 };
 
 const checkIfWaiting = () =>
@@ -366,3 +366,7 @@ const getExitGradient = (x, y) => {
 
 	return exit;
 };
+
+const gameOver = () => {
+    
+}
