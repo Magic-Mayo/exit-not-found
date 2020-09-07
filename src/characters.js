@@ -30,7 +30,7 @@ const Character = function (name, clas) {
 	C.actionsLeft = C.actionsPerTurn;
     C.attackSpeed = ~~(C.attackStrength / 2) || 1;
 
-    C.fov = !clas ? rng(2) + 2 : rng() + 4, 2
+    C.fov = !clas ? rng(2) + 2 : rng() + 4
     C.fov = Math.ceil(Math.sqrt(C.fov * C.fov + C.fov * C.fov));
 
 	C.accuracy = !C.class
