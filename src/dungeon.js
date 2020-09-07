@@ -48,8 +48,6 @@ const buildDungeon = (
                 cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
                 COORDINATES[x][y].walkable ? null : COORDINATES[x][y].occupied = 1;
             }
-            ctx.fillStyle = colors.unseenOrUnwalkable;
-            ctx.fillRect(x, y, tWidth, tHeight);
         });
     });
 
