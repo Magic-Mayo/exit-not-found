@@ -134,4 +134,4 @@ let exit;
 
 const start = [];
 
-let walkableTiles = 1;
+let walkableTiles = 0;
