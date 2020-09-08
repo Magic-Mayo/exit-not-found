@@ -60,7 +60,7 @@ const Character = function (name, clas) {
 		// bring up modal and prompt user
 		// to choose which stat to upgrade
 		/////////////// TO DO //////////////
-		if (!stat) {
+		if (stat == 0) {
 			console.log("you leveled up attack strength");
 			C.attackStrength = Math.ceil(C.attackStrength * 1.2);
 			_playerAttackStrength.innerHTML = C.attackStrength;
@@ -135,7 +135,7 @@ const Character = function (name, clas) {
 		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def;
         C.actionsLeft -= C.attackSpeed;
         _actionsLeft.innerHTML = C.actionsLeft;
-        willHit && (enemy.hp -= C.attackStrength - enemy.def);
+        willHit && (enemy.hp -= C.attackStrength - enemy.def - enemy.block);
         showEnemyDetails(enemy, i);
         
         if(enemy.hp < 1){
@@ -177,7 +177,8 @@ const Character = function (name, clas) {
 
 	C.block;
 	C.resetActions = function () {
-		C.actionsLeft = C.actionsPerTurn;
+        C.actionsLeft = C.actionsPerTurn;
+        C.block = 0;
 		_actionsLeft.innerHTML = C.actionsLeft;
 	};
 	C.defStance = async function () {
@@ -206,7 +207,7 @@ const Enemy = function (coords, enemyPower) {
 		!E.class || E.class == 1
 			? Math.ceil(enemyPower / (rng(11) + 10))
             : ~~(enemyPower / (rng(11) + 20));
-    E.attackSpeed = ~~(E.attackStrength/2)
+    E.attackSpeed = ~~(E.attackStrength/2) || 1;
 	E.accuracy = !E.class
 		? 65 + rng(26)
 		: E.class == 1
@@ -333,6 +334,7 @@ const Enemy = function (coords, enemyPower) {
     };
     E.resetActions = function(){
         E.speedLeft = E.speed;
+        E.block = 0;
     }
 };
 
