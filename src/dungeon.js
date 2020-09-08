@@ -11,10 +11,12 @@ const buildDungeon = (
 	tWidth,
 	[pExitX, pExitY]
 ) => {
+    walkableTiles = 0;
     // console.log(COORDINATES)
     // clear board of previous paint...if any
     ctx.clearRect(0, 0, cWidth, cHeight);
     start.length = 0;
+    console.log([pExitX, pExitY])
     const [sX, sY] = inverseCoords([pExitX, pExitY]);
     start.push(sX, sY)
     // SET UP COORDINATE PLANE
