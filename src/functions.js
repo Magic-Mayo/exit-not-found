@@ -18,48 +18,35 @@ const roundUp = (num) => {
 
 const checker = ([sX, sY]) => {
     const checkCOORDINATES = {...COORDINATES}
+    const checkerCoord = [[sX, sY]];
     
-	const checkerCoord = [[sX, sY]];
-    let i = 0;
-	while (checkerCoord.length < walkableTiles && i < 600) {
-        i++
-		checkerCoord.forEach(([cX, cY]) => {
+	for(let i=0; i<100; i++){
+		for(let j=0; j<checkerCoord.length;j++){
+            const [cX, cY] = checkerCoord[j];
 			const potentialHighlights = [
 				[cX, cY - TILE_HEIGHT],
 				[cX + TILE_HEIGHT, cY],
 				[cX, cY + TILE_HEIGHT],
-				[cX - TILE_HEIGHT, cY],
+				[cX - TILE_HEIGHT, cY]
             ];
-            ctx.fillStyle = 'red'
-            ctx.fillRect(cX,cY,16,16)
-            
-			potentialHighlights
-				.filter(([x, y]) => {
-                    if(checkCOORDINATES[x]?.[y]?.walkable){
-                        if(checkCOORDINATES[x][y].checked){
-                            return 0;
-                        } else {
-                            checkCOORDINATES[x][y].checked = 1;
-                            return 1;
-                        }
-                    }
-                })
-				.forEach(([x, y]) => {
-					if (x == sX && y == sY) return;
-					checkerCoord.push([x, y]);
-				});
-            });
-            
-        if (checkerCoord.length < 2) break;
-            
-    }
 
-    for (let i = 0; i < checkerCoord.length; i++) {
-        const [cX, cY] = checkerCoord[i];
-        console.log(cX == exit[0] && cY == exit[1])
-        if (cX == exit[0] && cY == exit[1]) {
-            return 1;
-        }
+			for(let k=0; k<potentialHighlights.length;k++){
+                const [x,y] = potentialHighlights[k]
+
+                if(checkCOORDINATES[x]?.[y]?.walkable){
+                    if(checkCOORDINATES[x][y].checked || x == sX && y == sY){
+                        continue;
+                    } else if(checkCOORDINATES[x][y].exit) {
+                        return 1;
+                    } else {
+                        checkCOORDINATES[x][y].checked = 1;
+                        checkerCoord.push(potentialHighlights[k]);
+                    }
+                }
+            }
+        };
+            
+        if (checkerCoord.length < 2) return;
     }
 
 	return;
@@ -175,16 +162,9 @@ const handlePlayerMovement = async (event, room, tileSize) => {
             TILE_WIDTH,
             exit
         );
-        // while (!checker(start)) {
-        //     return (
-        //         buildDungeon(CANVAS_HEIGHT, CANVAS_WIDTH, COLUMNS, ROWS, TILE_HEIGHT, TILE_WIDTH, exit))
-        // } 
-        // generatePlayer(start, COORDINATES, TILE_HEIGHT);
-        // generateEnemies(lvl, xyMax, COORDINATES);
-        // return _dungeon.innerHTML = dungeon++; 
     }
 
-	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
+	if (room[nextX]?.[nextY]?.walkable && !room[nextX]?.[nextY]?.occupied) {
         if (enemies.length) player.actionsLeft--;
 		room[playerX][playerY].occupied = 0;
 		room[nextX][nextY].occupied = 1;
@@ -226,7 +206,6 @@ const goFullScreen = () => {
 // must not be in a corner
 // must not be on the same side as another exit or the start
 const generateRandomEndpoint = ([sX,sY], tile) => {
-    // console.log(COORDINATES[sX][sY].quadrant)
     // Returned array so reduce can be used to get quadrant.
     // Goes in order 1-4(upper right to lower right CCW).
     // Takes in coords to return an array of objects that will be reduced to a single quadrant
@@ -234,7 +213,7 @@ const generateRandomEndpoint = ([sX,sY], tile) => {
     for(let x in COORDINATES){
         for(let y in COORDINATES[x]){
             if(COORDINATES[x][y].border && (x != sX && y != sY) && !COORDINATES[x][y].corner) {
-                potentialExits.push([x,y])
+                potentialExits.push([parseInt(x),parseInt(y)])
             }
 
         }
