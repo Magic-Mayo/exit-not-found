@@ -153,7 +153,7 @@ const Character = function (name, clas) {
                 const waiting = await checkIfWaiting();
                 if(waiting) continue;
             }
-            enemyTurn(exits)
+            enemyTurn(exit)
         }
 
         paintCanvas();
@@ -241,11 +241,7 @@ const Enemy = function (coords, enemyPower) {
 	E.handleTurn = function () {
 		const [x, y] = E.coords;
 
-		const isExit = ([a, b]) => {
-			for (let i = 0; i < exits.length; i++) {
-				if (exits[i][0] == a && exits[i][1] == b) return true;
-			}
-		};
+		const isExit = ([a, b]) => exit[0] == a && exit[1] == b;
 
 		const surroundings = [
 			{
@@ -314,7 +310,7 @@ const Enemy = function (coords, enemyPower) {
         }
 
         if(E.speedLeft - E.attackSpeed >= 0){
-            return E.atkChar();
+            return document.body.append(E.atkChar());
         }
 
         E.defStance();

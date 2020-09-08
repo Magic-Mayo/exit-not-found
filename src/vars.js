@@ -68,7 +68,7 @@ CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS
 ==================================== */
 const NUMBER_OF_ROWS = 16;
 const NUMBER_OF_COLUMNS = 16; 
-const CHECKER_INT = Math.pow(NUMBER_OF_COLUMNS - 2, 2) + 4;
+const CHECKER_INT = Math.pow(NUMBER_OF_COLUMNS - 2, 2) + 2;
 const CANVAS_HEIGHT = NUMBER_OF_COLUMNS * NUMBER_OF_COLUMNS;
 const CANVAS_WIDTH = NUMBER_OF_ROWS * NUMBER_OF_ROWS;
 const ROWS = new Array(NUMBER_OF_ROWS).fill();
@@ -130,5 +130,8 @@ const enemyPowerMult = () => lvl % 5 == 0 ? totalEnemyPower = ~~(totalEnemyPower
 let moveTimer;
 
 // EXITS FOR DUNGEON
-let exits;
-// const rooms = []
+let exit;
+
+const start = [];
+
+let walkableTiles = 1;

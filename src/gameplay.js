@@ -44,7 +44,15 @@ _btnStart.addEventListener("click", (e) => {
 		TILE_HEIGHT,
 		TILE_WIDTH,
 		[0, 160]
-	);
+    );
+    // while (!checker(start)) {
+    //     return (
+    //         buildDungeon(CANVAS_HEIGHT, CANVAS_WIDTH, COLUMNS, ROWS, TILE_HEIGHT, TILE_WIDTH, exit))
+    // } 
+    //     generatePlayer(start, COORDINATES, TILE_HEIGHT);
+    //     generateEnemies(lvl, xyMax, COORDINATES);
+    //     _dungeon.innerHTML = dungeon++; 
+
 });
 
 // _btnReset.addEventListener("click", (e) => {
@@ -87,10 +95,11 @@ game.addEventListener("click", (e) => {
 		: showEnemyDetails(clickedEnemy, index);
 });
 
-_attackBtn.addEventListener("click", (e) => {
+_attackBtn.addEventListener("click", async (e) => {
 	const i = e.target.dataset.enemy;
-	const enemy = enemies[i];
-	player.attackEnemy(enemy, i);
+    const enemy = enemies[i];
+    const attack = await player.attackEnemy(enemy, i)
+    document.body.append(attack)
 });
 
 const showEnemyDetails = (enemy, i) => {
@@ -110,7 +119,7 @@ const showEnemyDetails = (enemy, i) => {
 	// CREATE 'HP' & APPEND TO CONTAINER
 	_section.append(createParSpanPair("❤ HP: ", enemy.hp));
 	// CREATE 'ATTACK STRENGTH' & APPEND TO CONTAINER
-	_section.append(createParSpanPair("🔪 Attack: ", enemy.attack));
+	_section.append(createParSpanPair("🔪 Attack: ", enemy.attackStrength));
 	// CREATE 'DEFENSE' & APPEND TO CONTAINER
 	_section.append(createParSpanPair("🛡 Defense: ", enemy.def));
 	// CREATE 'FOV' & APPEND TO CONTAINER

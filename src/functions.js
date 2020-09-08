@@ -4,8 +4,8 @@ const asyncForEach = async (array, callback) => {
 	}
 };
 
-const inverseCoords = ([x, y], max) =>
-	!x ? [max, y] : !y ? [x, max] : x == max ? [0, y] : [x, 0];
+const inverseCoords = ([x, y]) =>
+	!x ? [xyMax, y] : !y ? [x, xyMax] : x == xyMax ? [0, y] : [x, 0];
 
 const roundUp = (num) => {
 	const split = num.toString().split(".")[1];
@@ -17,44 +17,50 @@ const roundUp = (num) => {
 };
 
 const checker = ([sX, sY]) => {
+    const checkCOORDINATES = {...COORDINATES}
+    
 	const checkerCoord = [[sX, sY]];
-	// let exitsFound = 0;
-	while (checkerCoord.length < CHECKER_INT) {
+    let i = 0;
+	while (checkerCoord.length < walkableTiles && i < 600) {
+        i++
 		checkerCoord.forEach(([cX, cY]) => {
 			const potentialHighlights = [
 				[cX, cY - TILE_HEIGHT],
 				[cX + TILE_HEIGHT, cY],
 				[cX, cY + TILE_HEIGHT],
 				[cX - TILE_HEIGHT, cY],
-			];
-
+            ];
+            ctx.fillStyle = 'red'
+            ctx.fillRect(cX,cY,16,16)
+            
 			potentialHighlights
-				.filter(([x, y]) => COORDINATES[x]?.[y]?.walkable)
-				.filter(([x, y]) =>
-					checkerCoord.some(([cX, cY]) =>
-						x != cX ? 1 : y == cY ? 0 : 1
-					)
-				)
+				.filter(([x, y]) => {
+                    if(checkCOORDINATES[x]?.[y]?.walkable){
+                        if(checkCOORDINATES[x][y].checked){
+                            return 0;
+                        } else {
+                            checkCOORDINATES[x][y].checked = 1;
+                            return 1;
+                        }
+                    }
+                })
 				.forEach(([x, y]) => {
 					if (x == sX && y == sY) return;
 					checkerCoord.push([x, y]);
 				});
-		});
+            });
+            
+        if (checkerCoord.length < 2) break;
+            
+    }
 
-		if (checkerCoord.length < 2) break;
-
-		for (let i = 0; i < exits.length; i++) {
-			const [eX, eY] = exits[i];
-			for (let j = 0; j < checkerCoord.length; j++) {
-				const [cX, cY] = checkerCoord[j];
-				if (cX == eX && cY == eY) {
-					return 1;
-					// exitsFound++;
-					// if (exitsFound == exits.length) return 1
-				}
-			}
-		}
-	}
+    for (let i = 0; i < checkerCoord.length; i++) {
+        const [cX, cY] = checkerCoord[i];
+        console.log(cX == exit[0] && cY == exit[1])
+        if (cX == exit[0] && cY == exit[1]) {
+            return 1;
+        }
+    }
 
 	return;
 };
@@ -144,34 +150,39 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 
     const [nextX, nextY] = dir[key];
     
-    for (let i = 0; i < exits.length; i++) {
-		if (nextX == exits[i][0] && nextY == exits[i][1]) {
-			game.classList.remove("e-turn");
-			game.classList.add("p-turn");
-			clearTimeout(moveTimer);
-			// _moveBtn.removeEventListener('click', player.hiliteMoveArea);
-			window.onkeypress = null;
-			player.xp += lvl;
-			lvl++;
-			enemyPowerMult();
-			if (lvl % 10 == 0) player.xp += 100;
-			player.checkIfNextLvl();
-			_expCurrent.textContent = player.xp;
-			passDungeonSound.play()
-			console.log("you win!");
+    if (nextX == exit[0] && nextY == exit[1]) {
+        game.classList.remove("e-turn");
+        game.classList.add("p-turn");
+        clearTimeout(moveTimer);
+        // _moveBtn.removeEventListener('click', player.hiliteMoveArea);
+        window.onkeypress = null;
+        player.xp += lvl;
+        lvl++;
+        enemyPowerMult();
+        if (lvl % 10 == 0) player.xp += 100;
+        player.checkIfNextLvl();
+        _expCurrent.textContent = player.xp;
+        passDungeonSound.play()
+        console.log("you win!");
 
-			player.resetActions();
-			return buildDungeon(
-				CANVAS_HEIGHT,
-				CANVAS_WIDTH,
-				COLUMNS,
-				ROWS,
-				TILE_HEIGHT,
-				TILE_WIDTH,
-				[exits[i][0], exits[i][1]]
-			);
-		}
-	}
+        player.resetActions();
+        return buildDungeon(
+            CANVAS_HEIGHT,
+            CANVAS_WIDTH,
+            COLUMNS,
+            ROWS,
+            TILE_HEIGHT,
+            TILE_WIDTH,
+            exit
+        );
+        // while (!checker(start)) {
+        //     return (
+        //         buildDungeon(CANVAS_HEIGHT, CANVAS_WIDTH, COLUMNS, ROWS, TILE_HEIGHT, TILE_WIDTH, exit))
+        // } 
+        // generatePlayer(start, COORDINATES, TILE_HEIGHT);
+        // generateEnemies(lvl, xyMax, COORDINATES);
+        // return _dungeon.innerHTML = dungeon++; 
+    }
 
 	if (room[nextX]?.[nextY].walkable && !room[nextX]?.[nextY].occupied) {
         if (enemies.length) player.actionsLeft--;
@@ -214,40 +225,25 @@ const goFullScreen = () => {
 
 // must not be in a corner
 // must not be on the same side as another exit or the start
-const generateRandomEndpoint = (start, tile, max) => {
-	let xZero = start[0] == 0 ? 1 : 0;
-	let xMax = start[0] == max ? 1 : 0;
-	let yZero = start[1] == 0 ? 1 : 0;
-	let yMax = start[1] == max ? 1 : 0;
-	const amountExits = rng(100) > 75 ? rng(3) + 1 : rng(2) + 1;
-	const exits = [];
+const generateRandomEndpoint = ([sX,sY], tile) => {
+    // console.log(COORDINATES[sX][sY].quadrant)
+    // Returned array so reduce can be used to get quadrant.
+    // Goes in order 1-4(upper right to lower right CCW).
+    // Takes in coords to return an array of objects that will be reduced to a single quadrant
+    let potentialExits = [];
+    for(let x in COORDINATES){
+        for(let y in COORDINATES[x]){
+            if(COORDINATES[x][y].border && (x != sX && y != sY) && !COORDINATES[x][y].corner) {
+                potentialExits.push([x,y])
+            }
 
-	const getRandCoord = () => {
-		let coord = rng(tile) * tile;
-		while (coord == max || coord == 0) {
-			coord = rng(tile) * tile;
-		}
-		return coord;
-	};
+        }
+    }
+    potentialExits = potentialExits.filter(([pX,pY]) => COORDINATES[pX][pY].quadrant !== COORDINATES[sX][sY].quadrant)
 
-	while (xMax + xZero + yMax + yZero <= amountExits) {
-		const randAxis = rng(4);
-		if (!randAxis && !xZero) {
-			xZero++;
-			exits.push([0, getRandCoord()]);
-		} else if (randAxis == 1 && !xMax) {
-			xMax++;
-			exits.push([max, getRandCoord()]);
-		} else if (randAxis == 2 && !yZero) {
-			yZero++;
-			exits.push([getRandCoord(), 0]);
-		} else if (randAxis == 3 && !yMax) {
-			yMax++;
-			exits.push([getRandCoord(), max]);
-		}
-	}
+    const actualExit = potentialExits[~~(Math.random() * potentialExits.length)]
 
-	return exits;
+    return actualExit
 };
 
 const paintCanvas = () => {
@@ -289,7 +285,7 @@ const paintCanvas = () => {
                 ctx.fillStyle = colors.unseenOrUnwalkable;
             }
 
-            if(border){
+            if(border && !exit){
                 ctx.fillStyle = colors.unseenOrUnwalkable;
             }
 
