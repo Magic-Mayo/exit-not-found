@@ -41,7 +41,7 @@
 				padding-top: 6vh;
 				padding-bottom: 6vh;
 				display: flex;
-				justify-content: space-evenly;
+				justify-content: space-around;
 				align-items: flex-start;
 
 				transition: 0.3s ease-out opacity;
@@ -63,12 +63,16 @@
 
 			.enemy-stats,
             .enemy-actions-window {
-				width: 26.5vw;
 				color: #a70707;
 				border: 0.24vw solid #a70707;
 				margin: 1.6vw;
 				position: relative;
 			}
+
+            .enemy-stats,
+            .player-stats {
+                height: 50vh;
+            }
 
 			.enemy-stats h3 {
 				text-transform: capitalize;
