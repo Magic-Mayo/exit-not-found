@@ -63,6 +63,11 @@ const _steps = document.querySelector('#steps')
 const _enemyDetails = document.querySelector('.enemy-details')
 const _enemySeesPlayer = document.querySelector('#enemySeesPlayer')
 
+// ACTIONS WINDOW
+const _actionWindow = document.querySelector('.actions-window')
+const _enemyActionWindow = document.querySelector('.enemy-actions-window')
+
+
 /* ==================================
 CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS
 ==================================== */
