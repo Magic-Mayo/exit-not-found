@@ -35,7 +35,9 @@ _btnStart.addEventListener("click", (e) => {
 	_actionsTotal.innerHTML = player.actionsPerTurn;
 	_actionsLeft.innerHTML = player.actionsLeft;
 	_expCurrent.innerHTML = player.xp;
-	_expToNextLvl.innerHTML = player.nextLvl;
+    _expToNextLvl.innerHTML = player.nextLvl;
+    console.log(_actionWindow.children)
+    _actionWindow.children[0].innerHTML = `${player.name} has entered the dungeon...`
 	buildDungeon(
 		CANVAS_HEIGHT,
 		CANVAS_WIDTH,
@@ -45,14 +47,6 @@ _btnStart.addEventListener("click", (e) => {
 		TILE_WIDTH,
 		[0, 160]
     );
-    // while (!checker(start)) {
-    //     return (
-    //         buildDungeon(CANVAS_HEIGHT, CANVAS_WIDTH, COLUMNS, ROWS, TILE_HEIGHT, TILE_WIDTH, exit))
-    // } 
-    //     generatePlayer(start, COORDINATES, TILE_HEIGHT);
-    //     generateEnemies(lvl, xyMax, COORDINATES);
-    //     _dungeon.innerHTML = dungeon++; 
-
 });
 
 // _btnReset.addEventListener("click", (e) => {
@@ -99,11 +93,15 @@ _attackBtn.addEventListener("click", async (e) => {
 	const i = e.target.dataset.enemy;
     const enemy = enemies[i];
     const attack = await player.attackEnemy(enemy, i)
-    document.body.append(attack)
+    const h5 = document.createElement('h5')
+    h5.innerHTML = attack;
+    _actionWindow.append(h5);
+    _actionWindow.scrollTo(0, _actionWindow.scrollHeight)
 });
 
 const showEnemyDetails = (enemy, i) => {
-	_enemyDetails.innerHTML = "";
+    _enemyDetails.innerHTML = "";
+    _enemyActionWindow.innerHTML = '';
 	// CREATE CONTAINER
 	const _section = document.createElement("section");
 	_section.classList.add("enemy-item");
@@ -123,7 +121,21 @@ const showEnemyDetails = (enemy, i) => {
 	// CREATE 'DEFENSE' & APPEND TO CONTAINER
 	_section.append(createParSpanPair("🛡 Defense: ", enemy.def));
 	// CREATE 'FOV' & APPEND TO CONTAINER
-	_section.append(createParSpanPair("🔭 FOV: ", enemy.fov));
+    _section.append(createParSpanPair("🔭 FOV: ", enemy.fov));
+    
+    if(enemy.attacks.length > 0){
+        enemy.attacks.forEach(attack => {
+            const actions = _enemyActionWindow.children;
+            if(attack == 'border' || !actions.length){
+                _enemyActionWindow.append(document.createElement('div'));
+            }
+            if(attack != 'border'){
+                const h3 = document.createElement('h3');
+                h3.innerHTML = attack;
+                actions[actions.length - 1].append(h3)
+            }
+        })
+    }
 
 	if (
 		player.inRange.some(
@@ -138,7 +150,8 @@ const showEnemyDetails = (enemy, i) => {
 		_attackBtn.classList.add("invisible");
 	}
 
-	_enemyDetails.append(_section);
+    _enemyDetails.append(_section);
+    _enemyActionWindow.scrollTo(0, _enemyActionWindow.scrollHeight)
 };
 
 
