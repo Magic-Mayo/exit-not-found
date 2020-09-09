@@ -136,7 +136,7 @@ const Character = function (name, clas) {
 	C.attackEnemy = async function (enemy, i) {
         if(C.attackSpeed > C.actionsLeft) return "You don't have enough energy left to attack!  Try another action";
 
-		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def;
+		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def + enemy.block;
         C.actionsLeft -= C.attackSpeed;
         _actionsLeft.innerHTML = C.actionsLeft;
         willHit && (enemy.hp -= C.attackStrength - enemy.def - enemy.block);
@@ -164,9 +164,11 @@ const Character = function (name, clas) {
         paintCanvas();
         C.hiliteMoveArea();
 
-		return willHit && enemy.hp < 1 ?
+        return player.attackStrength > enemy.block + enemy.def ?
+            `${enemy.name} blocked your attack!` :
+            willHit && enemy.hp < 1 ?
             `You defeated the ${enemy.name}!` :
-            willHit ? `You hit the ${enemy.name} for ${C.attackStrength - enemy.def}!` :
+            willHit ? `You hit the ${enemy.name} for ${C.attackStrength - enemy.def - enemy.block}!` :
 			`You missed the ${enemy.name}!`;
 	};
 
@@ -236,7 +238,7 @@ const Enemy = function (coords, enemyPower) {
         const toHit = rng(100)
 		const willHit =
 			E.accuracy - player.agility >= toHit && player.def < E.attackStrength;
-        willHit ? (player.hp -= E.attackStrength - ~~player.def) : 0;
+        willHit ? (player.hp -= E.attackStrength - ~~player.def - player.block) : 0;
         E.speedLeft -= E.attackSpeed;
         _healthpointsCurrent.innerHTML = player.hp;
         
@@ -245,7 +247,7 @@ const Enemy = function (coords, enemyPower) {
             return gameOver();
         }
 
-        const attack = player.def >= E.attackStrength
+        const attack = player.def + player.block >= E.attackStrength
         ? `You blocked ${E.name}'s attack!`
         : willHit
         ? `${E.name} hit for ${E.attackStrength - player.def - player.block}!`
