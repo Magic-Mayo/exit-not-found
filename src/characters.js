@@ -61,20 +61,24 @@ const Character = function (name, clas) {
 		// to choose which stat to upgrade
 		/////////////// TO DO //////////////
 		if (stat == 0) {
-			console.log("you leveled up attack strength");
-			C.attackStrength = Math.ceil(C.attackStrength * 1.2);
+            const lvlAtk = Math.ceil(C.attackStrength * 1.2);
+			_actionWindow.append(`you increased attack strength by ${lvlAtk - C.attackStrength}!`);
+            C.attackStrength = lvlAtk;
 			_playerAttackStrength.innerHTML = C.attackStrength;
 		} else if (stat == 1) {
-			console.log("you leveled up agility");
-			C.agility = Math.ceil(C.agility * 1.1);
+            const lvlAgl = Math.ceil(C.agility * 1.1)
+			_actionWindow.append(`you increased agility by ${lvlAgl - C.agility}!`);
+			C.agility = lvlAgl;
 			_playerAgility.innerHTML = C.agility;
 		} else if (stat == 2) {
-			console.log("you leveled up defense");
-			C.def = Math.ceil(C.def * 1.15);
+            const lvlDef = Math.ceil(C.attackStrength * 1.15)
+			_actionWindow.append(`you increased defense by ${lvlDef - C.def}!`);
+			C.def = lvlDef;
 			_playerDefense.innerHTML = C.def;
 		} else if (stat == 3) {
-			console.log("you leveled up fov");
-			C.actionsPerTurn = Math.ceil(C.actionsPerTurn * 1.1);
+            const lvlFov = Math.ceil(C.attackStrength * 1.1)
+			_actionWindow.append(`you increased fov by ${lvlFov - C.fov}!`);
+			C.actionsPerTurn = lvlFov;
 			_actionsTotal.innerHTML = C.actionsPerTurn;
             _actionsLeft.innerHTML = C.actionsPerTurn;
 		}
@@ -144,6 +148,7 @@ const Character = function (name, clas) {
             enemies.splice(i,1);
             C.xp += enemy.xp;
             _enemyDetails.innerHTML = '';
+            _enemyActionWindow.innerHTML = '';
             if(!enemies.length) C.actionsLeft = C.actionsPerTurn;
             C.checkIfNextLvl();
         }
@@ -218,7 +223,8 @@ const Enemy = function (coords, enemyPower) {
     E.speed = E.class == 0 ? 6 : E.class == 1 ? 3 : 4;
     E.speedLeft = E.speed;
 	E.playerSpotted = 0;
-	E.xp = ~~(enemyPower / 5);
+    E.xp = ~~(enemyPower / 5);
+    E.attacks = [];
 	E.atkChar = function () {
         const toHit = rng(100)
 		const willHit =
@@ -232,11 +238,13 @@ const Enemy = function (coords, enemyPower) {
             return gameOver();
         }
 
-		return player.def >= E.attackStrength
-			? `You blocked ${E.name}'s attack!`
-			: willHit
-			? `${E.name} hit for ${E.attackStrength}!`
-			: `${E.name} missed!`;
+        const attack = player.def >= E.attackStrength
+        ? `You blocked ${E.name}'s attack!`
+        : willHit
+        ? `${E.name} hit for ${E.attackStrength}!`
+        : `${E.name} missed!`
+        console.log(attack)
+		E.attacks.push(attack)
 	};
 
 	E.handleTurn = function () {
