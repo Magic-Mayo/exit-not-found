@@ -189,6 +189,24 @@
 				height: 3vw;
 			}
 
+            .game {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+			
+            #blockBtn {
+				background-color: #0787A7;
+				width: fit-content;
+				height: 4vw;
+                font-size: 2.8vw;
+				text-transform: uppercase;
+				cursor: pointer;
+				color: white;
+                margin-top: 5vh;
+			}
+
 			.toggle-game {
 				margin-top: 75px;
 				font-size: 50px;
@@ -439,8 +457,11 @@
 				<!-- <section class="player-items">
 					<h3>items</h3>
 				</section> -->
-			</div>
-			<canvas id="gameBG" width="256" height="256"></canvas>
+            </div>
+            <div class="game">
+                <canvas id="gameBG" width="256" height="256"></canvas>
+                <button class="font-regular" id='blockBtn'>Block</button>
+            </div>
 			<section class="enemy-stats font-bold">
 				<div class="enemy-summary">
 					<div>
