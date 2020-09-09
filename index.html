@@ -61,7 +61,8 @@
 				background-color: #2b2b2b;
 			}
 
-			.enemy-stats {
+			.enemy-stats,
+            .enemy-actions-window {
 				width: 26.5vw;
 				color: #a70707;
 				border: 0.24vw solid #a70707;
@@ -105,7 +106,8 @@
 				margin: 0.16vw 0 0.16vw 0.8vw;
 			}
 
-			.player {
+			.player,
+            .enemy {
 				width: 25vw;
 				color: white;
 			}
@@ -127,12 +129,36 @@
 			}
 
 			.player-stats,
-			.player-items {
+			.player-items,
+            .actions-window {
 				border: 0.24vw solid #16c551;
-				padding: 0.8vw 1.37vw 3.2vw;
+				padding: 0.8vw 1.37vw 1vw;
 				margin: 1.6vw;
 				position: relative;
+                max-height: 50vh;
 			}
+
+            .actions-window {
+                height: 20vh;
+                overflow-y: auto;
+            }
+
+            .actions-window h3 {
+                color: white;
+                font-size: 1vw;
+            }
+
+            .actions-window .turn,
+            .enemy-actions-window div {
+                border-top: #16c551 3px dashed;
+                margin-top: .5vw;
+                padding: .5vw 0;
+            }
+
+            .enemy-actions-window {
+                height: 20vh;
+                overflow-y: auto;
+            }
 
 			.player-level {
 				position: absolute;
@@ -436,23 +462,26 @@
 						</p>
 					</div>
 				</section>
-				<!-- <section class="player-items">
-					<h3>items</h3>
-				</section> -->
+				<section class="actions-window">
+					<div id="player-start"></div>
+				</section>
 			</div>
-			<canvas id="gameBG" width="256" height="256"></canvas>
-			<section class="enemy-stats font-bold">
-				<div class="enemy-summary">
-					<div>
-						<h3 class="font-regular">Enemy Stats</h3>
-						<p>Total Enemies: <span id="totalEnemies">0</span></p>
-						<p id="enemySeesPlayer"></p>
-					</div>
-					<button id="attackBtn" class="invisible">attack</button>
-				</div>
-
-				<article class="enemy-details"></article>
-			</section>
+            <canvas id="gameBG" width="256" height="256"></canvas>
+            <div class="enemy">
+                <section class="enemy-stats font-bold">
+                    <div class="enemy-summary">
+                        <div>
+                            <h3 class="font-regular">Enemy Stats</h3>
+                            <p>Total Enemies: <span id="totalEnemies">0</span></p>
+                            <p id="enemySeesPlayer"></p>
+                        </div>
+                        <button id="attackBtn" class="invisible">attack</button>
+                    </div>
+                    
+                    <article class="enemy-details"></article>
+                </section>
+                <section class="enemy-actions-window"></section>
+            </div>
 		</div>
 		<div class="headline">
 			<h1 class="font-bold">
