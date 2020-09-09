@@ -20,7 +20,6 @@ const Character = function (name, clas) {
 	C.nextLvl = 1;
 	C.lvl = 1;
 	C.hp = !clas ? 100 : clas == 1 ? 50 : 75;
-
 	C.attackStrength = !clas || clas == 1 ? rng() + 3 : rng(3) + 1;
 	C.def = !clas ? rng() + 2 : clas == 1 ? rng(2) + 1 : rng(3) + 1;
 
@@ -50,7 +49,7 @@ const Character = function (name, clas) {
 		_playerLvl.textContent = C.lvl;
 		_expToNextLvl.textContent = player.nextLvl;
 		_lvlUp.classList.remove("invisible");
-		levelUpSound.play()
+		zzfxP(levelUpSound[rng(levelUpSound.length -1)]);		
 		window.onkeypress = null;
 	};
 	C.weapons = weapons[C.class];
@@ -139,8 +138,14 @@ const Character = function (name, clas) {
 		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def + enemy.block;
         C.actionsLeft -= C.attackSpeed;
         _actionsLeft.innerHTML = C.actionsLeft;
-        willHit && (enemy.hp -= C.attackStrength - enemy.def - enemy.block);
-        showEnemyDetails(enemy, i);
+		
+		if (willHit) {
+			enemy.hp -= C.attackStrength - enemy.def - enemy.block
+			console.log('CLASS ' + C.class)
+			if (!C.class) zzfxP(meleeDamageSound[rng(meleeDamageSound.length -1)]);		
+			else if (C.class == 1) zzfxP(magicDamageSound[rng(magicDamageSound.length -1)]);		
+			else if (C.class == 2) zzfxP(rangedDamageSound[rng(meleeDamageSound.length -1)]);		
+		}
         
         if(enemy.hp < 1){
             const [x,y] = enemy.coords;
@@ -151,7 +156,9 @@ const Character = function (name, clas) {
             _enemyActionWindow.innerHTML = '';
             if(!enemies.length) C.actionsLeft = C.actionsPerTurn;
             C.checkIfNextLvl();
-        }
+        } else showEnemyDetails(enemy, i);
+
+		
         
         if(C.actionsLeft == 0){
             while(C.awaitingUser){
