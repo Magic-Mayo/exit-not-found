@@ -71,12 +71,12 @@ const Character = function (name, clas) {
 			C.agility = lvlAgl;
 			_playerAgility.innerHTML = C.agility;
 		} else if (stat == 2) {
-            const lvlDef = Math.ceil(C.attackStrength * 1.15)
+            const lvlDef = Math.ceil(C.def * 1.15)
 			_actionWindow.append(`you increased defense by ${lvlDef - C.def}!`);
 			C.def = lvlDef;
 			_playerDefense.innerHTML = C.def;
 		} else if (stat == 3) {
-            const lvlFov = Math.ceil(C.attackStrength * 1.1)
+            const lvlFov = Math.ceil(C.fov * 1.1)
 			_actionWindow.append(`you increased fov by ${lvlFov - C.fov}!`);
 			C.actionsPerTurn = lvlFov;
 			_actionsTotal.innerHTML = C.actionsPerTurn;
@@ -241,7 +241,7 @@ const Enemy = function (coords, enemyPower) {
         const attack = player.def >= E.attackStrength
         ? `You blocked ${E.name}'s attack!`
         : willHit
-        ? `${E.name} hit for ${E.attackStrength}!`
+        ? `${E.name} hit for ${E.attackStrength - player.def - player.block}!`
         : `${E.name} missed!`
         console.log(attack)
 		E.attacks.push(attack)
