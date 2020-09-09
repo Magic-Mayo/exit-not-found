@@ -55,6 +55,7 @@ const _actionsTotal = document.querySelector('#actionsPerTurn')
 const _actionsLeft = document.querySelector('#actionsLeft')
 const _lvlUp = document.querySelector('.level-up')
 const _attackBtn = document.querySelector('#attackBtn')
+const _blockBtn = document.querySelector('#blockBtn')
 //  Game Details
 const _dungeon = document.querySelector('#dungeon')
 const _steps = document.querySelector('#steps')

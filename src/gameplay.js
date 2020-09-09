@@ -36,8 +36,8 @@ _btnStart.addEventListener("click", (e) => {
 	_actionsLeft.innerHTML = player.actionsLeft;
 	_expCurrent.innerHTML = player.xp;
     _expToNextLvl.innerHTML = player.nextLvl;
-    console.log(_actionWindow.children)
     _actionWindow.children[0].innerHTML = `${player.name} has entered the dungeon...`
+    _blockBtn.addEventListener('click', player.defStance)
 	buildDungeon(
 		CANVAS_HEIGHT,
 		CANVAS_WIDTH,
