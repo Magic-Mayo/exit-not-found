@@ -124,17 +124,7 @@ const showEnemyDetails = (enemy, i) => {
     _section.append(createParSpanPair("🔭 FOV: ", enemy.fov));
     
     if(enemy.attacks.length > 0){
-        enemy.attacks.forEach(attack => {
-            const actions = _enemyActionWindow.children;
-            if(attack == 'border' || !actions.length){
-                _enemyActionWindow.append(document.createElement('div'));
-            }
-            if(attack != 'border'){
-                const h3 = document.createElement('h3');
-                h3.innerHTML = attack;
-                actions[actions.length - 1].append(h3)
-            }
-        })
+        displayAttack(enemy);
     }
 
 	if (
@@ -151,7 +141,6 @@ const showEnemyDetails = (enemy, i) => {
 	}
 
     _enemyDetails.append(_section);
-    _enemyActionWindow.scrollTo(0, _enemyActionWindow.scrollHeight)
 };
 
 

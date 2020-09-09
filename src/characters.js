@@ -17,7 +17,7 @@ const Character = function (name, clas) {
 	C.class = clas;
 	C.name = name;
 	C.xp = 0;
-	C.nextLvl = 1;
+	C.nextLvl = 100;
 	C.lvl = 1;
 	C.hp = !clas ? 100 : clas == 1 ? 50 : 75;
 	C.attackStrength = !clas || clas == 1 ? rng() + 3 : rng(3) + 1;
@@ -152,6 +152,7 @@ const Character = function (name, clas) {
             COORDINATES[x][y].occupied = 0;
             enemies.splice(i,1);
             C.xp += enemy.xp;
+            _expCurrent.innerHTML = C.xp;
             _enemyDetails.innerHTML = '';
             _enemyActionWindow.innerHTML = '';
             if(!enemies.length) C.actionsLeft = C.actionsPerTurn;
@@ -171,7 +172,7 @@ const Character = function (name, clas) {
         paintCanvas();
         C.hiliteMoveArea();
 
-        return player.attackStrength > enemy.block + enemy.def ?
+        return C.attackStrength <= enemy.block + enemy.def ?
             `${enemy.name} blocked your attack!` :
             willHit && enemy.hp < 1 ?
             `You defeated the ${enemy.name}!` :
@@ -248,6 +249,7 @@ const Enemy = function (coords, enemyPower) {
         willHit ? (player.hp -= E.attackStrength - ~~player.def - player.block) : 0;
         E.speedLeft -= E.attackSpeed;
         _healthpointsCurrent.innerHTML = player.hp;
+        displayAttack(E);
         
         // GAME OVER SCENARIO FOR PLAYER
         if(player.hp < 1){
@@ -255,7 +257,7 @@ const Enemy = function (coords, enemyPower) {
         }
 
         const attack = player.def + player.block >= E.attackStrength
-        ? `You blocked ${E.name}'s attack!`
+        ? `${player.name} blocked ${E.name}'s attack!`
         : willHit
         ? `${E.name} hit for ${E.attackStrength - player.def - player.block}!`
         : `${E.name} missed!`
