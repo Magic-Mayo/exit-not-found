@@ -1,9 +1,25 @@
 const rng = (n = 4) => Math.floor(Math.random() * n);
 
+
+const colors = {
+    player: '#fff',
+    inSight: {
+        walkable: "transparent",
+        unwalkable: "#000",
+        enemy: '#940404'
+    },
+    unseenOrUnwalkable: "#000",
+    outOfSight: "#00000066",
+    fovHighlight: "#3370d422",
+    walkHighlight: '#08fa2555'
+}
+
 /* ==================================
 HTML ELEMENTS
 ==================================== */
-const getEl = document.querySelector;
+
+const _createNameInput = document.querySelector("#createName");
+
 const game = document.querySelector("#gameBG");
 const ctx = game.getContext("2d");
 const body = document.querySelector('body')
@@ -17,12 +33,17 @@ const _landing = document.querySelector('.headline')
 const _playerLvl = document.querySelector('#playerLvl')
 const _expCurrent = document.querySelector('#playerExp')
 const _expToNextLvl = document.querySelector('#nextExp')
+const _lvlUpAtk = document.querySelector('#lvlUpAtk')
+const _lvlUpDef = document.querySelector('#lvlUpDef')
+const _lvlUpAgil = document.querySelector('#lvlUpAgil')
+const _lvlUpFOV = document.querySelector('#lvlUpFOV')
 
 // Info
 const _playerName = document.querySelector('#playerName')
+const _playerClass = document.querySelector('#playerClass')
 const _healthpointsCurrent = document.querySelector('#playerHealthCurrent')
 const _healthpointsMax = document.querySelector('#playerHealthMax')
-const playerClass = document.querySelector('#playerClass')
+
 
 // Fighting Details
 const _playerAttackStrength = document.querySelector('#playerAttackStrength')
@@ -32,20 +53,28 @@ const _playerAgility = document.querySelector('#playerAgility')
 const _playerFOV = document.querySelector('#playerFOV')
 const _actionsTotal = document.querySelector('#actionsPerTurn')
 const _actionsLeft = document.querySelector('#actionsLeft')
-
+const _lvlUp = document.querySelector('.level-up')
 const _attackBtn = document.querySelector('#attackBtn')
+const _blockBtn = document.querySelector('#blockBtn')
 //  Game Details
 const _dungeon = document.querySelector('#dungeon')
 const _steps = document.querySelector('#steps')
 
 // ***** ENEMY STATS *****
 const _enemyDetails = document.querySelector('.enemy-details')
+const _enemySeesPlayer = document.querySelector('#enemySeesPlayer')
+
+// ACTIONS WINDOW
+const _actionWindow = document.querySelector('.actions-window')
+const _enemyActionWindow = document.querySelector('.enemy-actions-window')
+
 
 /* ==================================
 CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS
 ==================================== */
 const NUMBER_OF_ROWS = 16;
 const NUMBER_OF_COLUMNS = 16; 
+const CHECKER_INT = Math.pow(NUMBER_OF_COLUMNS - 2, 2) + 2;
 const CANVAS_HEIGHT = NUMBER_OF_COLUMNS * NUMBER_OF_COLUMNS;
 const CANVAS_WIDTH = NUMBER_OF_ROWS * NUMBER_OF_ROWS;
 const ROWS = new Array(NUMBER_OF_ROWS).fill();
@@ -53,8 +82,10 @@ const COLUMNS = new Array(NUMBER_OF_COLUMNS).fill();
 const TILE_HEIGHT = (CANVAS_HEIGHT / NUMBER_OF_ROWS);
 const TILE_WIDTH = (CANVAS_WIDTH / NUMBER_OF_ROWS);
 const WALKABLE_TILE_CHANCE = 0.8;
+const xyMax = TILE_HEIGHT * TILE_HEIGHT - TILE_HEIGHT;
 /* ==================================
 ==================================== */
+
 
 game.setAttribute('width', CANVAS_WIDTH)
 game.setAttribute('height', CANVAS_HEIGHT)
@@ -78,7 +109,7 @@ let player;
 let lvl = 1;
 // current coordinate of the player
 let playerCoord = [];
-
+let playersTurn = true
 // ENEMY INFORMATION
 // # of enemies this dungeon
 // array of positions for each enemy
@@ -101,5 +132,12 @@ const enemyPowerMult = () => lvl % 5 == 0 ? totalEnemyPower = ~~(totalEnemyPower
 /* ==================================
 ==================================== */
 
+// TIMER FOR ENEMY MOVEMENT
+let moveTimer;
 
-// const rooms = []
+// EXITS FOR DUNGEON
+let exit;
+
+const start = [];
+
+let walkableTiles = 0;

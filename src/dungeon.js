@@ -11,118 +11,74 @@ const buildDungeon = (
 	tWidth,
 	[pExitX, pExitY]
 ) => {
-
-	// clear board of previous paint...if any
-	ctx.clearRect(0, 0, cWidth, cHeight);
-	const xyMax = tHeight * tWidth - tHeight;
-  const [sX, sY] = inverseCoords([pExitX, pExitY], xyMax);
-  const exits = [];
-  // TO GENERATE A NEW EXIT COORDINATE:
-  // 1. RULES:
-  //     A. since exit will always be on the perimeter, one value MUST be zero (either X or Y)
-  //     B. exit cannot be straight across from the exit
-  for(let i = rng(3) + 1; i>0;i--) exits.push(generateRandomEndpoint([sX, sY], tHeight, xyMax, exits))
-
-  // SET UP COORDINATE PLANE
+    walkableTiles = 0;
+    // console.log(COORDINATES)
+    // clear board of previous paint...if any
+    ctx.clearRect(0, 0, cWidth, cHeight);
+    start.length = 0;
+    const [sX, sY] = inverseCoords([pExitX, pExitY]);
+    start.push(sX, sY)
+    // SET UP COORDINATE PLANE
 	columns.forEach((vX, x, col) => {
-    const newX = x;
+        const newX = x;
 		x = x * tWidth;
 		COORDINATES[x] = {};
-
-		rows.forEach((vY, y, row) => {
-      let eX, eY;
-      const newY = y;
-			y = y * tHeight;
-			const cellChance = Math.random();
-      const newStartIsHere = sX === x && sY === y;
-      exits.forEach(([a,b]) => {
-        if(a == x && b == y){
-          eX = a;
-          eY = b;
-        }
-      })
-      COORDINATES[x][y] = {};
-      // console.log(x,y);
-
-			// console.log('newX', newX);
-
-      if(eX == x){
-        COORDINATES[x][y].walkable = 1;
-        let exit;
-        if(eX == 0){
-          exit = ctx.createLinearGradient(-20,0,20,0);
-        } else if(eX == xyMax){
-          exit = ctx.createLinearGradient(240,0,260,0);
-        } else if(eY == 0){
-          exit = ctx.createLinearGradient(0,-20,0,20);
-        } else if(eY == xyMax){
-          exit = ctx.createLinearGradient(0,240,0,260);
-        }
         
-        if(x == 0 || y == 0){
-          exit.addColorStop(0.2, 'black');
-          exit.addColorStop(1, 'yellow');
-        } else {
-          exit.addColorStop(1, 'black');
-          exit.addColorStop(0, 'yellow');
-        }
-        
-        ctx.fillStyle = exit;
-        ctx.fillRect(x,y,tWidth,tHeight)
-      } else if(newX == 0 || newY == 0 || y == xyMax || x == xyMax){
-        COORDINATES[x][y].walkable = sX == x && sY == y ? 1 : 0;
-        ctx.fillStyle = sX == x && sY == y ? 'white' : '#1c1c1c'
-        ctx.fillRect(x,y,tWidth,tHeight)
-        
-      } else if(x <= xyMax && y <= xyMax){
-        COORDINATES[x][y].walkable =
-        cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
-        COORDINATES[x][y].walkable ? null : COORDINATES[x][y].occupied = 1;
-        
-        ctx.fillStyle = COORDINATES[x][y].walkable === 1 ? "transparent" : "#2b2b2b";
-        ctx.fillRect(x, y, tWidth, tHeight);
-      }
+        rows.forEach((vY, y, row) => {
+            const start = sX == x && sY == y;
+            const newY = y;
+            y = y * tHeight;
+            const cellChance = Math.random();
+            const newStartIsHere = sX === x && sY === y;
 
-		});
-	});
+            COORDINATES[x][y] = {
+                hasBeenSeen: 0,
+                inSight: 0,
+                quadrant:
+                    // TOP RIGHT
+                    x >= xyMax/2 && y <= xyMax/2 ? 1 :
+                    // TOP LEFT
+                    x <= xyMax/2 && y <= xyMax/2 ? 2 :
+                    // BOTTOM LEFT
+                    x <= xyMax/2 && y >= xyMax/2 ? 3 :
+                    // BOTTOM RIGHT
+                    4,
+                corner:
+                    x == 0 && y == 0 ? 1 :
+                    x == 0 && y == xyMax ? 1 :
+                    x == xyMax && y == xyMax ? 1 :
+                    x == xyMax && y == 0 ? 1 : 0
+            };
 
-  // console.log(COORDINATES)
+            if(newX == 0 || newY == 0 || y == xyMax || x == xyMax){
+                COORDINATES[x][y].walkable = sX == x && sY == y ? 1 : 0;
+                start ? COORDINATES[x][y].start = 1 : COORDINATES[x][y].border = 1;
+                
+            } else if(x < xyMax && y < xyMax){
+                COORDINATES[x][y].walkable =
+                cellChance <= WALKABLE_TILE_CHANCE || newStartIsHere ? 1 : 0;
+                COORDINATES[x][y].walkable ? walkableTiles++ : COORDINATES[x][y].occupied = 1;
+            } else if(COORDINATES[x][y].corner){
+                COORDINATES[x][y].walkable = 0;
+            }
+        });
+    });
+        
+        exit = generateRandomEndpoint([sX, sY], tHeight);
+        COORDINATES[exit[0]][exit[1]].walkable = 1;
+        COORDINATES[exit[0]][exit[1]].exit = 1;
+
+
+        // checks to make sure the dungeon can be completed.
+        // if not build another one until you get one that can be
+    if (!checker([sX, sY])) return (
+        buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX,pExitY])
+    );
   
-	// checks to make sure the dungeon can be completed.
-  // if not build another one until you get one that can be
-  let exitReached;
-  for(let i=0;i<exits.length;i++){
-    if (
-      checker(
-        COORDINATES,
-        [sX, sY],
-        // [0,240],
-        [sX, sY],
-        // [0, 240],
-        exits[i],
-        [sX, sY],
-        // [0,240],
-        dir([sX, sY], tHeight, xyMax),
-        tHeight,
-        [xyMax, xyMax]
-      )
-    ) {
-      exitReached = true;
-      break;
-    }
-  }
-  
-  if(!exitReached){
-    return buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [
-      pExitX,
-      pExitY,
-    ]);
-  }
-  
-  generatePlayer([sX, sY], "white", COORDINATES, tHeight, exits);
-  generateEnemies(lvl, xyMax, COORDINATES, exits);
+    generatePlayer([sX, sY], COORDINATES, tHeight);
+    generateEnemies(lvl, xyMax, COORDINATES);
 
-  _dungeon.innerHTML = dungeon++;
+    _dungeon.innerHTML = dungeon++;
 };
 
 
