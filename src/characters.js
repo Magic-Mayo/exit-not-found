@@ -175,19 +175,26 @@ const Character = function (name, clas) {
         });
 	};
 
-	C.block;
+	C.block = 0;
 	C.resetActions = function () {
         C.actionsLeft = C.actionsPerTurn;
         C.block = 0;
 		_actionsLeft.innerHTML = C.actionsLeft;
 	};
 	C.defStance = async function () {
-        C.block = C.actionsLeft;
-        while(C.awaitingUser){
-            const waiting = await checkIfWaiting();
-            if(waiting) continue;
+        console.log('button click')
+        if(enemies.length){
+            C.block = C.actionsLeft;
+            C.actionsLeft = 0;
+            while(C.awaitingUser){
+                const waiting = await checkIfWaiting();
+                if(waiting) continue;
+            }
+            paintCanvas();
+            return enemyTurn();
         }
-        enemyTurn();
+        // add code to put text in actions window
+        return 
 	};
 };
 
