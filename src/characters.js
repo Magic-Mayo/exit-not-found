@@ -180,7 +180,7 @@ const Character = function (name, clas) {
         });
 	};
 
-	C.block;
+	C.block = 0;
 	C.resetActions = function () {
         C.actionsLeft = C.actionsPerTurn;
         C.block = 0;
