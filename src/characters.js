@@ -319,7 +319,7 @@ const Enemy = function (coords, enemyPower) {
         }
 
         if(E.speedLeft - E.attackSpeed >= 0){
-            return document.body.append(E.atkChar());
+            E.atkChar();
         }
 
         E.defStance();
