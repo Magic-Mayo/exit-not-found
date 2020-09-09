@@ -153,6 +153,15 @@ const handlePlayerMovement = async (event, room, tileSize) => {
         console.log("you win!");
 
         player.resetActions();
+
+        const div = document.createElement('div')
+        div.classList.add('turn')
+        const h3 = document.createElement('h3');
+        h3.innerHTML = `${player.name} has reached level ${lvl} in ${steps} steps!`
+        div.append(h3)
+        _actionWindow.append(div);
+        _actionWindow.scrollTo(0, _actionWindow.scrollHeight)
+
         return buildDungeon(
             CANVAS_HEIGHT,
             CANVAS_WIDTH,
@@ -290,6 +299,9 @@ const enemyTurn = () => {
                 const turn = setInterval(() => {
                     enemy.handleTurn();
                     if (enemy.speedLeft == 0) {
+                        if(enemy.attacks[enemy.attacks.length - 1] != 'border' && enemy.attacks.length > 0){
+                            enemy.attacks.push('border')
+                        }
                         clearInterval(turn);
                         if (i == enemies.length - 1) {
                             window.onkeypress = handleKeyPress;
