@@ -35,7 +35,8 @@ _btnStart.addEventListener("click", (e) => {
 	_actionsTotal.innerHTML = player.actionsPerTurn;
 	_actionsLeft.innerHTML = player.actionsLeft;
 	_expCurrent.innerHTML = player.xp;
-	_expToNextLvl.innerHTML = player.nextLvl;
+    _expToNextLvl.innerHTML = player.nextLvl;
+    _blockBtn.addEventListener('click', player.defStance)
 	buildDungeon(
 		CANVAS_HEIGHT,
 		CANVAS_WIDTH,
