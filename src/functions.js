@@ -359,3 +359,18 @@ const getExitGradient = (x, y) => {
 const gameOver = () => {
     
 }
+
+const displayAttack = enemy => {
+    enemy.attacks.forEach(attack => {
+        const actions = _enemyActionWindow.children;
+        if(attack == 'border' || !actions.length){
+            _enemyActionWindow.append(document.createElement('div'));
+        }
+        if(attack != 'border'){
+            const h3 = document.createElement('h3');
+            h3.innerHTML = attack;
+            actions[actions.length - 1].append(h3)
+        }
+    })
+    _enemyActionWindow.scrollTo(0, _enemyActionWindow.scrollHeight)
+}
