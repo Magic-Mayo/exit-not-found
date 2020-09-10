@@ -36,7 +36,16 @@ _btnStart.addEventListener("click", (e) => {
 	_actionsLeft.innerHTML = player.actionsLeft;
 	_expCurrent.innerHTML = player.xp;
     _expToNextLvl.innerHTML = player.nextLvl;
-	createChatMessage('narrator','narrator',`${player.name} has entered the dungeon...`)
+	asyncForEach(narrator.start, (msg, i) => 
+        new Promise(resolve => {
+            setTimeout(() => {
+                i == 0 || i == 1 ?
+                createChatMessage('narrator','narrator', msg(player.name)) :
+                createChatMessage('player',player.name, msg)
+                resolve();
+            }, rng(750) + 1000)
+        })
+    )
 	
     _blockBtn.addEventListener('click', player.defStance)
 	buildDungeon(
@@ -48,8 +57,6 @@ _btnStart.addEventListener("click", (e) => {
 		TILE_WIDTH,
 		[0, 160]
     );
-
-    createChatMessage('player', 'heyooo', 'we up in this bitch')
 });
 
 // _btnReset.addEventListener("click", (e) => {
@@ -114,25 +121,29 @@ const showEnemyDetails = enemy => {
 	_h4.innerHTML = enemy.name;
 	_section.append(_h4);
 
-	// CREATE 'CLASS' & APPEND TO CONTAINER
-	// const enemyClass = !enemy.class ? 'melee' : enemy.class == 1 ? 'magic' : 'ranged'
-	// _section.append(createParSpanPair('🧍 Class: ', enemyClass))
-	// CREATE 'HP' & APPEND TO CONTAINER
-	_section.append(createParSpanPair("❤ HP: ", enemy.hp));
-	// CREATE 'ATTACK STRENGTH' & APPEND TO CONTAINER
-	_section.append(createParSpanPair("🔪 Attack: ", enemy.attackStrength));
-	// CREATE 'DEFENSE' & APPEND TO CONTAINER
-	_section.append(createParSpanPair("🛡 Defense: ", enemy.def));
-	// CREATE 'FOV' & APPEND TO CONTAINER
-    _section.append(createParSpanPair("🔭 FOV: ", enemy.fov));
+	// _section.append(createParSpanPair("❤ HP: ", enemy.hp));
+	// _section.append(createParSpanPair("🔪 Attack: ", enemy.attackStrength));
+	// _section.append(createParSpanPair("🛡 Defense: ", enemy.def));
+
+	const _d = document.createElement('div')
+	_d.classList.add('enemy-item-stats')
+	_d.append(createParSpanPair("❤ HP: ", enemy.hp))
+	_d.append(createParSpanPair("🔪 Attack: ", enemy.attackStrength))
+	_d.append(createParSpanPair("🛡 Defense: ", enemy.def))
+
+	// _section.innerHTML = `<div class="enemy-item-stats">${createParSpanPair("❤ HP: ", enemy.hp)}${createParSpanPair("🔪 Attack: ", enemy.attackStrength)}${createParSpanPair("🛡 Defense: ", enemy.def)}</div>`
+
+	_section.append(_d)
 	
 	const _btn = document.createElement('button')
 	_btn.classList.add('attack-btn', 'font-bold')
 	_btn.innerText = "attack"
 	
+	// _section.append(_stats);
+	_section.append(_btn)
 
-	_cursorModal.append(_btn)
 	_cursorModal.append(_section)
+
 	_btn.removeEventListener('click', playerAttack)
 	_btn.addEventListener('click', playerAttack)
 };
@@ -168,3 +179,7 @@ const checkIfEnemyCoord = ([clickX, clickY], [enX, enY]) =>
 		: false;
 
 _lvlUp.addEventListener("click", (e) => e.target.dataset.stat ? player.addStat(e.target.dataset.stat) : null);
+_cursorModal.addEventListener("mouseleave", e => {
+	enemyIndex = 0
+	_cursorModal.classList.add('invisible')
+})

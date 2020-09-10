@@ -371,7 +371,8 @@ const createChatMessage = (sender, name, message) => {
 
     _box.append(_p,_p2)
 
-    _chatBox.append(_box)
+    _chatMessageGroup.append(_box)
+    _chatBox.scrollTo(0, _chatBox.scrollHeight)
 }
 
 

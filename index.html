@@ -374,10 +374,38 @@
 				transition: opacity .4s ease-out;
 				min-width: 100px;
 				min-height: 100px;
-				background-color: rgba(215, 228, 226, 0.555);
+				background-color: rgba(0, 0, 0, 0.555);
 				z-index: 5000;
 				cursor: pointer;
 			}
+
+			.enemy-item {
+				display: flex;
+				flex-wrap: wrap;
+				padding: 10px;
+				justify-content: space-between;
+				color: #fff
+			}
+
+			.enemy-item h4{
+				font-size: 21px;
+				flex: 1 1 100%;
+				margin-top: 5px;
+			}
+
+			.enemy-item .attack-btn {
+				width: 40%;
+				align-self: center;
+			}
+
+			.enemy-item-stats {
+				width: 40%;
+				min-width: 150px;
+				font-size: 16px;
+			}
+
+
+
 
 			@keyframes blink {
 				from {
@@ -405,19 +433,31 @@
 			}
 
 			.chat-box {
-                width: 450px;
-                height: 750px;
-                background-color: transparent;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
-                border: 4px solid #0787A7;
-                padding: 20px;
 				position: relative;
-				overflow-y: auto;
+                width: 450px;
+                height: 750px;                
+				background-color: transparent;
+				overflow: hidden scroll;
+                padding: 20px;
             }
 
-			.chat-box::before {
+			.chat-box-container {
+				position: relative;
+				border: 4px solid #0787A7;
+			}
+
+			.chat-message-group {
+				min-height: 100%;
+				width: 100%;
+				display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+				position: relative;
+				bottom: 0;
+				left: 0;
+			}
+
+			.chat-box-container::before {
 				content: '';
 				pointer-events: none;
 				position: absolute;
@@ -426,7 +466,7 @@
 				left: 0;
 				width: 100%;
 				height: 100%;
-				background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.775) 10.5%, transparent 28.5%);
+				background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.82) 10%, transparent 35%);
 			}
 
 			.chat-box-title {
@@ -438,16 +478,16 @@
 				color: #0787A7;
 				text-align: center;
 				width: 100%;
+				margin-top: 15px;
 			}
 
             .box {
+				position: relative;
                 width: 100%;
                 padding: 5px 15px 10px;
                 display: flex;
                 flex-direction: column;
             }
-
-
 
             .message-box {
                 padding: 15px 35px 25px 25px;
@@ -460,12 +500,13 @@
             .box-enemy,
 			.box-narrator {
                 align-items: flex-start;
+				animation: fadeInLeft .8s ease-out;
+
             }
 
             .box-enemy .message-box {
                 background-color: #a70707;
             }
-
 
             .box-enemy .author {
                 color: #a70707;
@@ -473,6 +514,8 @@
 
             .box-player {
                 align-items: flex-end;
+				animation: fadeInRight .8s ease-out;
+
             }
 
             .box-player .message-box {
@@ -503,6 +546,33 @@
             .box-player .author {
                 color: #16c551;
             }
+
+			@keyframes fadeInRight {
+				from {
+					transform: translateX(120%);
+					opacity: 0;
+					height: 0%;
+				}
+
+				to {
+					transform: translateX(0);
+					opacity: 1;
+					height: 100%;
+				}
+			}
+			@keyframes fadeInLeft {
+				from {
+					transform: translateX(-120%);
+					opacity: 0;
+					height: 0%;
+				}
+
+				to {
+					transform: translateX(0);
+					opacity: 1;
+					height: 100%;
+				}
+			}
 		</style>
 	</head>
 
@@ -585,45 +655,14 @@
                 <button class="font-regular" id='blockBtn'>Block</button>
             </div>
             
-            <div class="chat-box">
+			<div class="chat-box-container">
 				<h1 class="chat-box-title font-bold">Recent Activities</h1>
-				<div class="box box-enemy">
-				  <p class="message-box font-regular">
-					<svg width="100%" height="100%">
-					  <rect 
-						  width='100%' 
-						  height='100%' 
-						  fill='none' 
-						  stroke='black' 
-						  stroke-width='7' 
-						  stroke-dasharray='60,52,23' 
-						  stroke-dashoffset='84' 
-						  stroke-linecap='square'  
-					  />
-					</svg>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
-				  </p>
-				  <p class="author">Vampire</p>
+				<div class="chat-box">
+					<div class="chat-message-group">
+
+					</div>
 				</div>
-				 <div class="box box-player">
-				  <p class="message-box">
-					<svg width="100%" height="100%">
-					  <rect 
-						  width='100%' 
-						  height='100%' 
-						  fill='none' 
-						  stroke='black' 
-						  stroke-width='7' 
-						  stroke-dasharray='60, 52, 23' 
-						  stroke-dashoffset='84' 
-						  stroke-linecap='square'
-					  />
-					</svg>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-				  </p>  
-				  <p class="author">Player</p>  
-				</div>
-			  </div>
+			</div>
 
 		</div>
 		<div class="headline">
