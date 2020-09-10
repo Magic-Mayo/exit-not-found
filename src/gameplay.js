@@ -3,6 +3,7 @@
 ////////// TO DO ///////////
 _btnStart.addEventListener("click", (e) => {
     window.removeEventListener('keydown', typeName)
+    window.removeEventListener('keypress', handleKeyPress);
 	// goFullScreen();
 	// *** CREATE PLAYER ELEMENTS***
 	const _createClassInput = document.querySelector(
@@ -36,17 +37,23 @@ _btnStart.addEventListener("click", (e) => {
 	_actionsLeft.innerHTML = player.actionsLeft;
 	_expCurrent.innerHTML = player.xp;
     _expToNextLvl.innerHTML = player.nextLvl;
-	asyncForEach(narrator.start, (msg, i) => 
+    player.awaitingUser = true;
+	asyncForEach(narrator.start, (msg, i, arr) => 
         new Promise(resolve => {
-            setTimeout(() => {
-                i == 0 || i == 1 ?
-                createChatMessage('narrator','narrator', msg(player.name)) :
-                createChatMessage('player',player.name, msg)
-                resolve();
-            }, rng(750) + 1000)
+            if(i != 0){
+                return setTimeout(() => {
+                    i == 1 || i == 3 ?
+                    createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
+                    createChatMessage('player',player.name, msg);
+                    if(i == arr.length - 1) player.awaitingUser = false;
+                    resolve();
+                }, rng(750) + 1500)
+            }
+
+            createChatMessage('narrator', 'narrator', msg(player.name))
+            resolve();
         })
     )
-	
     _blockBtn.addEventListener('click', player.defStance)
 	buildDungeon(
 		CANVAS_HEIGHT,
