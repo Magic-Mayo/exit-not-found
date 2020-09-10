@@ -149,18 +149,12 @@ const handlePlayerMovement = async (event, room, tileSize) => {
         if (lvl % 10 == 0) player.xp += 100;
         player.checkIfNextLvl();
         _expCurrent.textContent = player.xp;
-        passDungeonSound.play()
+        zzfxP(passDungeonSound[rng(passDungeonSound.length -1)]); // playerMove
         console.log("you win!");
 
         player.resetActions();
 
-        const div = document.createElement('div')
-        div.classList.add('turn')
-        const h3 = document.createElement('h3');
-        h3.innerHTML = `${player.name} has reached level ${lvl} in ${steps} steps!`
-        div.append(h3)
-        _actionWindow.append(div);
-        _actionWindow.scrollTo(0, _actionWindow.scrollHeight)
+        createChatMessage('narrator','narrator', `${player.name} has reached level ${lvl} in ${steps} steps!`)
 
         return buildDungeon(
             CANVAS_HEIGHT,
@@ -293,15 +287,11 @@ const enemyTurn = () => {
     
 	moveTimer = setTimeout(() =>
         asyncForEach(enemies, (enemy, i) => {
-            showEnemyDetails(enemy);
             enemy.block = 0;
             return new Promise((resolve) => {
                 const turn = setInterval(() => {
                     enemy.handleTurn();
                     if (enemy.speedLeft == 0) {
-                        if(enemy.attacks[enemy.attacks.length - 1] != 'border' && enemy.attacks.length > 0){
-                            enemy.attacks.push('border')
-                        }
                         clearInterval(turn);
                         if (i == enemies.length - 1) {
                             window.onkeypress = handleKeyPress;
@@ -360,17 +350,30 @@ const gameOver = () => {
     
 }
 
-const displayAttack = enemy => {
-    enemy.attacks.forEach(attack => {
-        const actions = _enemyActionWindow.children;
-        if(attack == 'border' || !actions.length){
-            _enemyActionWindow.append(document.createElement('div'));
-        }
-        if(attack != 'border'){
-            const h3 = document.createElement('h3');
-            h3.innerHTML = attack;
-            actions[actions.length - 1].append(h3)
-        }
-    })
-    _enemyActionWindow.scrollTo(0, _enemyActionWindow.scrollHeight)
+const setAttributes =(el,attr) => {
+    for (let key in attr) {
+        el.setAttribute(key,attr[key])
+    }
 }
+
+// param: sender (either "player", "enemy", "narrator")
+const createChatMessage = (sender, name, message) => {
+    const _box = document.createElement('div');
+    _box.classList.add(`box`, `box-${sender}`)
+
+    const _p = document.createElement('p');
+    _p.classList.add(`message-box`, `font-regular`)
+    _p.innerHTML = generateChatBorder() + message
+
+    const _p2 = document.createElement('p')
+    _p2.classList.add('author')
+    _p2.innerText = name
+
+    _box.append(_p,_p2)
+
+    _chatMessageGroup.append(_box)
+    _chatBox.scrollTo(0, _chatBox.scrollHeight)
+}
+
+
+const generateChatBorder = () => `<svg width="100%" height="100%"><rect width='100%' height='100%' fill='none' stroke='black' stroke-width='7' stroke-dasharray=${rng(41) + 40},${rng(31) + 30},${rng(11) + 20} stroke-dashoffset='84' stroke-linecap='square' /></svg>`

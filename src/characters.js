@@ -20,10 +20,12 @@ const Character = function (name, clas) {
 	C.nextLvl = 100;
 	C.lvl = 1;
 	C.hp = !clas ? 100 : clas == 1 ? 50 : 75;
-
 	C.attackStrength = !clas || clas == 1 ? rng() + 3 : rng(3) + 1;
 	C.def = !clas ? rng() + 2 : clas == 1 ? rng(2) + 1 : rng(3) + 1;
-
+	C.crit = {
+		mult: 1.5,
+		chance: 50
+	};
 	C.agility = !clas ? rng() + 2 : clas == 1 ? rng(2) + 1 : rng(5) + 3;
 
 	C.actionsPerTurn = !clas ? rng() + 4 : clas == 1 ? rng(2) + 3 : rng() + 4;
@@ -50,35 +52,31 @@ const Character = function (name, clas) {
 		_playerLvl.textContent = C.lvl;
 		_expToNextLvl.textContent = player.nextLvl;
 		_lvlUp.classList.remove("invisible");
-		levelUpSound.play()
+		zzfxP(levelUpSound[rng(levelUpSound.length -1)]);		
 		window.onkeypress = null;
 	};
 	C.weapons = weapons[C.class];
 	C.addStat = function (stat) {
-		/////////////// TO DO //////////////
-		// Needs functionality to
-		// bring up modal and prompt user
-		// to choose which stat to upgrade
-		/////////////// TO DO //////////////
 		if (stat == 0) {
             const lvlAtk = Math.ceil(C.attackStrength * 1.2);
-			_actionWindow.append(`you increased attack strength by ${lvlAtk - C.attackStrength}!`);
+			createChatMessage('player', C.name, `I increased my attack strength by ${lvlAtk - C.attackStrength}!`);
             C.attackStrength = lvlAtk;
 			_playerAttackStrength.innerHTML = C.attackStrength;
 		} else if (stat == 1) {
             const lvlAgl = Math.ceil(C.agility * 1.1)
-			_actionWindow.append(`you increased agility by ${lvlAgl - C.agility}!`);
+			createChatMessage('player', C.name, `I increased my agility by ${lvlAgl - C.agility}!`);
 			C.agility = lvlAgl;
 			_playerAgility.innerHTML = C.agility;
 		} else if (stat == 2) {
             const lvlDef = Math.ceil(C.def * 1.15)
-			_actionWindow.append(`you increased defense by ${lvlDef - C.def}!`);
+			createChatMessage('player', C.name, `I increased my defense by ${lvlDef - C.def}!`);
 			C.def = lvlDef;
 			_playerDefense.innerHTML = C.def;
 		} else if (stat == 3) {
-            const lvlFov = Math.ceil(C.fov * 1.1)
-			_actionWindow.append(`you increased fov by ${lvlFov - C.fov}!`);
-			C.actionsPerTurn = lvlFov;
+            const lvlActions = Math.ceil(C.actionsPerTurn * 1.1)
+			createChatMessage('player', C.name, `I increased my actions per turn by ${lvlActions - C.actionsPerTurn}!`);
+			C.actionsPerTurn = lvlActions;
+			C.actionsLeft = lvlActions;
 			_actionsTotal.innerHTML = C.actionsPerTurn;
             _actionsLeft.innerHTML = C.actionsPerTurn;
 		}
@@ -133,26 +131,33 @@ const Character = function (name, clas) {
             }
         })
     };
-	C.attackEnemy = async function (enemy, i) {
+	C.attackEnemy = async function (enemy) {
         if(C.attackSpeed > C.actionsLeft) return "You don't have enough energy left to attack!  Try another action";
 
-		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def + enemy.block;
+		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def + enemy.block
         C.actionsLeft -= C.attackSpeed;
         _actionsLeft.innerHTML = C.actionsLeft;
-        willHit && (enemy.hp -= C.attackStrength - enemy.def - enemy.block);
-        showEnemyDetails(enemy, i);
+		
+		const mult = rng(100) <= C.crit.chance ? Math.ceil(C.crit.mult * C.attackStrength) : C.attackStrength;
+		if (willHit) {
+			enemy.hp -= mult - enemy.def - enemy.block
+			if (!C.class) zzfxP(meleeDamageSound[rng(meleeDamageSound.length -1)]);		
+			else if (C.class == 1) zzfxP(magicDamageSound[rng(magicDamageSound.length -1)]);		
+			else if (C.class == 2) zzfxP(rangedDamageSound[rng(meleeDamageSound.length -1)]);		
+		}
         
         if(enemy.hp < 1){
             const [x,y] = enemy.coords;
             COORDINATES[x][y].occupied = 0;
-            enemies.splice(i,1);
+            enemies.splice(enemyIndex,1);
             C.xp += enemy.xp;
             _expCurrent.innerHTML = C.xp;
-            _enemyDetails.innerHTML = '';
-            _enemyActionWindow.innerHTML = '';
+            _cursorModal.classList.add('invisible')
             if(!enemies.length) C.actionsLeft = C.actionsPerTurn;
             C.checkIfNextLvl();
         }
+
+        showEnemyDetails(enemy)
         
         if(C.actionsLeft == 0){
             while(C.awaitingUser){
@@ -165,12 +170,12 @@ const Character = function (name, clas) {
         paintCanvas();
         C.hiliteMoveArea();
 
-        return C.attackStrength <= enemy.block + enemy.def ?
+        return mult <= enemy.block + enemy.def ?
             `${enemy.name} blocked your attack!` :
             willHit && enemy.hp < 1 ?
-            `You defeated the ${enemy.name}!` :
-            willHit ? `You hit the ${enemy.name} for ${C.attackStrength - enemy.def - enemy.block}!` :
-			`You missed the ${enemy.name}!`;
+            `I defeated the ${enemy.name} by dealing ${mult - enemy.def - enemy.block} damage!` :
+            willHit ? `I hit the ${enemy.name} for ${mult - enemy.def - enemy.block}!` :
+			`I missed the ${enemy.name}!`;
 	};
 
 	C.inRange = [];
@@ -234,7 +239,6 @@ const Enemy = function (coords, enemyPower) {
     E.speedLeft = E.speed;
 	E.playerSpotted = 0;
     E.xp = ~~(enemyPower / 5);
-    E.attacks = [];
 	E.atkChar = function () {
         const toHit = rng(100)
 		const willHit =
@@ -242,7 +246,6 @@ const Enemy = function (coords, enemyPower) {
         willHit ? (player.hp -= E.attackStrength - ~~player.def - player.block) : 0;
         E.speedLeft -= E.attackSpeed;
         _healthpointsCurrent.innerHTML = player.hp;
-        displayAttack(E);
         
         // GAME OVER SCENARIO FOR PLAYER
         if(player.hp < 1){
@@ -255,7 +258,7 @@ const Enemy = function (coords, enemyPower) {
         ? `${E.name} hit for ${E.attackStrength - player.def - player.block}!`
         : `${E.name} missed!`
         console.log(attack)
-		E.attacks.push(attack)
+		createChatMessage('enemy', E.name, attack)
 	};
 
 	E.handleTurn = function () {
@@ -343,11 +346,11 @@ const Enemy = function (coords, enemyPower) {
 	E.checkFOV = function (spotRange = 1) {
 		if (inRange(E.coords,player.coords,E.fov)) {
 			if (spotRange == 2) E.playerSpotted = 1;
-			_enemySeesPlayer.innerHTML = "Gotcha!";
+			// _enemySeesPlayer.innerHTML = "Gotcha!";
 			return 1;
 		} else {
 			E.playerSpotted = 0;
-			_enemySeesPlayer.innerHTML = "Where'd you go??";
+			// _enemySeesPlayer.innerHTML = "Where'd you go??";
 			return 0;
 		}
     };
