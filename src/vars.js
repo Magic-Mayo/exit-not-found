@@ -14,6 +14,19 @@ const colors = {
     walkHighlight: '#08fa2555'
 }
 
+const tutorial = {
+    start: name => `${name} has entered the dungeon`,
+    move: `Use the WASD keys to move your character. Hint: It's the White box ;)`,
+    fog: [
+        "Tiles you have not explored yet are completely hidden by the fog of war.",
+        "Tiles you've discovered will stay visible until they are out of your frame of view (FOV).",
+        "You'll remember the dungeon layout, but you'll no longer be able to see 'activity'",
+        "So watch out!",
+        "There could be vampires"
+    ],
+
+}
+
 /* ==================================
 HTML ELEMENTS
 ==================================== */
@@ -54,7 +67,6 @@ const _playerFOV = document.querySelector('#playerFOV')
 const _actionsTotal = document.querySelector('#actionsPerTurn')
 const _actionsLeft = document.querySelector('#actionsLeft')
 const _lvlUp = document.querySelector('.level-up')
-const _attackBtn = document.querySelector('#attackBtn')
 const _blockBtn = document.querySelector('#blockBtn')
 //  Game Details
 const _dungeon = document.querySelector('#dungeon')
@@ -65,9 +77,7 @@ const _enemyDetails = document.querySelector('.enemy-details')
 // const _enemySeesPlayer = document.querySelector('#enemySeesPlayer')
 
 // ACTIONS WINDOW
-const _actionWindow = document.querySelector('.actions-window')
-const _enemyActionWindow = document.querySelector('.enemy-actions-window')
-
+const _chatBox = document.querySelector('.chat-box')
 
 /* ==================================
 CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS
@@ -141,3 +151,5 @@ let exit;
 const start = [];
 
 let walkableTiles = 0;
+
+let enemyIndex = 0;

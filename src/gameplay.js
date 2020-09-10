@@ -36,7 +36,8 @@ _btnStart.addEventListener("click", (e) => {
 	_actionsLeft.innerHTML = player.actionsLeft;
 	_expCurrent.innerHTML = player.xp;
     _expToNextLvl.innerHTML = player.nextLvl;
-    _actionWindow.children[0].innerHTML = `${player.name} has entered the dungeon...`
+	createChatMessage('narrator','narrator',`${player.name} has entered the dungeon...`)
+	
     _blockBtn.addEventListener('click', player.defStance)
 	buildDungeon(
 		CANVAS_HEIGHT,
@@ -47,6 +48,8 @@ _btnStart.addEventListener("click", (e) => {
 		TILE_WIDTH,
 		[0, 160]
     );
+
+    createChatMessage('player', 'heyooo', 'we up in this bitch')
 });
 
 // _btnReset.addEventListener("click", (e) => {
@@ -67,7 +70,7 @@ _btnStart.addEventListener("click", (e) => {
 // 4. total steps walked
 
 
-const handleCanvasHover = (e,attacking) => {
+const handleCanvasHover = (e) => {
 	_cursorModal.style.transform = `translate(calc(-25% + ${e.clientX}px),calc(-25% + ${e.clientY}px))`
 	const { top, left } = game.getBoundingClientRect();
 	const percentDiff = game.width / e.target.clientWidth;
@@ -76,30 +79,31 @@ const handleCanvasHover = (e,attacking) => {
 	const adjustedY = (e.clientY - top) * percentDiff;
 
 	// THIS SHOULD RETURN AN ARRAY OF ONE OR MORE ENEMIES THAT ARE IN THE CLICK LOCATION
-	let index;
 	const [hoveredEnemy] = enemies.filter((enemy, i) => {
 		if (checkIfEnemyCoord([adjustedX, adjustedY], enemy.coords)) {
-			index = i;
+			enemyIndex = i;
 			return 1;
 		}
 	});
 
 	if (hoveredEnemy) {
 		_cursorModal.classList.remove('invisible')
-		showEnemyDetails(hoveredEnemy, index);
+		showEnemyDetails(hoveredEnemy, enemyIndex);
 
-	} else _cursorModal.classList.add('invisible')
-
-	if (attacking != undefined) {
-		
+	} else {
+        enemyIndex = 0
+        _cursorModal.classList.add('invisible')
 	}
-
 }
+
 game.addEventListener('mousemove', handleCanvasHover)
 
-const showEnemyDetails = (enemy, i) => {
-    _enemyDetails.innerHTML = "";
-	_enemyActionWindow.innerHTML = '';
+const playerAttack = async () => {
+    const attack = await player.attackEnemy(enemies[enemyIndex])
+    createChatMessage('player', player.name, attack)
+};
+
+const showEnemyDetails = enemy => {
 	_cursorModal.innerHTML = ""
 	// CREATE CONTAINER
 	const _section = document.createElement("section");
@@ -121,42 +125,17 @@ const showEnemyDetails = (enemy, i) => {
 	_section.append(createParSpanPair("🛡 Defense: ", enemy.def));
 	// CREATE 'FOV' & APPEND TO CONTAINER
     _section.append(createParSpanPair("🔭 FOV: ", enemy.fov));
-    
-    if(enemy.attacks.length > 0){
-        displayAttack(enemy);
-    }
-
-	if (
-		player.inRange.some(
-			({ coords: [x, y] }) =>
-				x == enemies[i]?.coords[0] && y == enemies[i]?.coords[1]
-		) &&
-		window.onkeypress
-	) {
-		_attackBtn.classList.remove("invisible");
-		_attackBtn.setAttribute("data-enemy", i);
-	} else {
-		_attackBtn.classList.add("invisible");
-	}
 	
 	const _btn = document.createElement('button')
 	_btn.classList.add('attack-btn', 'font-bold')
 	_btn.innerText = "attack"
+	
+
 	_cursorModal.append(_btn)
-
 	_cursorModal.append(_section)
-    // _enemyDetails.append(_section);
+	_btn.removeEventListener('click', playerAttack)
+	_btn.addEventListener('click', playerAttack)
 };
-
-_attackBtn.addEventListener("click", async (e) => {
-	const i = e.target.dataset.enemy;
-    const enemy = enemies[i];
-    const attack = await player.attackEnemy(enemy, i)
-    const h5 = document.createElement('h5')
-    h5.innerHTML = attack;
-    _actionWindow.append(h5);
-    _actionWindow.scrollTo(0, _actionWindow.scrollHeight)
-});
 
 const typeName = e => {
     if(_createNameInput.textContent.length > 20  && e.keyCode != 8 && e.keyCode != 46) {
