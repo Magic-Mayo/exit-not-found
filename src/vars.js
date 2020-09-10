@@ -18,20 +18,25 @@ const narrator = {
     start: [
         name => `${name} has entered the dungeon...`,
         name => `but will ${name} find the exit?`,
-        '...what was that voice?  Is someone there?'
+        '...what was that voice?  Is someone there?',
+        `Use the WASD keys to move your character. Hint: It's the White box ;)`,
+        'ok....thanks?',
+        '**whoever you are**'
     ],
-    move: `Use the WASD keys to move your character. Hint: It's the White box ;)`,
     fog: [
         "Tiles you have not explored yet are completely hidden by the fog of war.",
-        "Tiles you've discovered will stay visible until they are out of your frame of view (FOV).",
+        "Tiles you've discovered will stay visible until they are out of your field of view (FOV).",
         "You'll remember the dungeon layout, but you'll no longer be able to see 'activity'",
         "So watch out!",
-        "There could be vampires"
+        "There could be vampires",
+        "WHO ARE YOU?!"
     ],
     enemy: [
         'That....is an enemy',
         "If you want to check out it's stats or attack just look at it!",
         "....or hover your mouse over it for those that don't have extra sensory abilities",
+        // `I'd almost rather die in here than having to keep hearing these "jokes"`,
+        '....whelp.  Guess the "jokes" are just gonna keep coming'
     ],
     taunting: [
 
@@ -121,7 +126,7 @@ const COORDINATES = {};
 // object of all 'walkable tiles' on game-grid
 const WALKABLE_COORDINATES = []
 // total steps walked by player this game
-let steps = 1;
+let steps = 0;
 // current dungeon the player is on
 let dungeon = 1;
 // total exp given to player for completing dungeon
@@ -132,7 +137,6 @@ let player;
 let lvl = 1;
 // current coordinate of the player
 let playerCoord = [];
-let playersTurn = true
 // ENEMY INFORMATION
 // # of enemies this dungeon
 // array of positions for each enemy
@@ -166,3 +170,5 @@ const start = [];
 let walkableTiles = 0;
 
 let enemyIndex = 0;
+
+let firstEnemySpotted;
