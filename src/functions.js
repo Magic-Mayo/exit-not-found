@@ -374,3 +374,30 @@ const displayAttack = enemy => {
     })
     _enemyActionWindow.scrollTo(0, _enemyActionWindow.scrollHeight)
 }
+
+const setAttributes =(el,attr) => {
+    for (let key in attr) {
+        el.setAttribute(key,attr[key])
+    }
+}
+
+// param: sender (either "player", "enemy", "narrator")
+const createChatMessage = (sender, name, message) => {
+    const _box = document.createElement('div');
+    _box.classList.add(`box`, `box-${sender}`)
+
+    const _p = document.createElement('p');
+    _p.classList.add(`message-box`, `font-regular`)
+    _p.innerHTML = generateChatBorder() + message
+
+    const _p2 = document.createElement('p')
+    _p2.classList.add('author')
+    _p2.innerText = name
+
+    _box.append(_p,_p2)
+
+    _chatBox.append(_box)
+}
+
+
+const generateChatBorder = () => `<svg width="100%" height="100%"><rect width='100%' height='100%' fill='none' stroke='black' stroke-width='7' stroke-dasharray=${rng(41) + 40},${rng(31) + 30},${rng(11) + 20} stroke-dashoffset='84' stroke-linecap='square' /></svg>`

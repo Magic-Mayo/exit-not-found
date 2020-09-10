@@ -250,7 +250,6 @@ const Enemy = function (coords, enemyPower) {
         willHit ? (player.hp -= E.attackStrength - ~~player.def - player.block) : 0;
         E.speedLeft -= E.attackSpeed;
         _healthpointsCurrent.innerHTML = player.hp;
-        displayAttack(E);
         
         // GAME OVER SCENARIO FOR PLAYER
         if(player.hp < 1){
@@ -263,7 +262,7 @@ const Enemy = function (coords, enemyPower) {
         ? `${E.name} hit for ${E.attackStrength - player.def - player.block}!`
         : `${E.name} missed!`
         console.log(attack)
-		E.attacks.push(attack)
+		createChatMessage('enemy', E.name, attack)
 	};
 
 	E.handleTurn = function () {

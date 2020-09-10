@@ -47,6 +47,8 @@ _btnStart.addEventListener("click", (e) => {
 		TILE_WIDTH,
 		[0, 160]
     );
+
+    createChatMessage('player', 'heyooo', 'we up in this bitch')
 });
 
 // _btnReset.addEventListener("click", (e) => {
@@ -96,6 +98,12 @@ const handleCanvasHover = (e,attacking) => {
 
 }
 game.addEventListener('mousemove', handleCanvasHover)
+const attack = async (e) => {
+	const i = e.target.dataset.enemy;
+    const enemy = enemies[i];
+    const attack = await player.attackEnemy(enemy, i)
+    createChatMessage('player', player.name, attack)
+};
 
 const showEnemyDetails = (enemy, i) => {
     _enemyDetails.innerHTML = "";
@@ -121,10 +129,6 @@ const showEnemyDetails = (enemy, i) => {
 	_section.append(createParSpanPair("🛡 Defense: ", enemy.def));
 	// CREATE 'FOV' & APPEND TO CONTAINER
     _section.append(createParSpanPair("🔭 FOV: ", enemy.fov));
-    
-    if(enemy.attacks.length > 0){
-        displayAttack(enemy);
-    }
 
 	if (
 		player.inRange.some(
@@ -146,6 +150,8 @@ const showEnemyDetails = (enemy, i) => {
 
 	_cursorModal.append(_section)
     // _enemyDetails.append(_section);
+	_attackBtn.addEventListener('click', attack)
+    _enemyDetails.append(_section);
 };
 
 _attackBtn.addEventListener("click", async (e) => {
