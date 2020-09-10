@@ -154,13 +154,7 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 
         player.resetActions();
 
-        const div = document.createElement('div')
-        div.classList.add('turn')
-        const h3 = document.createElement('h3');
-        h3.innerHTML = `${player.name} has reached level ${lvl} in ${steps} steps!`
-        div.append(h3)
-        _actionWindow.append(div);
-        _actionWindow.scrollTo(0, _actionWindow.scrollHeight)
+        createChatMessage('narrator','narrator', `${player.name} has reached level ${lvl} in ${steps} steps!`)
 
         return buildDungeon(
             CANVAS_HEIGHT,
@@ -293,15 +287,11 @@ const enemyTurn = () => {
     
 	moveTimer = setTimeout(() =>
         asyncForEach(enemies, (enemy, i) => {
-            showEnemyDetails(enemy);
             enemy.block = 0;
             return new Promise((resolve) => {
                 const turn = setInterval(() => {
                     enemy.handleTurn();
                     if (enemy.speedLeft == 0) {
-                        if(enemy.attacks[enemy.attacks.length - 1] != 'border' && enemy.attacks.length > 0){
-                            enemy.attacks.push('border')
-                        }
                         clearInterval(turn);
                         if (i == enemies.length - 1) {
                             window.onkeypress = handleKeyPress;
@@ -358,21 +348,6 @@ const getExitGradient = (x, y) => {
 
 const gameOver = () => {
     
-}
-
-const displayAttack = enemy => {
-    enemy.attacks.forEach(attack => {
-        const actions = _enemyActionWindow.children;
-        if(attack == 'border' || !actions.length){
-            _enemyActionWindow.append(document.createElement('div'));
-        }
-        if(attack != 'border'){
-            const h3 = document.createElement('h3');
-            h3.innerHTML = attack;
-            actions[actions.length - 1].append(h3)
-        }
-    })
-    _enemyActionWindow.scrollTo(0, _enemyActionWindow.scrollHeight)
 }
 
 const setAttributes =(el,attr) => {
