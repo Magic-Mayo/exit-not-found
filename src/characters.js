@@ -53,7 +53,7 @@ const Character = function (name, clas) {
 		_expToNextLvl.textContent = player.nextLvl;
 		_lvlUp.classList.remove("invisible");
 		zzfxP(levelUpSound[rng(levelUpSound.length -1)]);		
-		window.onkeypress = null;
+		window.removeEventListener('onkeypress', handleKeyPress)
 	};
 	C.weapons = weapons[C.class];
 	C.addStat = function (stat) {
@@ -83,7 +83,7 @@ const Character = function (name, clas) {
 
 		_lvlUp.classList.add("invisible");
 		C.awaitingUser = false;
-		window.onkeypress = handleKeyPress;
+		window.addEventListener('keypress', handleKeyPress)
 	};
     C.coords = playerCoord;
 	C.highlighted = 0;
