@@ -67,7 +67,6 @@ const _playerFOV = document.querySelector('#playerFOV')
 const _actionsTotal = document.querySelector('#actionsPerTurn')
 const _actionsLeft = document.querySelector('#actionsLeft')
 const _lvlUp = document.querySelector('.level-up')
-const _attackBtn = document.querySelector('#attackBtn')
 const _blockBtn = document.querySelector('#blockBtn')
 //  Game Details
 const _dungeon = document.querySelector('#dungeon')
@@ -78,8 +77,6 @@ const _enemyDetails = document.querySelector('.enemy-details')
 // const _enemySeesPlayer = document.querySelector('#enemySeesPlayer')
 
 // ACTIONS WINDOW
-const _actionWindow = document.querySelector('.actions-window')
-const _enemyActionWindow = document.querySelector('.enemy-actions-window')
 const _chatBox = document.querySelector('.chat-box')
 
 /* ==================================
@@ -154,3 +151,5 @@ let exit;
 const start = [];
 
 let walkableTiles = 0;
+
+let enemyIndex = 0;
