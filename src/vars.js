@@ -90,7 +90,7 @@ const _enemyDetails = document.querySelector('.enemy-details')
 
 // ACTIONS WINDOW
 const _chatBox = document.querySelector('.chat-box')
-const _chatContainer = document.querySelector('.chat-box-container');
+const _chatMessageGroup = document.querySelector('.chat-message-group');
 
 /* ==================================
 CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS

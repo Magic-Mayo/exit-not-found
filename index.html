@@ -424,19 +424,31 @@
 			} */
 
 			.chat-box {
+				position: relative;
                 width: 450px;
                 height: 750px;                
 				background-color: transparent;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
+				overflow: hidden scroll;
                 padding: 20px;
-				position: relative;
-				overflow-y: scroll;
-				border: 4px solid #0787A7;
             }
 
-			.chat-box::before {
+			.chat-box-container {
+				position: relative;
+				border: 4px solid #0787A7;
+			}
+
+			.chat-message-group {
+				min-height: 100%;
+				width: 100%;
+				display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+				position: relative;
+				bottom: 0;
+				left: 0;
+			}
+
+			.chat-box-container::before {
 				content: '';
 				pointer-events: none;
 				position: absolute;
@@ -445,7 +457,7 @@
 				left: 0;
 				width: 100%;
 				height: 100%;
-				background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.775) 10.5%, transparent 28.5%);
+				background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.82) 10%, transparent 35%);
 			}
 
 			.chat-box-title {
@@ -457,6 +469,7 @@
 				color: #0787A7;
 				text-align: center;
 				width: 100%;
+				margin-top: 15px;
 			}
 
             .box {
@@ -465,20 +478,9 @@
                 padding: 5px 15px 10px;
                 display: flex;
                 flex-direction: column;
-				animation: fadeIn .8s ease-out;
             }
 
-			@keyframes fadeIn {
-				from {
-					transform: translateY(120%);
-					opacity: 0;
-				}
 
-				to {
-					transform: translateY(0);
-					opacity: 1;
-				}
-			}
 
             .message-box {
                 padding: 15px 35px 25px 25px;
@@ -491,12 +493,13 @@
             .box-enemy,
 			.box-narrator {
                 align-items: flex-start;
+				animation: fadeInLeft .8s ease-out;
+
             }
 
             .box-enemy .message-box {
                 background-color: #a70707;
             }
-
 
             .box-enemy .author {
                 color: #a70707;
@@ -504,6 +507,8 @@
 
             .box-player {
                 align-items: flex-end;
+				animation: fadeInRight .8s ease-out;
+
             }
 
             .box-player .message-box {
@@ -534,6 +539,33 @@
             .box-player .author {
                 color: #16c551;
             }
+
+			@keyframes fadeInRight {
+				from {
+					transform: translateX(120%);
+					opacity: 0;
+					height: 0%;
+				}
+
+				to {
+					transform: translateX(0);
+					opacity: 1;
+					height: 100%;
+				}
+			}
+			@keyframes fadeInLeft {
+				from {
+					transform: translateX(-120%);
+					opacity: 0;
+					height: 0%;
+				}
+
+				to {
+					transform: translateX(0);
+					opacity: 1;
+					height: 100%;
+				}
+			}
 		</style>
 	</head>
 
@@ -616,11 +648,14 @@
                 <button class="font-regular" id='blockBtn'>Block</button>
             </div>
             
-			<!-- <div class="chat-box-container"> -->
+			<div class="chat-box-container">
+				<h1 class="chat-box-title font-bold">Recent Activities</h1>
 				<div class="chat-box">
-					<h1 class="chat-box-title font-bold">Recent Activities</h1>
+					<div class="chat-message-group">
+
+					</div>
 				</div>
-			<!-- </div> -->
+			</div>
 
 		</div>
 		<div class="headline">
