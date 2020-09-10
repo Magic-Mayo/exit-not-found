@@ -414,10 +414,24 @@
                 border: 4px solid #0787A7;
                 padding: 20px;
 				position: relative;
+				overflow-y: auto;
             }
+
+			.chat-box::before {
+				content: '';
+				pointer-events: none;
+				position: absolute;
+				z-index: 1;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.775) 10.5%, transparent 28.5%);
+			}
 
 			.chat-box-title {
 				position: absolute;
+				z-index: 6000;
 				top: 0;
 				left: 50%;
 				transform: translate(-50%,0);
@@ -443,7 +457,8 @@
             }
 
 
-            .box-enemy {
+            .box-enemy,
+			.box-narrator {
                 align-items: flex-start;
             }
 
@@ -464,7 +479,15 @@
                 background-color: #16c551;
             }
 
-             .message-box svg {
+			.box-narrator .message-box {
+				background-color: #3948d4;
+			}
+
+			.box-narrator .author {
+				color: #3948d4;
+			}
+
+            .message-box svg {
                 position: absolute;
                 top: 0; left: 0;
                 width: 100%;
