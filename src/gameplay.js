@@ -66,9 +66,9 @@ _btnStart.addEventListener("click", (e) => {
 // 3. dungeon lvl
 // 4. total steps walked
 
-game.addEventListener("click", (e) => {
-	_enemyDetails.innerHTML = "";
 
+const handleCanvasHover = (e,attacking) => {
+	_cursorModal.style.transform = `translate(calc(-25% + ${e.clientX}px),calc(-25% + ${e.clientY}px))`
 	const { top, left } = game.getBoundingClientRect();
 	const percentDiff = game.width / e.target.clientWidth;
 
@@ -77,31 +77,30 @@ game.addEventListener("click", (e) => {
 
 	// THIS SHOULD RETURN AN ARRAY OF ONE OR MORE ENEMIES THAT ARE IN THE CLICK LOCATION
 	let index;
-	const [clickedEnemy] = enemies.filter((enemy, i) => {
+	const [hoveredEnemy] = enemies.filter((enemy, i) => {
 		if (checkIfEnemyCoord([adjustedX, adjustedY], enemy.coords)) {
 			index = i;
 			return 1;
 		}
 	});
 
-	!clickedEnemy
-		? _attackBtn.classList.add("invisible")
-		: showEnemyDetails(clickedEnemy, index);
-});
+	if (hoveredEnemy) {
+		_cursorModal.classList.remove('invisible')
+		showEnemyDetails(hoveredEnemy, index);
 
-_attackBtn.addEventListener("click", async (e) => {
-	const i = e.target.dataset.enemy;
-    const enemy = enemies[i];
-    const attack = await player.attackEnemy(enemy, i)
-    const h5 = document.createElement('h5')
-    h5.innerHTML = attack;
-    _actionWindow.append(h5);
-    _actionWindow.scrollTo(0, _actionWindow.scrollHeight)
-});
+	} else _cursorModal.classList.add('invisible')
+
+	if (attacking != undefined) {
+		
+	}
+
+}
+game.addEventListener('mousemove', handleCanvasHover)
 
 const showEnemyDetails = (enemy, i) => {
     _enemyDetails.innerHTML = "";
-    _enemyActionWindow.innerHTML = '';
+	_enemyActionWindow.innerHTML = '';
+	_cursorModal.innerHTML = ""
 	// CREATE CONTAINER
 	const _section = document.createElement("section");
 	_section.classList.add("enemy-item");
@@ -139,10 +138,25 @@ const showEnemyDetails = (enemy, i) => {
 	} else {
 		_attackBtn.classList.add("invisible");
 	}
+	
+	const _btn = document.createElement('button')
+	_btn.classList.add('attack-btn', 'font-bold')
+	_btn.innerText = "attack"
+	_cursorModal.append(_btn)
 
-    _enemyDetails.append(_section);
+	_cursorModal.append(_section)
+    // _enemyDetails.append(_section);
 };
 
+_attackBtn.addEventListener("click", async (e) => {
+	const i = e.target.dataset.enemy;
+    const enemy = enemies[i];
+    const attack = await player.attackEnemy(enemy, i)
+    const h5 = document.createElement('h5')
+    h5.innerHTML = attack;
+    _actionWindow.append(h5);
+    _actionWindow.scrollTo(0, _actionWindow.scrollHeight)
+});
 
 const typeName = e => {
     if(_createNameInput.textContent.length > 20  && e.keyCode != 8 && e.keyCode != 46) {
@@ -174,4 +188,4 @@ const checkIfEnemyCoord = ([clickX, clickY], [enX, enY]) =>
 		? true
 		: false;
 
-_lvlUp.addEventListener("click", (e) => player.addStat(e.target.dataset.stat));
+_lvlUp.addEventListener("click", (e) => e.target.dataset.stat ? player.addStat(e.target.dataset.stat) : null);
