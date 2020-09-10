@@ -1,6 +1,6 @@
 const asyncForEach = async (array, callback) => {
 	for (let index = 0; index < array.length; index++) {
-		await callback(array[index], index);
+		await callback(array[index], index, array);
 	}
 };
 
@@ -60,7 +60,7 @@ const inRange = ([aX,aY], [bX,bY], fov) => {
 
 const getCenterOfCoords = character => ([character.coords[0] + (TILE_WIDTH /2), character.coords[1] + (TILE_WIDTH /2)]);
 
-const generatePlayer = (coord, room, tileSize) => {
+const generatePlayer = async (coord, room, tileSize) => {
 	handleKeyPress = (e) => handlePlayerMovement(e, room, tileSize);
 
 	playerCoord = coord;
@@ -70,9 +70,12 @@ const generatePlayer = (coord, room, tileSize) => {
     // );
 	//   _moveBtn.addEventListener('click', player.hiliteMoveArea);
     
-	if (!player.awaitingUser) {
-        window.onkeypress = handleKeyPress;
-	}
+	while(player.awaitingUser) {
+        const waiting = await checkIfWaiting();
+        if(waiting) continue;
+    }
+
+    window.addEventListener('keypress', handleKeyPress);
 };
 
 const generateEnemies = (lvl, max, room) => {
@@ -120,29 +123,29 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 			event.code == "KeyA"
 		)
 	)
-		return;
-	// pMove.play()
-	zzfxP(pMove[rng(pMove.length -1)]); // playerMove
-	// zzfx(...[,.25,144,,,.07,2,.1,-95.1,43.9,191,.1,.01,,,.1,.03,,.04])
-	let { key } = event;
-	key = key.toLowerCase();
-	let [playerX, playerY] = playerCoord;
-
-	const dir = {
-		w: [playerX, playerY - tileSize],
-		d: [playerX + tileSize, playerY],
-		s: [playerX, playerY + tileSize],
+        return;
+        
+        // pMove.play()
+        zzfxP(pMove[rng(pMove.length -1)]); // playerMove
+        // zzfx(...[,.25,144,,,.07,2,.1,-95.1,43.9,191,.1,.01,,,.1,.03,,.04])
+        let { key } = event;
+        key = key.toLowerCase();
+        let [playerX, playerY] = playerCoord;
+        
+        const dir = {
+            w: [playerX, playerY - tileSize],
+            d: [playerX + tileSize, playerY],
+            s: [playerX, playerY + tileSize],
 		a: [playerX - tileSize, playerY],
 	};
-
+    
     const [nextX, nextY] = dir[key];
     
     if (nextX == exit[0] && nextY == exit[1]) {
         game.classList.remove("e-turn");
         game.classList.add("p-turn");
         clearTimeout(moveTimer);
-        // _moveBtn.removeEventListener('click', player.hiliteMoveArea);
-        window.onkeypress = null;
+        window.removeEventListener('keypress', handleKeyPress);
         player.xp += lvl;
         lvl++;
         enemyPowerMult();
@@ -151,11 +154,11 @@ const handlePlayerMovement = async (event, room, tileSize) => {
         _expCurrent.textContent = player.xp;
         zzfxP(passDungeonSound[rng(passDungeonSound.length -1)]); // playerMove
         console.log("you win!");
-
+        
         player.resetActions();
-
+        
         createChatMessage('narrator','narrator', `${player.name} has reached level ${lvl} in ${steps} steps!`)
-
+        
         return buildDungeon(
             CANVAS_HEIGHT,
             CANVAS_WIDTH,
@@ -166,8 +169,8 @@ const handlePlayerMovement = async (event, room, tileSize) => {
             exit
         );
     }
-
-	if (room[nextX]?.[nextY]?.walkable && !room[nextX]?.[nextY]?.occupied) {
+        
+    if (room[nextX]?.[nextY]?.walkable && !room[nextX]?.[nextY]?.occupied) {
         if (enemies.length) player.actionsLeft--;
 		room[playerX][playerY].occupied = 0;
 		room[nextX][nextY].occupied = 1;
@@ -180,12 +183,70 @@ const handlePlayerMovement = async (event, room, tileSize) => {
         
 		paintCanvas();
 		player.hiliteMoveArea();
-		player.checkFOV();
+        player.checkFOV();
 
+        if(steps == Math.ceil(player.fov)){
+            window.removeEventListener('keypress', handleKeyPress);
+            player.awaitingUser = true;
+            asyncForEach(narrator.fog, (msg, i, arr) => {
+                return new Promise(resolve => {
+                    if(i == 0){
+                        createChatMessage('narrator', 'narrator', msg)
+                        return resolve()
+                    }
+                    setTimeout(() => {
+                        if(i != arr.length - 1){
+                            createChatMessage('narrator', 'narrator', msg)
+                            resolve();
+                        } else {
+                            createChatMessage('player', player.name, msg);
+                            player.awaitingUser = false;
+                            resolve();
+                        }
+                    }, rng(750) + 2000)
+                })
+            })
+            
+            while(player.awaitingUser){
+                const waiting = await checkIfWaiting();
+                if(waiting) continue;
+                else window.addEventListener('keypress', handleKeyPress);
+            }
+        }
+
+        if(!firstEnemySpotted && player.inRange.length){
+            window.removeEventListener('keypress', handleKeyPress);
+            player.awaitingUser = true;
+            asyncForEach(narrator.enemy, (msg,i,arr) => 
+                new Promise(resolve => {
+                    if(i == 0){
+                        createChatMessage('narrator', 'narrator', msg);
+                        return resolve()
+                    }
+                    setTimeout(() => {
+                        if(i == arr.length - 1){
+                            player.awaitingUser = false;
+                            firstEnemySpotted = 1
+                            createChatMessage('player', player.name, msg)
+                        } else createChatMessage('narrator', 'narrator', msg)
+                        resolve();
+                    }, rng(750) + 1500)
+                })
+            )
+
+        }
+        
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
 		if (!player.actionsLeft && enemies.length) {
-			playersTurn = false;
-			return enemyTurn();
+            while(player.awaitingUser){
+                const waiting = await checkIfWaiting();
+                if(waiting) continue;
+                else {
+                    window.addEventListener('keypress', handleKeyPress);
+                    return setTimeout(enemyTurn, 2000)
+                }
+            }
+			enemyTurn();
 		}
 	}
 
@@ -281,7 +342,7 @@ const paintCanvas = () => {
 };
 
 const enemyTurn = () => {
-    window.onkeypress = null;
+    window.removeEventListener('keypress', handleKeyPress);
     game.classList.remove("p-turn");
     game.classList.add("e-turn");
     
@@ -294,22 +355,21 @@ const enemyTurn = () => {
                     if (enemy.speedLeft == 0) {
                         clearInterval(turn);
                         if (i == enemies.length - 1) {
-                            window.onkeypress = handleKeyPress;
+                            window.addEventListener('keypress', handleKeyPress);
                             setTimeout(() => {
-									playersTurn = true;
-									game.classList.remove("e-turn");
-									game.classList.add("p-turn");
-                                    player.resetActions();
-									player.hiliteMoveArea();
-								}, 300);
-							}
-
-							setTimeout(() =>{
-                                enemy.resetActions();
-                                resolve()
+                                game.classList.remove("e-turn");
+                                game.classList.add("p-turn");
+                                player.resetActions();
+                                player.hiliteMoveArea();
                             }, 300);
-						}
-					}, 300);
+                        }
+
+                        setTimeout(() =>{
+                            enemy.resetActions();
+                            resolve()
+                        }, 300);
+                    }
+                }, 300);
             });
         })
     , 500);
