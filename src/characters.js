@@ -75,9 +75,10 @@ const Character = function (name, clas) {
 			C.def = lvlDef;
 			_playerDefense.innerHTML = C.def;
 		} else if (stat == 3) {
-            const lvlFov = Math.ceil(C.fov * 1.1)
-			_actionWindow.append(`you increased fov by ${lvlFov - C.fov}!`);
-			C.actionsPerTurn = lvlFov;
+            const lvlActions = Math.ceil(C.actionsPerTurn * 1.1)
+			_actionWindow.append(`you increased actions per turn by ${lvlActions - C.actionsPerTurn}!`);
+			C.actionsPerTurn = lvlActions;
+			C.actionsLeft = lvlActions;
 			_actionsTotal.innerHTML = C.actionsPerTurn;
             _actionsLeft.innerHTML = C.actionsPerTurn;
 		}
@@ -350,11 +351,11 @@ const Enemy = function (coords, enemyPower) {
 	E.checkFOV = function (spotRange = 1) {
 		if (inRange(E.coords,player.coords,E.fov)) {
 			if (spotRange == 2) E.playerSpotted = 1;
-			_enemySeesPlayer.innerHTML = "Gotcha!";
+			// _enemySeesPlayer.innerHTML = "Gotcha!";
 			return 1;
 		} else {
 			E.playerSpotted = 0;
-			_enemySeesPlayer.innerHTML = "Where'd you go??";
+			// _enemySeesPlayer.innerHTML = "Where'd you go??";
 			return 0;
 		}
     };

@@ -27,7 +27,7 @@ const _btnStart = document.querySelector('.toggle-game')
 const _btnReset = document.querySelector('.reset')
 const _container = document.querySelector('.container')
 const _landing = document.querySelector('.headline')
-
+const _cursorModal = document.querySelector('#cursorModal')
 // ***** PLAYER STATS *****
 // Level
 const _playerLvl = document.querySelector('#playerLvl')
@@ -36,8 +36,8 @@ const _expToNextLvl = document.querySelector('#nextExp')
 const _lvlUpAtk = document.querySelector('#lvlUpAtk')
 const _lvlUpDef = document.querySelector('#lvlUpDef')
 const _lvlUpAgil = document.querySelector('#lvlUpAgil')
-const _lvlUpFOV = document.querySelector('#lvlUpFOV')
-
+const _lvlUpActions = document.querySelector('#lvlUpActions')
+const _lvlUpBtn = document.querySelectorAll('.lvl-up-btn')
 // Info
 const _playerName = document.querySelector('#playerName')
 const _playerClass = document.querySelector('#playerClass')
@@ -62,7 +62,7 @@ const _steps = document.querySelector('#steps')
 
 // ***** ENEMY STATS *****
 const _enemyDetails = document.querySelector('.enemy-details')
-const _enemySeesPlayer = document.querySelector('#enemySeesPlayer')
+// const _enemySeesPlayer = document.querySelector('#enemySeesPlayer')
 
 // ACTIONS WINDOW
 const _actionWindow = document.querySelector('.actions-window')
