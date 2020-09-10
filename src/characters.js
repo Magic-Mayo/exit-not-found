@@ -173,9 +173,9 @@ const Character = function (name, clas) {
         return mult <= enemy.block + enemy.def ?
             `${enemy.name} blocked your attack!` :
             willHit && enemy.hp < 1 ?
-            `You defeated the ${enemy.name}!` :
-            willHit ? `You hit the ${enemy.name} for ${mult - enemy.def - enemy.block}!` :
-			`You missed the ${enemy.name}!`;
+            `I defeated the ${enemy.name} by dealing ${mult - enemy.def - enemy.block} damage!` :
+            willHit ? `I hit the ${enemy.name} for ${mult - enemy.def - enemy.block}!` :
+			`I missed the ${enemy.name}!`;
 	};
 
 	C.inRange = [];
