@@ -14,8 +14,12 @@ const colors = {
     walkHighlight: '#08fa2555'
 }
 
-const tutorial = {
-    start: name => `${name} has entered the dungeon`,
+const narrator = {
+    start: [
+        name => `${name} has entered the dungeon...`,
+        name => `but will ${name} find the exit?`,
+        '...what was that voice?  Is someone there?'
+    ],
     move: `Use the WASD keys to move your character. Hint: It's the White box ;)`,
     fog: [
         "Tiles you have not explored yet are completely hidden by the fog of war.",
@@ -24,6 +28,14 @@ const tutorial = {
         "So watch out!",
         "There could be vampires"
     ],
+    enemy: [
+        'That....is an enemy',
+        "If you want to check out it's stats or attack just look at it!",
+        "....or hover your mouse over it for those that don't have extra sensory abilities",
+    ],
+    taunting: [
+
+    ]
 
 }
 
@@ -78,6 +90,7 @@ const _enemyDetails = document.querySelector('.enemy-details')
 
 // ACTIONS WINDOW
 const _chatBox = document.querySelector('.chat-box')
+const _chatContainer = document.querySelector('.chat-box-container');
 
 /* ==================================
 CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS

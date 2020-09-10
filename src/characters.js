@@ -57,11 +57,6 @@ const Character = function (name, clas) {
 	};
 	C.weapons = weapons[C.class];
 	C.addStat = function (stat) {
-		/////////////// TO DO //////////////
-		// Needs functionality to
-		// bring up modal and prompt user
-		// to choose which stat to upgrade
-		/////////////// TO DO //////////////
 		if (stat == 0) {
             const lvlAtk = Math.ceil(C.attackStrength * 1.2);
 			createChatMessage('player', C.name, `I increased my attack strength by ${lvlAtk - C.attackStrength}!`);

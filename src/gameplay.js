@@ -36,7 +36,16 @@ _btnStart.addEventListener("click", (e) => {
 	_actionsLeft.innerHTML = player.actionsLeft;
 	_expCurrent.innerHTML = player.xp;
     _expToNextLvl.innerHTML = player.nextLvl;
-	createChatMessage('narrator','narrator',`${player.name} has entered the dungeon...`)
+	asyncForEach(narrator.start, (msg, i) => 
+        new Promise(resolve => {
+            setTimeout(() => {
+                i == 0 || i == 1 ?
+                createChatMessage('narrator','narrator', msg(player.name)) :
+                createChatMessage('player',player.name, msg)
+                resolve();
+            }, rng(750) + 1000)
+        })
+    )
 	
     _blockBtn.addEventListener('click', player.defStance)
 	buildDungeon(
@@ -48,8 +57,6 @@ _btnStart.addEventListener("click", (e) => {
 		TILE_WIDTH,
 		[0, 160]
     );
-
-    createChatMessage('player', 'heyooo', 'we up in this bitch')
 });
 
 // _btnReset.addEventListener("click", (e) => {
