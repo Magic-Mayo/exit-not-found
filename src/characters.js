@@ -147,6 +147,9 @@ const Character = function (name, clas) {
 			if (!C.class) zzfxP(meleeDamageSound[rng(meleeDamageSound.length -1)]);		
 			else if (C.class == 1) zzfxP(magicDamageSound[rng(magicDamageSound.length -1)]);		
 			else if (C.class == 2) zzfxP(rangedDamageSound[rng(meleeDamageSound.length -1)]);		
+		} else {
+			if (mult <= enemy.block + enemy.def) zzfxP(blockSound[rng(blockSound.length -1)])
+			else zzfxP(missedSound[rng(missedSound.length -1)])
 		}
         
         if(enemy.hp < 1){
