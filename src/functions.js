@@ -65,10 +65,6 @@ const generatePlayer = async (coord, room, tileSize) => {
 
 	playerCoord = coord;
 	player.coords = coord;
-	// console.log(
-	// `The player will start at ${playerCoord} and will have the color ${color}`
-    // );
-	//   _moveBtn.addEventListener('click', player.hiliteMoveArea);
     
 	while(player.awaitingUser) {
         const waiting = await checkIfWaiting();
@@ -234,18 +230,15 @@ const handlePlayerMovement = async (event, room, tileSize) => {
                 })
             )
 
+            while(player.awaitingUser){
+                const waiting = await checkIfWaiting();
+                if(waiting) continue;
+                else window.addEventListener('keypress', handleKeyPress);
+            }
         }
         
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
 		if (!player.actionsLeft && enemies.length) {
-            while(player.awaitingUser){
-                const waiting = await checkIfWaiting();
-                if(waiting) continue;
-                else {
-                    window.addEventListener('keypress', handleKeyPress);
-                    return setTimeout(enemyTurn, 2000)
-                }
-            }
 			enemyTurn();
 		}
 	}
