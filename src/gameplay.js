@@ -135,6 +135,4 @@ _newGameBtn.addEventListener('click', e => {
 	startGame(true)
 })
 
-// _newCharacterBtn.addEventListener('click', e => {
-
-// })
+_newCharacterBtn.addEventListener('click', e => location.reload())
