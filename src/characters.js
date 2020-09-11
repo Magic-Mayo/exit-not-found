@@ -253,9 +253,9 @@ const Enemy = function (coords, enemyPower) {
 	E.atkChar = function () {
         const toHit = rng(100)
 		const willHit =
-            E.accuracy - player.agility >= toHit && player.def < E.attackStrength;
+            E.accuracy - player.agility >= toHit && player.def + player.block < E.attackStrength;
         const mult = rng(100) <= E.crit.chance ? E.attackStrength * E.crit.mult : E.attackStrength;
-        willHit ? (player.hp -= mult - ~~player.def - player.block) : 0;
+        willHit && (player.hp -= mult - ~~player.def - player.block)
         E.speedLeft -= E.attackSpeed;
         // _healthpointsCurrent.innerHTML = player.hp;
         
