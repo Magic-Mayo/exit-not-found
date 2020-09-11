@@ -127,3 +127,14 @@ _cursorModal.addEventListener("mouseleave", e => {
 	enemyIndex = 0
 	_cursorModal.classList.add('invisible')
 })
+
+_newGameBtn.addEventListener('click', e => {
+	player = new Character(player.name,player.class)
+	_playAgain.classList.add('invisible')
+	_chatMessageGroup.innerHTML = ''
+	startGame(true)
+})
+
+// _newCharacterBtn.addEventListener('click', e => {
+
+// })
