@@ -101,11 +101,13 @@
 				padding: 0.8vw 1.3vw 3.2vw;
 			}
 
-			.enemy-item {
+			.enemy-item,
+            .player-item {
 				margin: 0.4vw 0.4vw 0.8vw;
 			}
 
-			.enemy-item p {
+			.enemy-item p,
+            .player-item {
 				margin: 0.16vw 0 0.16vw 0.8vw;
 			}
 
@@ -190,28 +192,17 @@
 				color: #b3ffcc !important;
 			}
 
-			.attack-btn {
-				background-color: #a70707;
+			.attack-btn,
+            .block-btn {
 				width: 5.1vw;
 				height: 3vw;
 			}
-
-            .game {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
+			.attack-btn {
+				background-color: #a70707;
             }
 			
-            #blockBtn {
+            .block-btn {
 				background-color: #0787A7;
-				width: fit-content;
-				height: 4vw;
-                font-size: 2.8vw;
-				text-transform: uppercase;
-				cursor: pointer;
-				color: white;
-                margin-top: 5vh;
 			}
 
 			.toggle-game {
@@ -379,7 +370,8 @@
 				cursor: pointer;
 			}
 
-			.enemy-item {
+			.enemy-item,
+            .player-item {
 				display: flex;
 				flex-wrap: wrap;
 				padding: 10px;
@@ -387,18 +379,21 @@
 				color: #fff
 			}
 
-			.enemy-item h4{
+			.enemy-item h4,
+            .player-item h4 {
 				font-size: 21px;
 				flex: 1 1 100%;
 				margin-top: 5px;
 			}
 
-			.enemy-item .attack-btn {
+			.enemy-item .attack-btn,
+            .player-item .block-btn {
 				width: 40%;
-				align-self: center;
+				align-self: flex-end;
 			}
 
-			.enemy-item-stats {
+			.enemy-item-stats,
+            .player-item-stats {
 				width: 40%;
 				min-width: 150px;
 				font-size: 16px;
@@ -589,71 +584,8 @@
 					<button class="lvl-up-btn" id="lvlUpActions" data-stat="3">⌛</button>
 				</div>
 			</aside>
-			<!-- <button type="reset" class="reset font-regular">quit</button> -->
-			<div class="player font-bold">
-				<section class="player-stats">
-					<h3 class="font-regular">player stats</h3>
-					<div class="player-level">
-						<p>Level: <span id="playerLvl">0</span></p>
-						<p>
-							Experience: <br /><span id="playerExp">0</span
-							>/<span id="nextExp">100</span>
-						</p>
-					</div>
-					<div class="player-info">
-						<p>🙂 Name: <span id="playerName">Jeff</span></p>
-						<p>
-							❤ Health:
-							<span id="playerHealthCurrent">100</span>/<span
-								id="playerHealthMax"
-								>100</span
-							>
-						</p>
-						<p>🧍 class: <span id="playerClass">Melee</span></p>
-					</div>
-					<div class="player-fight-details">
-						<div>
-							<h4>🔪 Attack:</h4>
-							<p>
-								strength:
-								<span id="playerAttackStrength">7</span>
-							</p>
-							<p>speed: <span id="playerAttackSpeed">7</span></p>
-						</div>
-						<div>
-							<h4>
-								🛡 Defense: <span id="playerDefense">5</span>
-							</h4>
-						</div>
-						<div>
-							<h4>
-								🏃 Agility: <span id="playerAgility">3</span>
-							</h4>
-						</div>
-						<div>
-							<h4>🔭 FOV: <span id="playerFOV">3</span></h4>
-						</div>
-					</div>
-					<div class="game-details">
-						<p>steps taken: <span id="steps">7</span></p>
-						<p>dungeon level: <span id="dungeon">7</span></p>
-						<p>
-							⌛ actions per turn:
-							<span id="actionsLeft">0</span>/<span
-								id="actionsPerTurn"
-								>0</span
-							>
-						</p>
-					</div>
-				</section>
-				<section class="actions-window">
-					<div id="player-start"></div>
-				</section>
-			</div>
-            <div class="game">
-                <canvas id="gameBG" width="256" height="256"></canvas>
-                <button class="font-regular" id='blockBtn'>Block</button>
-            </div>
+            
+            <canvas id="gameBG" width="256" height="256"></canvas>
             
 			<div class="chat-box-container">
 				<h1 class="chat-box-title font-bold">Recent Activities</h1>
