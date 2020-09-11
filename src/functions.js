@@ -69,32 +69,22 @@ const startGame = (e,restart) => {
 	_container.classList.remove("invisible");
 	game.classList.add("p-turn");
     
-    if (!restart) {
-        player = new Character(
-            _createNameInput.textContent,
-            parseInt(_createClassInput.value)
-        );
-    }
-    
-	_healthpointsCurrent.innerHTML = player.hp;
-	_healthpointsMax.innerHTML = player.hp;
-    _playerLvl.innerHTML = player.lvl;
-    _playerName.innerHTML = player.name
-    _playerClass.innerHTML = !player.class ? "melee" : player.class == 1 ? 'magic' : 'ranged'
+  player = new Character(
+      _createNameInput.textContent,
+      parseInt(_createClassInput.value)
+  );
 
-	_playerAttackStrength.innerHTML = player.attackStrength;
-	_playerAttackSpeed.innerHTML = player.attackSpeed;
-	_playerDefense.innerHTML = player.def;
-	_playerAgility.innerHTML = player.agility;
-	_playerFOV.innerHTML = Math.round(player.fov);
-	_actionsTotal.innerHTML = player.actionsPerTurn;
-	_actionsLeft.innerHTML = player.actionsLeft;
-	_expCurrent.innerHTML = player.xp;
-    _expToNextLvl.innerHTML = player.nextLvl;
-    player.awaitingUser = true;
-    game.classList.remove("p-turn");
-    game.classList.remove('e-turn')
-    game.classList.add("n-turn");
+  if (!restart) {
+      player = new Character(
+          _createNameInput.textContent,
+          parseInt(_createClassInput.value)
+      );
+  }
+
+  player.awaitingUser = true;
+  game.classList.remove("p-turn");
+  game.classList.remove('e-turn')
+  game.classList.add("n-turn");
 	asyncForEach(narrator.start, (msg, i, arr) => 
         new Promise(resolve => {
             if(i != 0){
@@ -115,8 +105,8 @@ const startGame = (e,restart) => {
             resolve();
         })
     )
-    _blockBtn.addEventListener('click', player.defStance)
-	buildDungeon([0, 160]);
+
+	  buildDungeon([0, 160]);
 }
 
 const inRange = ([aX,aY], [bX,bY], fov) => {
@@ -214,7 +204,6 @@ const handlePlayerMovement = async (event, room, tileSize) => {
         enemyPowerMult();
         if (lvl % 10 == 0) player.xp += 100;
         player.checkIfNextLvl();
-        _expCurrent.textContent = player.xp;
         zzfxP(passDungeonSound[rng(passDungeonSound.length -1)]); // playerMove
         console.log("you win!");
         
@@ -228,10 +217,8 @@ const handlePlayerMovement = async (event, room, tileSize) => {
     if (room[nextX]?.[nextY]?.walkable && !room[nextX]?.[nextY]?.occupied) {
         if (enemies.length) player.actionsLeft--;
 		room[playerX][playerY].occupied = 0;
-		room[nextX][nextY].occupied = 1;
-        
-		_actionsLeft.innerHTML = player.actionsLeft;
-        _steps.innerHTML = ++steps;
+		room[nextX][nextY].occupied = 1;    
+        ++steps;
         
 		playerCoord = [nextX, nextY];
         player.coords = playerCoord;
@@ -410,8 +397,9 @@ const enemyTurn = () => {
 	moveTimer = setTimeout(() =>
         asyncForEach(enemies, (enemy, i) => {
             enemy.block = 0;
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 const turn = setInterval(() => {
+                    if(player.hp < 1) clearInterval(turn);
                     enemy.handleTurn();
                     if (enemy.speedLeft == 0) {
                         clearInterval(turn);

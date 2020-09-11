@@ -31,19 +31,27 @@ const handleCanvasHover = (e) => {
 
 	// THIS SHOULD RETURN AN ARRAY OF ONE OR MORE ENEMIES THAT ARE IN THE CLICK LOCATION
 	const [hoveredEnemy] = enemies.filter((enemy, i) => {
-		if (checkIfEnemyCoord([adjustedX, adjustedY], enemy.coords)) {
+		if (checkIfTargetCoord([adjustedX, adjustedY], enemy.coords)) {
 			enemyIndex = i;
 			return 1;
 		}
-	});
+    });
 
+    const hoverPlayer = checkIfTargetCoord([adjustedX,adjustedY], player.coords);
+    
 	if (hoveredEnemy) {
+        console.log('enemy')
 		_cursorModal.classList.remove('invisible')
-		showEnemyDetails(hoveredEnemy, enemyIndex);
-
-	} else {
+		showHoveredDetails(hoveredEnemy);
+        
+    } else if(hoverPlayer){
+        console.log('player')
+        _cursorModal.classList.remove('invisible');
+        showHoveredDetails(1,1);
+    } else {
         enemyIndex = 0
         _cursorModal.classList.add('invisible')
+        _cursorModal.innerHTML = ""
 	}
 }
 
@@ -54,48 +62,49 @@ const playerAttack = async () => {
     createChatMessage('player', player.name, attack)
 };
 
-const showEnemyDetails = enemy => {
-	_cursorModal.innerHTML = ""
+const showHoveredDetails = (enemy, user) => {
+    _cursorModal.innerHTML = ""
+    const blkBtn = document.querySelector(`${user ? 'block' : 'attack'}-btn`)
+    const atkBtn = document.querySelector(`${user ? 'block' : 'attack'}-btn`)
+    if(blkBtn) blkBtn.removeEventListener('click', player.defStance)
+    if(atkBtn) atkBtn.removeEventListener('click', playerAttack)
+    const hovered = user ? {...player} : {...enemy}
 	// CREATE CONTAINER
+    
 	const _section = document.createElement("section");
-	_section.classList.add("enemy-item");
-
+	_section.classList.add(`${user ? 'player' : 'enemy'}-item`);
+    
 	// CREATE 'H4' & APPEND TO CONTAINER
 	const _h4 = document.createElement("h4");
-	_h4.innerHTML = enemy.name;
+	_h4.innerHTML = `${hovered.name} - ${!hovered.class ? 'Melee' : hovered.class == 1 ? 'Magic' : 'Ranged'}`;
 	_section.append(_h4);
-
-	// _section.append(createParSpanPair("❤ HP: ", enemy.hp));
-	// _section.append(createParSpanPair("🔪 Attack: ", enemy.attackStrength));
-	// _section.append(createParSpanPair("🛡 Defense: ", enemy.def));
-
+    
+    const hp = user ? `${hovered.hp}/${hovered.maxHp}` : hovered.hp
 	const _d = document.createElement('div')
-	_d.classList.add('enemy-item-stats')
-	_d.append(createParSpanPair("❤ HP: ", enemy.hp))
-	_d.append(createParSpanPair("🔪 Attack: ", enemy.attackStrength))
-	_d.append(createParSpanPair("🛡 Defense: ", enemy.def))
-
-	// _section.innerHTML = `<div class="enemy-item-stats">${createParSpanPair("❤ HP: ", enemy.hp)}${createParSpanPair("🔪 Attack: ", enemy.attackStrength)}${createParSpanPair("🛡 Defense: ", enemy.def)}</div>`
-
+    user && _d.append(createParSpanPair('XP:', `${player.xp}/${player.nextLvl}`))
+    user && _d.append(document.createElement('br'))
+	_d.classList.add(`${user ? 'player' : 'enemy'}-item-stats`)
+	_d.append(createParSpanPair("❤ HP: ", hp))
+	_d.append(createParSpanPair("🔪 Attack: ", hovered.attackStrength))
+	_d.append(createParSpanPair("🔪 Attack Speed: ", hovered.attackSpeed))
+	_d.append(createParSpanPair("🛡 Defense: ", hovered.def))
+        
 	_section.append(_d)
 	
 	const _btn = document.createElement('button')
-	_btn.classList.add('attack-btn', 'font-bold')
-	_btn.innerText = "attack"
+	_btn.classList.add(`${user ? 'block' : 'attack'}-btn`, 'font-bold')
+    _btn.innerText = user ? 'block' : "attack";
 	
-	// _section.append(_stats);
 	_section.append(_btn)
-
 	_cursorModal.append(_section)
 
-	_btn.removeEventListener('click', playerAttack)
-	_btn.addEventListener('click', playerAttack)
+	_btn.addEventListener('click', user ? player.defStance : playerAttack)
 };
 
 const typeName = e => {
     if(_createNameInput.textContent.length > 20  && e.keyCode != 8 && e.keyCode != 46) {
         e.preventDefault()
-    } else if (e.key.match(/[A-Za-z0-9]/g) && e.key.length == 1) {
+    } else if (e.key.match(/[A-Za-z0-9]/g) && e.key.length == 1){
         console.log(e.key)
         _createNameInput.textContent = _createNameInput.textContent + e.key
     } else if (e.keyCode == 8) {
@@ -114,11 +123,11 @@ const createParSpanPair = (title, data) => {
 	return _p;
 };
 
-const checkIfEnemyCoord = ([clickX, clickY], [enX, enY]) =>
-	clickX >= enX &&
-	clickY >= enY &&
-	clickX < enX + TILE_WIDTH &&
-	clickY < enY + TILE_WIDTH
+const checkIfTargetCoord = ([hoverX, hoverY], [targetX, targetY]) =>
+	hoverX >= targetX &&
+	hoverY >= targetY &&
+	hoverX < targetX + TILE_WIDTH &&
+	hoverY < targetY + TILE_WIDTH
 		? true
 		: false;
 
