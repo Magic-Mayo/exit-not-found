@@ -78,7 +78,7 @@ const buildDungeon = (
     generatePlayer([sX, sY], COORDINATES, tHeight);
     generateEnemies(lvl, xyMax, COORDINATES);
 
-    _dungeon.innerHTML = dungeon++;
+    dungeon++;
 };
 
 
