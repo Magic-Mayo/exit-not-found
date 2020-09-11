@@ -64,38 +64,17 @@ const _landing = document.querySelector('.headline')
 const _cursorModal = document.querySelector('#cursorModal')
 // ***** PLAYER STATS *****
 // Level
-const _playerLvl = document.querySelector('#playerLvl')
-const _expCurrent = document.querySelector('#playerExp')
-const _expToNextLvl = document.querySelector('#nextExp')
 const _lvlUpAtk = document.querySelector('#lvlUpAtk')
 const _lvlUpDef = document.querySelector('#lvlUpDef')
 const _lvlUpAgil = document.querySelector('#lvlUpAgil')
 const _lvlUpActions = document.querySelector('#lvlUpActions')
 const _lvlUpBtn = document.querySelectorAll('.lvl-up-btn')
-// Info
-const _playerName = document.querySelector('#playerName')
-const _playerClass = document.querySelector('#playerClass')
-const _healthpointsCurrent = document.querySelector('#playerHealthCurrent')
-const _healthpointsMax = document.querySelector('#playerHealthMax')
-
 
 // Fighting Details
-const _playerAttackStrength = document.querySelector('#playerAttackStrength')
-const _playerAttackSpeed = document.querySelector('#playerAttackSpeed')
-const _playerDefense = document.querySelector('#playerDefense')
-const _playerAgility = document.querySelector('#playerAgility')
-const _playerFOV = document.querySelector('#playerFOV')
-const _actionsTotal = document.querySelector('#actionsPerTurn')
-const _actionsLeft = document.querySelector('#actionsLeft')
 const _lvlUp = document.querySelector('.level-up')
-const _blockBtn = document.querySelector('#blockBtn')
-//  Game Details
-const _dungeon = document.querySelector('#dungeon')
-const _steps = document.querySelector('#steps')
 
 // ***** ENEMY STATS *****
 const _enemyDetails = document.querySelector('.enemy-details')
-// const _enemySeesPlayer = document.querySelector('#enemySeesPlayer')
 
 // ACTIONS WINDOW
 const _chatBox = document.querySelector('.chat-box')
