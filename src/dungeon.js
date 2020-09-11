@@ -2,32 +2,24 @@
 // BUILDING OUT THE DUNGEON
 // ==========================
 
-const buildDungeon = (
-	cHeight,
-	cWidth,
-	columns,
-	rows,
-	tHeight,
-	tWidth,
-	[pExitX, pExitY]
-) => {
+const buildDungeon = ([pExitX, pExitY]) => {
     walkableTiles = 0;
     // console.log(COORDINATES)
     // clear board of previous paint...if any
-    ctx.clearRect(0, 0, cWidth, cHeight);
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     start.length = 0;
     const [sX, sY] = inverseCoords([pExitX, pExitY]);
     start.push(sX, sY)
     // SET UP COORDINATE PLANE
-	columns.forEach((vX, x, col) => {
+	COLUMNS.forEach((vX, x, col) => {
         const newX = x;
-		x = x * tWidth;
+		x = x * TILE_WIDTH;
 		COORDINATES[x] = {};
         
-        rows.forEach((vY, y, row) => {
+        ROWS.forEach((vY, y, row) => {
             const start = sX == x && sY == y;
             const newY = y;
-            y = y * tHeight;
+            y = y * TILE_HEIGHT;
             const cellChance = Math.random();
             const newStartIsHere = sX === x && sY === y;
 
@@ -64,7 +56,7 @@ const buildDungeon = (
         });
     });
         
-        exit = generateRandomEndpoint([sX, sY], tHeight);
+        exit = generateRandomEndpoint([sX, sY], TILE_HEIGHT);
         COORDINATES[exit[0]][exit[1]].walkable = 1;
         COORDINATES[exit[0]][exit[1]].exit = 1;
 
@@ -72,13 +64,13 @@ const buildDungeon = (
         // checks to make sure the dungeon can be completed.
         // if not build another one until you get one that can be
     if (!checker([sX, sY])) return (
-        buildDungeon(cHeight, cWidth, columns, rows, tHeight, tWidth, [pExitX,pExitY])
+        buildDungeon([pExitX,pExitY])
     );
   
-    generatePlayer([sX, sY], COORDINATES, tHeight);
+    generatePlayer([sX, sY], COORDINATES, TILE_HEIGHT);
     generateEnemies(lvl, xyMax, COORDINATES);
 
-    _dungeon.innerHTML = dungeon++;
+    dungeon++;
 };
 
 

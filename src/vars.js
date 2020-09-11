@@ -18,25 +18,34 @@ const narrator = {
     start: [
         name => `${name} has entered the dungeon...`,
         name => `but will ${name} find the exit?`,
-        '...what was that voice?  Is someone there?'
+        '...what was that voice?  Is someone there?',
+        `Use the WASD keys to move your character. Hint: It's the White box ;)`,
+        'ok....thanks?',
+        '**whoever you are**'
     ],
-    move: `Use the WASD keys to move your character. Hint: It's the White box ;)`,
     fog: [
         "Tiles you have not explored yet are completely hidden by the fog of war.",
-        "Tiles you've discovered will stay visible until they are out of your frame of view (FOV).",
+        "Tiles you've discovered will stay visible until they are out of your field of view (FOV).",
         "You'll remember the dungeon layout, but you'll no longer be able to see 'activity'",
         "So watch out!",
-        "There could be vampires"
+        "There could be vampires",
+        "WHO ARE YOU?!"
     ],
     enemy: [
         'That....is an enemy',
         "If you want to check out it's stats or attack just look at it!",
         "....or hover your mouse over it for those that don't have extra sensory abilities",
+        // `I'd almost rather die in here than having to keep hearing these "jokes"`,
+        '....whelp.  Guess the "jokes" are just gonna keep coming'
     ],
     taunting: [
 
+    ],
+    gameOver: [
+        name => `....looks like ${name} was not able to find the exit`,
+        name => `didn't think ${name} would`,
+        "well at least the jokes can stop now"
     ]
-
 }
 
 /* ==================================
@@ -55,43 +64,24 @@ const _landing = document.querySelector('.headline')
 const _cursorModal = document.querySelector('#cursorModal')
 // ***** PLAYER STATS *****
 // Level
-const _playerLvl = document.querySelector('#playerLvl')
-const _expCurrent = document.querySelector('#playerExp')
-const _expToNextLvl = document.querySelector('#nextExp')
 const _lvlUpAtk = document.querySelector('#lvlUpAtk')
 const _lvlUpDef = document.querySelector('#lvlUpDef')
 const _lvlUpAgil = document.querySelector('#lvlUpAgil')
 const _lvlUpActions = document.querySelector('#lvlUpActions')
 const _lvlUpBtn = document.querySelectorAll('.lvl-up-btn')
-// Info
-const _playerName = document.querySelector('#playerName')
-const _playerClass = document.querySelector('#playerClass')
-const _healthpointsCurrent = document.querySelector('#playerHealthCurrent')
-const _healthpointsMax = document.querySelector('#playerHealthMax')
-
 
 // Fighting Details
-const _playerAttackStrength = document.querySelector('#playerAttackStrength')
-const _playerAttackSpeed = document.querySelector('#playerAttackSpeed')
-const _playerDefense = document.querySelector('#playerDefense')
-const _playerAgility = document.querySelector('#playerAgility')
-const _playerFOV = document.querySelector('#playerFOV')
-const _actionsTotal = document.querySelector('#actionsPerTurn')
-const _actionsLeft = document.querySelector('#actionsLeft')
 const _lvlUp = document.querySelector('.level-up')
-const _blockBtn = document.querySelector('#blockBtn')
-//  Game Details
-const _dungeon = document.querySelector('#dungeon')
-const _steps = document.querySelector('#steps')
 
 // ***** ENEMY STATS *****
 const _enemyDetails = document.querySelector('.enemy-details')
-// const _enemySeesPlayer = document.querySelector('#enemySeesPlayer')
 
 // ACTIONS WINDOW
 const _chatBox = document.querySelector('.chat-box')
 const _chatMessageGroup = document.querySelector('.chat-message-group');
-
+const _playAgain = document.querySelector('#playAgain');
+const _newGameBtn = document.querySelector('.play-again-btn')
+const _newCharacterBtn = document.querySelector('.new-character-btn')
 /* ==================================
 CONSTANTS USED TO DEFINE THE DUNGEON CONSTRAINTS
 ==================================== */
@@ -121,7 +111,7 @@ const COORDINATES = {};
 // object of all 'walkable tiles' on game-grid
 const WALKABLE_COORDINATES = []
 // total steps walked by player this game
-let steps = 1;
+let steps = 0;
 // current dungeon the player is on
 let dungeon = 1;
 // total exp given to player for completing dungeon
@@ -132,7 +122,6 @@ let player;
 let lvl = 1;
 // current coordinate of the player
 let playerCoord = [];
-let playersTurn = true
 // ENEMY INFORMATION
 // # of enemies this dungeon
 // array of positions for each enemy
@@ -166,3 +155,5 @@ const start = [];
 let walkableTiles = 0;
 
 let enemyIndex = 0;
+
+let firstEnemySpotted;

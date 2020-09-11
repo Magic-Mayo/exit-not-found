@@ -1,6 +1,7 @@
 const asyncForEach = async (array, callback) => {
 	for (let index = 0; index < array.length; index++) {
-		await callback(array[index], index);
+        if(player.hp < 1) return;
+		await callback(array[index], index, array);
 	}
 };
 
@@ -52,6 +53,62 @@ const checker = ([sX, sY]) => {
 	return;
 };
 
+const startGame = (e,restart) => {
+    window.removeEventListener('keydown', typeName)
+    window.removeEventListener('keypress', handleKeyPress);
+	// goFullScreen();
+	// *** CREATE PLAYER ELEMENTS***
+	const _createClassInput = document.querySelector(
+		'input[name="class"]:checked'
+    );
+    
+
+	_landing.classList.add("invisible");
+	_btnStart.classList.add("invisible");
+
+	_container.classList.remove("invisible");
+	game.classList.add("p-turn");
+    
+  player = new Character(
+      _createNameInput.textContent,
+      parseInt(_createClassInput.value)
+  );
+
+  if (!restart) {
+      player = new Character(
+          _createNameInput.textContent,
+          parseInt(_createClassInput.value)
+      );
+  }
+
+  player.awaitingUser = true;
+  game.classList.remove("p-turn");
+  game.classList.remove('e-turn')
+  game.classList.add("n-turn");
+	asyncForEach(narrator.start, (msg, i, arr) => 
+        new Promise(resolve => {
+            if(i != 0){
+                return setTimeout(() => {
+                    i == 1 || i == 3 ?
+                    createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
+                    createChatMessage('player',player.name, msg);
+                    if(i == arr.length - 1) {
+                        player.awaitingUser = false;
+                        game.classList.remove("n-turn");
+                        game.classList.add("p-turn");
+                    }
+                    resolve();
+                }, rng(750) + 1500)
+            }
+
+            createChatMessage('narrator', 'narrator', msg(player.name))
+            resolve();
+        })
+    )
+
+	  buildDungeon([0, 160]);
+}
+
 const inRange = ([aX,aY], [bX,bY], fov) => {
     const xDif = Math.abs(aX - bX) / TILE_HEIGHT;
     const yDif = Math.abs(aY - bY) / TILE_HEIGHT;
@@ -60,19 +117,18 @@ const inRange = ([aX,aY], [bX,bY], fov) => {
 
 const getCenterOfCoords = character => ([character.coords[0] + (TILE_WIDTH /2), character.coords[1] + (TILE_WIDTH /2)]);
 
-const generatePlayer = (coord, room, tileSize) => {
+const generatePlayer = async (coord, room, tileSize) => {
 	handleKeyPress = (e) => handlePlayerMovement(e, room, tileSize);
 
 	playerCoord = coord;
 	player.coords = coord;
-	// console.log(
-	// `The player will start at ${playerCoord} and will have the color ${color}`
-    // );
-	//   _moveBtn.addEventListener('click', player.hiliteMoveArea);
     
-	if (!player.awaitingUser) {
-        window.onkeypress = handleKeyPress;
-	}
+	while(player.awaitingUser) {
+        const waiting = await checkIfWaiting();
+        if(waiting) continue;
+    }
+
+    window.addEventListener('keypress', handleKeyPress);
 };
 
 const generateEnemies = (lvl, max, room) => {
@@ -120,72 +176,124 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 			event.code == "KeyA"
 		)
 	)
-		return;
-	// pMove.play()
-	zzfxP(pMove[rng(pMove.length -1)]); // playerMove
-	// zzfx(...[,.25,144,,,.07,2,.1,-95.1,43.9,191,.1,.01,,,.1,.03,,.04])
-	let { key } = event;
-	key = key.toLowerCase();
-	let [playerX, playerY] = playerCoord;
-
-	const dir = {
-		w: [playerX, playerY - tileSize],
-		d: [playerX + tileSize, playerY],
-		s: [playerX, playerY + tileSize],
+        return;
+        
+        // pMove.play()
+        zzfxP(pMove[rng(pMove.length -1)]); // playerMove
+        // zzfx(...[,.25,144,,,.07,2,.1,-95.1,43.9,191,.1,.01,,,.1,.03,,.04])
+        let { key } = event;
+        key = key.toLowerCase();
+        let [playerX, playerY] = playerCoord;
+        
+        const dir = {
+            w: [playerX, playerY - tileSize],
+            d: [playerX + tileSize, playerY],
+            s: [playerX, playerY + tileSize],
 		a: [playerX - tileSize, playerY],
 	};
-
+    
     const [nextX, nextY] = dir[key];
     
     if (nextX == exit[0] && nextY == exit[1]) {
         game.classList.remove("e-turn");
         game.classList.add("p-turn");
         clearTimeout(moveTimer);
-        // _moveBtn.removeEventListener('click', player.hiliteMoveArea);
-        window.onkeypress = null;
+        window.removeEventListener('keypress', handleKeyPress);
         player.xp += lvl;
         lvl++;
         enemyPowerMult();
         if (lvl % 10 == 0) player.xp += 100;
         player.checkIfNextLvl();
-        _expCurrent.textContent = player.xp;
         zzfxP(passDungeonSound[rng(passDungeonSound.length -1)]); // playerMove
         console.log("you win!");
-
+        
         player.resetActions();
-
+        
         createChatMessage('narrator','narrator', `${player.name} has reached level ${lvl} in ${steps} steps!`)
-
-        return buildDungeon(
-            CANVAS_HEIGHT,
-            CANVAS_WIDTH,
-            COLUMNS,
-            ROWS,
-            TILE_HEIGHT,
-            TILE_WIDTH,
-            exit
-        );
+        
+        return buildDungeon(exit);
     }
-
-	if (room[nextX]?.[nextY]?.walkable && !room[nextX]?.[nextY]?.occupied) {
+        
+    if (room[nextX]?.[nextY]?.walkable && !room[nextX]?.[nextY]?.occupied) {
         if (enemies.length) player.actionsLeft--;
 		room[playerX][playerY].occupied = 0;
-		room[nextX][nextY].occupied = 1;
-        
-		_actionsLeft.innerHTML = player.actionsLeft;
-        _steps.innerHTML = steps++;
+		room[nextX][nextY].occupied = 1;    
+        ++steps;
         
 		playerCoord = [nextX, nextY];
         player.coords = playerCoord;
         
 		paintCanvas();
 		player.hiliteMoveArea();
-		player.checkFOV();
+        player.checkFOV();
 
+        if(steps == Math.ceil(player.fov)){
+            window.removeEventListener('keypress', handleKeyPress);
+            game.classList.remove("p-turn");
+            game.classList.add("n-turn");
+            player.awaitingUser = true;
+            asyncForEach(narrator.fog, (msg, i, arr) => {
+                return new Promise(resolve => {
+                    if(i == 0){
+                        createChatMessage('narrator', 'narrator', msg)
+                        return resolve()
+                    }
+                    setTimeout(() => {
+                        if(i != arr.length - 1){
+                            createChatMessage('narrator', 'narrator', msg)
+                            resolve();
+                        } else {
+                            createChatMessage('player', player.name, msg);
+                            game.classList.remove("n-turn");
+                            game.classList.add("p-turn");
+                            player.awaitingUser = false;
+                            resolve();
+                        }
+                    }, rng(750) + 2000)
+                })
+            })
+            
+            while(player.awaitingUser){
+                const waiting = await checkIfWaiting();
+                if(waiting) continue;
+                else window.addEventListener('keypress', handleKeyPress);
+            }
+        }
+
+        if(!firstEnemySpotted && player.inRange.length){
+            window.removeEventListener('keypress', handleKeyPress);
+            game.classList.remove("p-turn");
+            game.classList.add("n-turn");
+            player.awaitingUser = true;
+            asyncForEach(narrator.enemy, (msg,i,arr) => 
+                new Promise(resolve => {
+                    if(i == 0){
+                        createChatMessage('narrator', 'narrator', msg);
+                        return resolve()
+                    }
+                    setTimeout(() => {
+                        if(i == arr.length - 1){
+                            game.classList.remove("n-turn");
+                            game.classList.add("p-turn");
+                            player.awaitingUser = false;
+                            firstEnemySpotted = 1
+                            createChatMessage('player', player.name, msg)
+                        } else createChatMessage('narrator', 'narrator', msg)
+                        resolve();
+                    }, rng(750) + 1500)
+                })
+            )
+
+            while(player.awaitingUser){
+                const waiting = await checkIfWaiting();
+                if(waiting) continue;
+                else window.addEventListener('keypress', handleKeyPress);
+            }
+        }
+        
 		// ADD CONDITIONAl TO ONLY RUN WHEN ACTIONSLEFT == 0
 		if (!player.actionsLeft && enemies.length) {
-			playersTurn = false;
-			return enemyTurn();
+			enemyTurn();
 		}
 	}
 
@@ -281,35 +389,36 @@ const paintCanvas = () => {
 };
 
 const enemyTurn = () => {
-    window.onkeypress = null;
+    window.removeEventListener('keypress', handleKeyPress);
     game.classList.remove("p-turn");
+    game.classList.remove('n-turn')
     game.classList.add("e-turn");
     
 	moveTimer = setTimeout(() =>
         asyncForEach(enemies, (enemy, i) => {
             enemy.block = 0;
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 const turn = setInterval(() => {
+                    if(player.hp < 1) clearInterval(turn);
                     enemy.handleTurn();
                     if (enemy.speedLeft == 0) {
                         clearInterval(turn);
                         if (i == enemies.length - 1) {
-                            window.onkeypress = handleKeyPress;
+                            window.addEventListener('keypress', handleKeyPress);
                             setTimeout(() => {
-									playersTurn = true;
-									game.classList.remove("e-turn");
-									game.classList.add("p-turn");
-                                    player.resetActions();
-									player.hiliteMoveArea();
-								}, 300);
-							}
-
-							setTimeout(() =>{
-                                enemy.resetActions();
-                                resolve()
+                                game.classList.remove("e-turn");
+                                game.classList.add("p-turn");
+                                player.resetActions();
+                                player.hiliteMoveArea();
                             }, 300);
-						}
-					}, 300);
+                        }
+
+                        setTimeout(() =>{
+                            enemy.resetActions();
+                            resolve()
+                        }, 300);
+                    }
+                }, 300);
             });
         })
     , 500);
@@ -347,7 +456,47 @@ const getExitGradient = (x, y) => {
 };
 
 const gameOver = () => {
-    
+    // POTENTIALLY FADE CANVAS OUT OR SIMILAR EFFECT
+    const tiles = [];
+    for(let x in COORDINATES){
+        for(let y in COORDINATES[x]){
+            tiles.push([x,y])
+        }
+    }
+
+    const fadeCanvas = setInterval(() => {
+        const randTile = rng(tiles.length);
+        const [x,y] = tiles[randTile];
+        tiles.splice(randTile, 1);
+        ctx.fillStyle = 'black';
+        ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT);
+        
+        if (tiles.length < CANVAS_HEIGHT * .2) {
+            _playAgain.classList.remove('invisible')
+        }
+
+        if(!tiles.length){
+            ctx.fillRect(0,0,CANVAS_HEIGHT,CANVAS_HEIGHT)
+            clearInterval(fadeCanvas);
+        }
+    }, 500/TILE_HEIGHT)
+
+    window.removeEventListener('keypress', handleKeyPress)
+    asyncForEach(narrator.gameOver, (msg, i, arr) => 
+        new Promise(resolve =>
+            setTimeout(() => {
+                if(i != arr.length - 1){
+                    createChatMessage('narrator', 'narrator', msg(player.name));
+                    return resolve();
+                }
+
+                setTimeout(() => {
+                    // call function to bring up modal to restart
+                    return resolve();
+                }, 5000)
+            }, rng(1000) + 2000)
+        )
+    )
 }
 
 const setAttributes =(el,attr) => {
@@ -358,6 +507,12 @@ const setAttributes =(el,attr) => {
 
 // param: sender (either "player", "enemy", "narrator")
 const createChatMessage = (sender, name, message) => {
+
+    if (sender === "player") zzfxP(messageSound.player[rng(messageSound.player.length -1)]);
+    else if (sender === "enemy") zzfxP(messageSound.enemy[rng(messageSound.enemy.length -1)]);
+    else if (sender === "narrator") zzfxP(messageSound.narrator[rng(messageSound.narrator.length -1)]);
+
+
     const _box = document.createElement('div');
     _box.classList.add(`box`, `box-${sender}`)
 

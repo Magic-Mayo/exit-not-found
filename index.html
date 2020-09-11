@@ -8,13 +8,11 @@
 		<title>Exit Not Found</title>
 		<style>
 			.font-regular {
-				font-family: monospace;
 				font-weight: 400;
 				font-style: normal;
 			}
 
 			.font-bold {
-				font-family: monospace;
 				font-weight: 700;
 				font-style: normal;
 			}
@@ -26,6 +24,8 @@
 			* {
 				margin: 0;
 				box-sizing: border-box;
+				font-family: monospace;
+
 			}
 
 			.container {
@@ -54,164 +54,37 @@
 				box-shadow: 0 0 25px 10px #a70707;
 			}
 
+			.n-turn {
+				box-shadow: 0 0 25px 10px #0787A7;
+			}
+
 			canvas {
 				width: 33vw;
 				margin: 10px;
 				background-color: #2b2b2b;
 			}
 
-			.enemy-stats,
-            .enemy-actions-window {
-				color: #a70707;
-				border: 0.24vw solid #a70707;
-				margin: 1.6vw;
-				position: relative;
-			}
-
-            .enemy-stats,
-            .player-stats {
-                height: 50vh;
-            }
-
-			.enemy-stats h3 {
-				text-transform: capitalize;
-				font-size: 2vw;
-			}
-
-			.enemy-stats p {
-				color: #f4b8b8;
-				font-size: 1.25vw;
-			}
-
-			.enemy-stats span,
-			.enemy-stats h4 {
-				color: #a70707;
-				font-size: 1.25vw;
-			}
-
-			.enemy-summary {
-				border-bottom: 0.24vw solid #a70707;
-				padding: 0.8vw 1.3vw 0.8vw;
-				display: flex;
-				justify-content: space-around;
-				align-items: center;
-			}
-
-			.enemy-details {
-				padding: 0.8vw 1.3vw 3.2vw;
-			}
-
-			.enemy-item {
+			.enemy-item,
+            .player-item {
 				margin: 0.4vw 0.4vw 0.8vw;
 			}
 
-			.enemy-item p {
+			.enemy-item p,
+            .player-item {
 				margin: 0.16vw 0 0.16vw 0.8vw;
 			}
 
-			.player,
-            .enemy {
-				width: 25vw;
-				color: white;
-			}
-
-			.player h3 {
-				color: #16c551;
-				text-transform: capitalize;
-				font-size: 2vw;
-			}
-
-			.player p {
-				font-size: 1.25vw;
-				color: #b3ffcc;
-				text-transform: capitalize;
-			}
-
-			.player p span {
-				color: #16c551;
-			}
-
-			.player-stats,
-			.player-items {
-				border: 0.24vw solid #16c551;
-				padding: 0.8vw 1.37vw 1vw;
-				position: relative;
-                max-height: 50vh;
-			}
-
-
-
-			.player-level {
-				position: absolute;
-				right: 0;
-				top: 1.4vw;
-				right: 0.94vw;
-				text-align: right;
-			}
-
-			.player-info,
-			.player-fight-details {
-				margin: 0.8vw 0.4vw;
-			}
-
-			.player-fight-details {
-				display: flex;
-				flex-wrap: wrap;
-				justify-content: space-between;
-				color: #b3ffcc;
-			}
-
-			.player-fight-details div {
-				width: 50%;
-				margin-bottom: 0.8vw;
-			}
-
-			.player-fight-details h4 {
-				text-transform: uppercase;
-				font-size: 1.25vw;
-			}
-
-			.player-fight-details p {
-				text-transform: capitalize;
-				margin-left: 0.012vw;
-				color: #16c551;
-			}
-
-			.player-fight-details span {
-				color: #16c551;
-			}
-
-			.game-details {
-				text-align: center;
-				color: #b3ffcc;
-			}
-
-			.game-details span {
-				color: #b3ffcc !important;
-			}
-
-			.attack-btn {
-				background-color: #a70707;
+			.attack-btn,
+            .block-btn {
 				width: 5.1vw;
 				height: 3vw;
 			}
-
-            .game {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
+			.attack-btn {
+				background-color: #a70707;
             }
 			
-            #blockBtn {
+            .block-btn {
 				background-color: #0787A7;
-				width: fit-content;
-				height: 4vw;
-                font-size: 2.8vw;
-				text-transform: uppercase;
-				cursor: pointer;
-				color: white;
-                margin-top: 5vh;
 			}
 
 			.toggle-game {
@@ -379,7 +252,8 @@
 				cursor: pointer;
 			}
 
-			.enemy-item {
+			.enemy-item,
+            .player-item {
 				display: flex;
 				flex-wrap: wrap;
 				padding: 10px;
@@ -387,25 +261,25 @@
 				color: #fff
 			}
 
-			.enemy-item h4{
+			.enemy-item h4,
+            .player-item h4 {
 				font-size: 21px;
 				flex: 1 1 100%;
 				margin-top: 5px;
 			}
 
-			.enemy-item .attack-btn {
+			.enemy-item .attack-btn,
+            .player-item .block-btn {
 				width: 40%;
-				align-self: center;
+				align-self: flex-end;
 			}
 
-			.enemy-item-stats {
+			.enemy-item-stats,
+            .player-item-stats {
 				width: 40%;
 				min-width: 150px;
 				font-size: 16px;
 			}
-
-
-
 
 			@keyframes blink {
 				from {
@@ -547,6 +421,38 @@
                 color: #16c551;
             }
 
+			#playAgain {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				z-index: 6000;
+				transform: translate(-50%,-50%);
+				display: flex;
+				flex-direction: column;
+				width: 250px;
+				height: auto;
+				background-color: black;
+				transition: opacity .8s ease-out;
+			}
+
+			#playAgain button {
+				text-transform: uppercase;
+				padding: 10px 5px;
+				margin: 7.5px;
+				font-size: 21px;
+				cursor: pointer;
+			}
+
+			.play-again-btn {
+				background-color: black;
+				color: white;
+			}
+
+			.new-character-btn {
+				background-color: white;
+				color: black;
+			}
+
 			@keyframes fadeInRight {
 				from {
 					transform: translateX(120%);
@@ -577,6 +483,11 @@
 	</head>
 
 	<body>
+		<div id="playAgain" class="invisible">
+			<button class="play-again-btn">play again?</button>
+			<button class="new-character-btn">new character</button>
+
+		</div>
 		<div id="cursorModal" class="invisible font-regular"></div>
 		<div class="container invisible">
 			<aside class="level-up font-bold invisible">
@@ -589,71 +500,8 @@
 					<button class="lvl-up-btn" id="lvlUpActions" data-stat="3">⌛</button>
 				</div>
 			</aside>
-			<!-- <button type="reset" class="reset font-regular">quit</button> -->
-			<div class="player font-bold">
-				<section class="player-stats">
-					<h3 class="font-regular">player stats</h3>
-					<div class="player-level">
-						<p>Level: <span id="playerLvl">0</span></p>
-						<p>
-							Experience: <br /><span id="playerExp">0</span
-							>/<span id="nextExp">100</span>
-						</p>
-					</div>
-					<div class="player-info">
-						<p>🙂 Name: <span id="playerName">Jeff</span></p>
-						<p>
-							❤ Health:
-							<span id="playerHealthCurrent">100</span>/<span
-								id="playerHealthMax"
-								>100</span
-							>
-						</p>
-						<p>🧍 class: <span id="playerClass">Melee</span></p>
-					</div>
-					<div class="player-fight-details">
-						<div>
-							<h4>🔪 Attack:</h4>
-							<p>
-								strength:
-								<span id="playerAttackStrength">7</span>
-							</p>
-							<p>speed: <span id="playerAttackSpeed">7</span></p>
-						</div>
-						<div>
-							<h4>
-								🛡 Defense: <span id="playerDefense">5</span>
-							</h4>
-						</div>
-						<div>
-							<h4>
-								🏃 Agility: <span id="playerAgility">3</span>
-							</h4>
-						</div>
-						<div>
-							<h4>🔭 FOV: <span id="playerFOV">3</span></h4>
-						</div>
-					</div>
-					<div class="game-details">
-						<p>steps taken: <span id="steps">7</span></p>
-						<p>dungeon level: <span id="dungeon">7</span></p>
-						<p>
-							⌛ actions per turn:
-							<span id="actionsLeft">0</span>/<span
-								id="actionsPerTurn"
-								>0</span
-							>
-						</p>
-					</div>
-				</section>
-				<section class="actions-window">
-					<div id="player-start"></div>
-				</section>
-			</div>
-            <div class="game">
-                <canvas id="gameBG" width="256" height="256"></canvas>
-                <button class="font-regular" id='blockBtn'>Block</button>
-            </div>
+            
+            <canvas id="gameBG" width="256" height="256"></canvas>
             
 			<div class="chat-box-container">
 				<h1 class="chat-box-title font-bold">Recent Activities</h1>

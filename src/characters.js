@@ -19,12 +19,13 @@ const Character = function (name, clas) {
 	C.xp = 0;
 	C.nextLvl = 100;
 	C.lvl = 1;
-	C.hp = !clas ? 100 : clas == 1 ? 50 : 75;
+    C.hp = !clas ? 100 : clas == 1 ? 50 : 75;
+    C.maxHp = C.hp;
 	C.attackStrength = !clas || clas == 1 ? rng() + 3 : rng(3) + 1;
 	C.def = !clas ? rng() + 2 : clas == 1 ? rng(2) + 1 : rng(3) + 1;
 	C.crit = {
 		mult: 1.5,
-		chance: 50
+		chance: 10
 	};
 	C.agility = !clas ? rng() + 2 : clas == 1 ? rng(2) + 1 : rng(5) + 3;
 
@@ -49,11 +50,13 @@ const Character = function (name, clas) {
 		C.nextLvl += C.nextLvl + Math.pow(C.lvl, 3);
 		C.lvl++;
 		C.awaitingUser = true;
-		_playerLvl.textContent = C.lvl;
-		_expToNextLvl.textContent = player.nextLvl;
-		_lvlUp.classList.remove("invisible");
+		// _playerLvl.textContent = C.lvl;
+		// _expToNextLvl.textContent = player.nextLvl;
+        _lvlUp.classList.remove("invisible");
+        C.maxHp *= 1.1;
+        // _healthpointsMax.innerHTML = C.maxHp;
 		zzfxP(levelUpSound[rng(levelUpSound.length -1)]);		
-		window.onkeypress = null;
+		window.removeEventListener('onkeypress', handleKeyPress)
 	};
 	C.weapons = weapons[C.class];
 	C.addStat = function (stat) {
@@ -61,29 +64,29 @@ const Character = function (name, clas) {
             const lvlAtk = Math.ceil(C.attackStrength * 1.2);
 			createChatMessage('player', C.name, `I increased my attack strength by ${lvlAtk - C.attackStrength}!`);
             C.attackStrength = lvlAtk;
-			_playerAttackStrength.innerHTML = C.attackStrength;
+			// _playerAttackStrength.innerHTML = C.attackStrength;
 		} else if (stat == 1) {
             const lvlAgl = Math.ceil(C.agility * 1.1)
 			createChatMessage('player', C.name, `I increased my agility by ${lvlAgl - C.agility}!`);
 			C.agility = lvlAgl;
-			_playerAgility.innerHTML = C.agility;
+			// _playerAgility.innerHTML = C.agility;
 		} else if (stat == 2) {
             const lvlDef = Math.ceil(C.def * 1.15)
 			createChatMessage('player', C.name, `I increased my defense by ${lvlDef - C.def}!`);
 			C.def = lvlDef;
-			_playerDefense.innerHTML = C.def;
+			// _playerDefense.innerHTML = C.def;
 		} else if (stat == 3) {
             const lvlActions = Math.ceil(C.actionsPerTurn * 1.1)
 			createChatMessage('player', C.name, `I increased my actions per turn by ${lvlActions - C.actionsPerTurn}!`);
 			C.actionsPerTurn = lvlActions;
 			C.actionsLeft = lvlActions;
-			_actionsTotal.innerHTML = C.actionsPerTurn;
-            _actionsLeft.innerHTML = C.actionsPerTurn;
+			// _actionsTotal.innerHTML = C.actionsPerTurn;
+            // _actionsLeft.innerHTML = C.actionsPerTurn;
 		}
 
 		_lvlUp.classList.add("invisible");
 		C.awaitingUser = false;
-		window.onkeypress = handleKeyPress;
+		window.addEventListener('keypress', handleKeyPress)
 	};
     C.coords = playerCoord;
 	C.highlighted = 0;
@@ -136,7 +139,7 @@ const Character = function (name, clas) {
 
 		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def + enemy.block
         C.actionsLeft -= C.attackSpeed;
-        _actionsLeft.innerHTML = C.actionsLeft;
+        // _actionsLeft.innerHTML = C.actionsLeft;
 		
 		const mult = rng(100) <= C.crit.chance ? Math.ceil(C.crit.mult * C.attackStrength) : C.attackStrength;
 		if (willHit) {
@@ -144,6 +147,9 @@ const Character = function (name, clas) {
 			if (!C.class) zzfxP(meleeDamageSound[rng(meleeDamageSound.length -1)]);		
 			else if (C.class == 1) zzfxP(magicDamageSound[rng(magicDamageSound.length -1)]);		
 			else if (C.class == 2) zzfxP(rangedDamageSound[rng(meleeDamageSound.length -1)]);		
+		} else {
+			if (mult <= enemy.block + enemy.def) zzfxP(blockSound[rng(blockSound.length -1)])
+			else zzfxP(missedSound[rng(missedSound.length -1)])
 		}
         
         if(enemy.hp < 1){
@@ -151,13 +157,13 @@ const Character = function (name, clas) {
             COORDINATES[x][y].occupied = 0;
             enemies.splice(enemyIndex,1);
             C.xp += enemy.xp;
-            _expCurrent.innerHTML = C.xp;
+            // _expCurrent.innerHTML = C.xp;
             _cursorModal.classList.add('invisible')
             if(!enemies.length) C.actionsLeft = C.actionsPerTurn;
             C.checkIfNextLvl();
         }
 
-        showEnemyDetails(enemy)
+        showHoveredDetails(enemy)
         
         if(C.actionsLeft == 0){
             while(C.awaitingUser){
@@ -192,7 +198,7 @@ const Character = function (name, clas) {
 	C.resetActions = function () {
         C.actionsLeft = C.actionsPerTurn;
         C.block = 0;
-		_actionsLeft.innerHTML = C.actionsLeft;
+		// _actionsLeft.innerHTML = C.actionsLeft;
 	};
 	C.defStance = async function () {
         console.log('button click')
@@ -227,7 +233,7 @@ const Enemy = function (coords, enemyPower) {
 		!E.class || E.class == 1
 			? Math.ceil(enemyPower / (rng(11) + 10))
             : ~~(enemyPower / (rng(11) + 20));
-    E.attackSpeed = ~~(E.attackStrength/2) || 1;
+    E.attackSpeed = ~~(E.attackStrength/2) - 1 > 0 ? ~~(E.attackStrength/2) - 1 : 1;
 	E.accuracy = !E.class
 		? 65 + rng(26)
 		: E.class == 1
@@ -239,32 +245,47 @@ const Enemy = function (coords, enemyPower) {
     E.speedLeft = E.speed;
 	E.playerSpotted = 0;
     E.xp = ~~(enemyPower / 5);
+    E.crit = {
+		mult: 2,
+		chance: 60
+	};
+
 	E.atkChar = function () {
         const toHit = rng(100)
 		const willHit =
-			E.accuracy - player.agility >= toHit && player.def < E.attackStrength;
-        willHit ? (player.hp -= E.attackStrength - ~~player.def - player.block) : 0;
+            E.accuracy - player.agility >= toHit && player.def + player.block < E.attackStrength;
+        const mult = rng(100) <= E.crit.chance ? E.attackStrength * E.crit.mult : E.attackStrength;
+        willHit && (player.hp -= mult - ~~player.def - player.block)
         E.speedLeft -= E.attackSpeed;
-        _healthpointsCurrent.innerHTML = player.hp;
+        // _healthpointsCurrent.innerHTML = player.hp;
+        
+        const attack = player.def + player.block >= mult ? `${player.name} blocked ${E.name}'s attack!` :
+        willHit && E.attackStrength != mult ? `hehehehehe....get crit'd. you just got hit for ${mult}` :
+        willHit ? `just hit you for ${mult - player.def - player.block}!` :
+        `I missed!`
+        createChatMessage('enemy', E.name, attack)
         
         // GAME OVER SCENARIO FOR PLAYER
         if(player.hp < 1){
+            // _healthpointsCurrent.innerHTML = 0;
             return gameOver();
         }
-
-        const attack = player.def + player.block >= E.attackStrength
-        ? `${player.name} blocked ${E.name}'s attack!`
-        : willHit
-        ? `${E.name} hit for ${E.attackStrength - player.def - player.block}!`
-        : `${E.name} missed!`
-        console.log(attack)
-		createChatMessage('enemy', E.name, attack)
 	};
 
 	E.handleTurn = function () {
 		const [x, y] = E.coords;
 
-		const isExit = ([a, b]) => exit[0] == a && exit[1] == b;
+        const isExit = ([a, b]) => exit[0] == a && exit[1] == b;
+        const canSee = E.checkFOV();
+        const canAttack = E.speedLeft - E.attackSpeed >= 0;
+        
+        if(canSee && canAttack){
+            return E.atkChar();
+        }
+
+        if(canSee && rng(100) <= 75){
+            return E.defStance();
+        }
 
 		const surroundings = [
 			{
@@ -303,40 +324,34 @@ const Enemy = function (coords, enemyPower) {
 
 		player.checkFOV();
 
-		if (!E.checkFOV(E.playerSpotted ? 2 : 1)) {
-            E.speedLeft--;
-			if (E.playerSpotted && inRange(E.coords, player.coords, E.fov)) {
-				console.log(availableSurroundings);
-				const [subX, subY] = [playerCoord[0] - x, playerCoord[1] - y];
-				// console.log(`DIFF COORD: ${[subX, subY]}`);
+        E.speedLeft--;
 
-				availableSurroundings = availableSurroundings.filter((c) => {
-					if (c.pos == "left") return subX < 0;
-					if (c.pos == "right") return subX > 0;
-					if (c.pos == "top") return subY < 0;
-					if (c.pos == "bottom") return subY > 0;
-				});
+        if (E.playerSpotted) {
+            console.log(availableSurroundings);
+            const [subX, subY] = [playerCoord[0] - x, playerCoord[1] - y];
+            // console.log(`DIFF COORD: ${[subX, subY]}`);
 
-				// console.log(availableSurroundings);
-			}
-			const newCoords = rng(availableSurroundings.length);
-			COORDINATES[x][y].occupied = 0;
+            availableSurroundings = availableSurroundings.filter((c) => {
+                if (c.pos == "left") return subX < 0;
+                if (c.pos == "right") return subX > 0;
+                if (c.pos == "top") return subY < 0;
+                if (c.pos == "bottom") return subY > 0;
+            });
 
-			E.coords =
-				availableSurroundings.length > 0
-					? availableSurroundings[newCoords].coord
-					: E.coords;
-			const {coords: [newX, newY]} = E;
-			zzfxP(eMove[rng(eMove.length -1)]);
-            COORDINATES[newX][newY].occupied = 1;
-            return paintCanvas();
+            // console.log(availableSurroundings);
         }
 
-        if(E.speedLeft - E.attackSpeed >= 0){
-            E.atkChar();
-        }
+        const newCoords = rng(availableSurroundings.length);
+        COORDINATES[x][y].occupied = 0;
 
-        E.defStance();
+        E.coords =
+            availableSurroundings.length > 0
+                ? availableSurroundings[newCoords].coord
+                : E.coords;
+        const {coords: [newX, newY]} = E;
+        zzfxP(eMove[rng(eMove.length -1)]);
+        COORDINATES[newX][newY].occupied = 1;
+        return paintCanvas();
     };
     E.block = 0;
     E.defStance = function(){
