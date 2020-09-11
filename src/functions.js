@@ -53,7 +53,7 @@ const checker = ([sX, sY]) => {
 	return;
 };
 
-const startGame = e => {
+const startGame = (e,restart) => {
     window.removeEventListener('keydown', typeName)
     window.removeEventListener('keypress', handleKeyPress);
 	// goFullScreen();
@@ -69,10 +69,12 @@ const startGame = e => {
 	_container.classList.remove("invisible");
 	game.classList.add("p-turn");
     
-    player = new Character(
-		_createNameInput.textContent,
-		parseInt(_createClassInput.value)
-    );
+    if (!restart) {
+        player = new Character(
+            _createNameInput.textContent,
+            parseInt(_createClassInput.value)
+        );
+    }
     
 	_healthpointsCurrent.innerHTML = player.hp;
 	_healthpointsMax.innerHTML = player.hp;
@@ -90,6 +92,9 @@ const startGame = e => {
 	_expCurrent.innerHTML = player.xp;
     _expToNextLvl.innerHTML = player.nextLvl;
     player.awaitingUser = true;
+    game.classList.remove("p-turn");
+    game.classList.remove('e-turn')
+    game.classList.add("n-turn");
 	asyncForEach(narrator.start, (msg, i, arr) => 
         new Promise(resolve => {
             if(i != 0){
@@ -97,7 +102,11 @@ const startGame = e => {
                     i == 1 || i == 3 ?
                     createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
                     createChatMessage('player',player.name, msg);
-                    if(i == arr.length - 1) player.awaitingUser = false;
+                    if(i == arr.length - 1) {
+                        player.awaitingUser = false;
+                        game.classList.remove("n-turn");
+                        game.classList.add("p-turn");
+                    }
                     resolve();
                 }, rng(750) + 1500)
             }
@@ -107,15 +116,7 @@ const startGame = e => {
         })
     )
     _blockBtn.addEventListener('click', player.defStance)
-	buildDungeon(
-		CANVAS_HEIGHT,
-		CANVAS_WIDTH,
-		COLUMNS,
-		ROWS,
-		TILE_HEIGHT,
-		TILE_WIDTH,
-		[0, 160]
-    );
+	buildDungeon([0, 160]);
 }
 
 const inRange = ([aX,aY], [bX,bY], fov) => {
@@ -221,15 +222,7 @@ const handlePlayerMovement = async (event, room, tileSize) => {
         
         createChatMessage('narrator','narrator', `${player.name} has reached level ${lvl} in ${steps} steps!`)
         
-        return buildDungeon(
-            CANVAS_HEIGHT,
-            CANVAS_WIDTH,
-            COLUMNS,
-            ROWS,
-            TILE_HEIGHT,
-            TILE_WIDTH,
-            exit
-        );
+        return buildDungeon(exit);
     }
         
     if (room[nextX]?.[nextY]?.walkable && !room[nextX]?.[nextY]?.occupied) {
@@ -249,6 +242,8 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 
         if(steps == Math.ceil(player.fov)){
             window.removeEventListener('keypress', handleKeyPress);
+            game.classList.remove("p-turn");
+            game.classList.add("n-turn");
             player.awaitingUser = true;
             asyncForEach(narrator.fog, (msg, i, arr) => {
                 return new Promise(resolve => {
@@ -262,6 +257,8 @@ const handlePlayerMovement = async (event, room, tileSize) => {
                             resolve();
                         } else {
                             createChatMessage('player', player.name, msg);
+                            game.classList.remove("n-turn");
+                            game.classList.add("p-turn");
                             player.awaitingUser = false;
                             resolve();
                         }
@@ -278,6 +275,8 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 
         if(!firstEnemySpotted && player.inRange.length){
             window.removeEventListener('keypress', handleKeyPress);
+            game.classList.remove("p-turn");
+            game.classList.add("n-turn");
             player.awaitingUser = true;
             asyncForEach(narrator.enemy, (msg,i,arr) => 
                 new Promise(resolve => {
@@ -287,6 +286,8 @@ const handlePlayerMovement = async (event, room, tileSize) => {
                     }
                     setTimeout(() => {
                         if(i == arr.length - 1){
+                            game.classList.remove("n-turn");
+                            game.classList.add("p-turn");
                             player.awaitingUser = false;
                             firstEnemySpotted = 1
                             createChatMessage('player', player.name, msg)
@@ -403,6 +404,7 @@ const paintCanvas = () => {
 const enemyTurn = () => {
     window.removeEventListener('keypress', handleKeyPress);
     game.classList.remove("p-turn");
+    game.classList.remove('n-turn')
     game.classList.add("e-turn");
     
 	moveTimer = setTimeout(() =>
@@ -480,6 +482,11 @@ const gameOver = () => {
         tiles.splice(randTile, 1);
         ctx.fillStyle = 'black';
         ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT);
+        
+        if (tiles.length < CANVAS_HEIGHT * .2) {
+            _playAgain.classList.remove('invisible')
+        }
+
         if(!tiles.length){
             ctx.fillRect(0,0,CANVAS_HEIGHT,CANVAS_HEIGHT)
             clearInterval(fadeCanvas);
