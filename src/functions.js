@@ -1,5 +1,6 @@
 const asyncForEach = async (array, callback) => {
 	for (let index = 0; index < array.length; index++) {
+        if(player.hp < 1) return;
 		await callback(array[index], index, array);
 	}
 };
@@ -51,6 +52,71 @@ const checker = ([sX, sY]) => {
 
 	return;
 };
+
+const startGame = e => {
+    window.removeEventListener('keydown', typeName)
+    window.removeEventListener('keypress', handleKeyPress);
+	// goFullScreen();
+	// *** CREATE PLAYER ELEMENTS***
+	const _createClassInput = document.querySelector(
+		'input[name="class"]:checked'
+    );
+    
+
+	_landing.classList.add("invisible");
+	_btnStart.classList.add("invisible");
+
+	_container.classList.remove("invisible");
+	game.classList.add("p-turn");
+    
+    player = new Character(
+		_createNameInput.textContent,
+		parseInt(_createClassInput.value)
+    );
+    
+	_healthpointsCurrent.innerHTML = player.hp;
+	_healthpointsMax.innerHTML = player.hp;
+    _playerLvl.innerHTML = player.lvl;
+    _playerName.innerHTML = player.name
+    _playerClass.innerHTML = !player.class ? "melee" : player.class == 1 ? 'magic' : 'ranged'
+
+	_playerAttackStrength.innerHTML = player.attackStrength;
+	_playerAttackSpeed.innerHTML = player.attackSpeed;
+	_playerDefense.innerHTML = player.def;
+	_playerAgility.innerHTML = player.agility;
+	_playerFOV.innerHTML = Math.round(player.fov);
+	_actionsTotal.innerHTML = player.actionsPerTurn;
+	_actionsLeft.innerHTML = player.actionsLeft;
+	_expCurrent.innerHTML = player.xp;
+    _expToNextLvl.innerHTML = player.nextLvl;
+    player.awaitingUser = true;
+	asyncForEach(narrator.start, (msg, i, arr) => 
+        new Promise(resolve => {
+            if(i != 0){
+                return setTimeout(() => {
+                    i == 1 || i == 3 ?
+                    createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
+                    createChatMessage('player',player.name, msg);
+                    if(i == arr.length - 1) player.awaitingUser = false;
+                    resolve();
+                }, rng(750) + 1500)
+            }
+
+            createChatMessage('narrator', 'narrator', msg(player.name))
+            resolve();
+        })
+    )
+    _blockBtn.addEventListener('click', player.defStance)
+	buildDungeon(
+		CANVAS_HEIGHT,
+		CANVAS_WIDTH,
+		COLUMNS,
+		ROWS,
+		TILE_HEIGHT,
+		TILE_WIDTH,
+		[0, 160]
+    );
+}
 
 const inRange = ([aX,aY], [bX,bY], fov) => {
     const xDif = Math.abs(aX - bX) / TILE_HEIGHT;
@@ -172,7 +238,7 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 		room[nextX][nextY].occupied = 1;
         
 		_actionsLeft.innerHTML = player.actionsLeft;
-        _steps.innerHTML = steps++;
+        _steps.innerHTML = ++steps;
         
 		playerCoord = [nextX, nextY];
         player.coords = playerCoord;
@@ -400,7 +466,42 @@ const getExitGradient = (x, y) => {
 };
 
 const gameOver = () => {
-    
+    // POTENTIALLY FADE CANVAS OUT OR SIMILAR EFFECT
+    const tiles = [];
+    for(let x in COORDINATES){
+        for(let y in COORDINATES[x]){
+            tiles.push([x,y])
+        }
+    }
+
+    const fadeCanvas = setInterval(() => {
+        const randTile = rng(tiles.length);
+        const [x,y] = tiles[randTile];
+        tiles.splice(randTile, 1);
+        ctx.fillStyle = 'black';
+        ctx.fillRect(x,y,TILE_HEIGHT,TILE_HEIGHT);
+        if(!tiles.length){
+            ctx.fillRect(0,0,CANVAS_HEIGHT,CANVAS_HEIGHT)
+            clearInterval(fadeCanvas);
+        }
+    }, 500/TILE_HEIGHT)
+
+    window.removeEventListener('keypress', handleKeyPress)
+    asyncForEach(narrator.gameOver, (msg, i, arr) => 
+        new Promise(resolve =>
+            setTimeout(() => {
+                if(i != arr.length - 1){
+                    createChatMessage('narrator', 'narrator', msg(player.name));
+                    return resolve();
+                }
+
+                setTimeout(() => {
+                    // call function to bring up modal to restart
+                    return resolve();
+                }, 5000)
+            }, rng(1000) + 2000)
+        )
+    )
 }
 
 const setAttributes =(el,attr) => {
