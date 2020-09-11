@@ -411,6 +411,12 @@ const setAttributes =(el,attr) => {
 
 // param: sender (either "player", "enemy", "narrator")
 const createChatMessage = (sender, name, message) => {
+
+    if (sender === "player") zzfxP(messageSound.player[rng(messageSound.player.length -1)]);
+    else if (sender === "enemy") zzfxP(messageSound.enemy[rng(messageSound.enemy.length -1)]);
+    else if (sender === "narrator") zzfxP(messageSound.narrator[rng(messageSound.narrator.length -1)]);
+
+
     const _box = document.createElement('div');
     _box.classList.add(`box`, `box-${sender}`)
 
