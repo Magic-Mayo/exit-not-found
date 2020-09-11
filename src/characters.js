@@ -233,7 +233,7 @@ const Enemy = function (coords, enemyPower) {
 		!E.class || E.class == 1
 			? Math.ceil(enemyPower / (rng(11) + 10))
             : ~~(enemyPower / (rng(11) + 20));
-    E.attackSpeed = ~~(E.attackStrength/2) - 1 || 1;
+    E.attackSpeed = ~~(E.attackStrength/2) - 1 > 0 ? ~~(E.attackStrength/2) - 1 : 1;
 	E.accuracy = !E.class
 		? 65 + rng(26)
 		: E.class == 1
