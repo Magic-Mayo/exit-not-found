@@ -19,12 +19,13 @@ const Character = function (name, clas) {
 	C.xp = 0;
 	C.nextLvl = 100;
 	C.lvl = 1;
-	C.hp = !clas ? 100 : clas == 1 ? 50 : 75;
+    C.hp = !clas ? 100 : clas == 1 ? 50 : 75;
+    C.maxHp = C.hp;
 	C.attackStrength = !clas || clas == 1 ? rng() + 3 : rng(3) + 1;
 	C.def = !clas ? rng() + 2 : clas == 1 ? rng(2) + 1 : rng(3) + 1;
 	C.crit = {
 		mult: 1.5,
-		chance: 50
+		chance: 10
 	};
 	C.agility = !clas ? rng() + 2 : clas == 1 ? rng(2) + 1 : rng(5) + 3;
 
@@ -51,7 +52,9 @@ const Character = function (name, clas) {
 		C.awaitingUser = true;
 		_playerLvl.textContent = C.lvl;
 		_expToNextLvl.textContent = player.nextLvl;
-		_lvlUp.classList.remove("invisible");
+        _lvlUp.classList.remove("invisible");
+        C.maxHp *= 1.1;
+        _healthpointsMax.innerHTML = C.maxHp;
 		zzfxP(levelUpSound[rng(levelUpSound.length -1)]);		
 		window.removeEventListener('onkeypress', handleKeyPress)
 	};
@@ -239,11 +242,17 @@ const Enemy = function (coords, enemyPower) {
     E.speedLeft = E.speed;
 	E.playerSpotted = 0;
     E.xp = ~~(enemyPower / 5);
+    E.crit = {
+		mult: 2,
+		chance: 60
+	};
+
 	E.atkChar = function () {
         const toHit = rng(100)
 		const willHit =
-			E.accuracy - player.agility >= toHit && player.def < E.attackStrength;
-        willHit ? (player.hp -= E.attackStrength - ~~player.def - player.block) : 0;
+            E.accuracy - player.agility >= toHit && player.def < E.attackStrength;
+        const mult = rng(100) <= E.crit.chance ? E.attackStrength * E.crit.mult : E.attackStrength;
+        willHit ? (player.hp -= mult - ~~player.def - player.block) : 0;
         E.speedLeft -= E.attackSpeed;
         _healthpointsCurrent.innerHTML = player.hp;
         
@@ -252,12 +261,10 @@ const Enemy = function (coords, enemyPower) {
             return gameOver();
         }
 
-        const attack = player.def + player.block >= E.attackStrength
-        ? `${player.name} blocked ${E.name}'s attack!`
-        : willHit
-        ? `${E.name} hit for ${E.attackStrength - player.def - player.block}!`
-        : `${E.name} missed!`
-        console.log(attack)
+        const attack = player.def + player.block >= mult ? `${player.name} blocked ${E.name}'s attack!` :
+        willHit && E.attackStrength != mult ? `hehehehehe....get crit'd. you just got hit for ${mult}` :
+        willHit ? `just hit you for ${mult - player.def - player.block}!` :
+        `I missed!`
 		createChatMessage('enemy', E.name, attack)
 	};
 
