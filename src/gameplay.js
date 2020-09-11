@@ -1,70 +1,7 @@
 ////////// TO DO ///////////
 // uncomment listener
 ////////// TO DO ///////////
-_btnStart.addEventListener("click", (e) => {
-    window.removeEventListener('keydown', typeName)
-    window.removeEventListener('keypress', handleKeyPress);
-	// goFullScreen();
-	// *** CREATE PLAYER ELEMENTS***
-	const _createClassInput = document.querySelector(
-		'input[name="class"]:checked'
-    );
-    
-
-	_landing.classList.add("invisible");
-	_btnStart.classList.add("invisible");
-
-	_container.classList.remove("invisible");
-	game.classList.add("p-turn");
-    
-    player = new Character(
-		_createNameInput.textContent,
-		parseInt(_createClassInput.value)
-    );
-    
-	_healthpointsCurrent.innerHTML = player.hp;
-	_healthpointsMax.innerHTML = player.hp;
-    _playerLvl.innerHTML = player.lvl;
-    _playerName.innerHTML = player.name
-    _playerClass.innerHTML = !player.class ? "melee" : player.class == 1 ? 'magic' : 'ranged'
-
-	_playerAttackStrength.innerHTML = player.attackStrength;
-	_playerAttackSpeed.innerHTML = player.attackSpeed;
-	_playerDefense.innerHTML = player.def;
-	_playerAgility.innerHTML = player.agility;
-	_playerFOV.innerHTML = Math.round(player.fov);
-	_actionsTotal.innerHTML = player.actionsPerTurn;
-	_actionsLeft.innerHTML = player.actionsLeft;
-	_expCurrent.innerHTML = player.xp;
-    _expToNextLvl.innerHTML = player.nextLvl;
-    player.awaitingUser = true;
-	asyncForEach(narrator.start, (msg, i, arr) => 
-        new Promise(resolve => {
-            if(i != 0){
-                return setTimeout(() => {
-                    i == 1 || i == 3 ?
-                    createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
-                    createChatMessage('player',player.name, msg);
-                    if(i == arr.length - 1) player.awaitingUser = false;
-                    resolve();
-                }, rng(750) + 1500)
-            }
-
-            createChatMessage('narrator', 'narrator', msg(player.name))
-            resolve();
-        })
-    )
-    _blockBtn.addEventListener('click', player.defStance)
-	buildDungeon(
-		CANVAS_HEIGHT,
-		CANVAS_WIDTH,
-		COLUMNS,
-		ROWS,
-		TILE_HEIGHT,
-		TILE_WIDTH,
-		[0, 160]
-    );
-});
+_btnStart.addEventListener("click", startGame);
 
 // _btnReset.addEventListener("click", (e) => {
 // 	const didExit = confirm(
