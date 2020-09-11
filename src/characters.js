@@ -259,16 +259,17 @@ const Enemy = function (coords, enemyPower) {
         E.speedLeft -= E.attackSpeed;
         _healthpointsCurrent.innerHTML = player.hp;
         
-        // GAME OVER SCENARIO FOR PLAYER
-        if(player.hp < 1){
-            return gameOver();
-        }
-
         const attack = player.def + player.block >= mult ? `${player.name} blocked ${E.name}'s attack!` :
         willHit && E.attackStrength != mult ? `hehehehehe....get crit'd. you just got hit for ${mult}` :
         willHit ? `just hit you for ${mult - player.def - player.block}!` :
         `I missed!`
-		createChatMessage('enemy', E.name, attack)
+        createChatMessage('enemy', E.name, attack)
+        
+        // GAME OVER SCENARIO FOR PLAYER
+        if(player.hp < 1){
+            _healthpointsCurrent.innerHTML = 0;
+            return gameOver();
+        }
 	};
 
 	E.handleTurn = function () {

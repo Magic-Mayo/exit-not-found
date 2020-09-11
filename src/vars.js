@@ -40,8 +40,12 @@ const narrator = {
     ],
     taunting: [
 
+    ],
+    gameOver: [
+        name => `....looks like ${name} was not able to find the exit`,
+        name => `didn't think ${name} would`,
+        "well at least the jokes can stop now"
     ]
-
 }
 
 /* ==================================
