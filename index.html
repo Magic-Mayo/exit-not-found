@@ -8,13 +8,11 @@
 		<title>Exit Not Found</title>
 		<style>
 			.font-regular {
-				font-family: monospace;
 				font-weight: 400;
 				font-style: normal;
 			}
 
 			.font-bold {
-				font-family: monospace;
 				font-weight: 700;
 				font-style: normal;
 			}
@@ -26,6 +24,8 @@
 			* {
 				margin: 0;
 				box-sizing: border-box;
+				font-family: monospace;
+
 			}
 
 			.container {
@@ -52,6 +52,10 @@
 
 			.e-turn {
 				box-shadow: 0 0 25px 10px #a70707;
+			}
+
+			.n-turn {
+				box-shadow: 0 0 25px 10px #0787A7;
 			}
 
 			canvas {
@@ -417,6 +421,38 @@
                 color: #16c551;
             }
 
+			#playAgain {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				z-index: 6000;
+				transform: translate(-50%,-50%);
+				display: flex;
+				flex-direction: column;
+				width: 250px;
+				height: auto;
+				background-color: black;
+				transition: opacity .8s ease-out;
+			}
+
+			#playAgain button {
+				text-transform: uppercase;
+				padding: 10px 5px;
+				margin: 7.5px;
+				font-size: 21px;
+				cursor: pointer;
+			}
+
+			.play-again-btn {
+				background-color: black;
+				color: white;
+			}
+
+			.new-character-btn {
+				background-color: white;
+				color: black;
+			}
+
 			@keyframes fadeInRight {
 				from {
 					transform: translateX(120%);
@@ -447,6 +483,11 @@
 	</head>
 
 	<body>
+		<div id="playAgain" class="invisible">
+			<button class="play-again-btn">play again?</button>
+			<button class="new-character-btn">new character</button>
+
+		</div>
 		<div id="cursorModal" class="invisible font-regular"></div>
 		<div class="container invisible">
 			<aside class="level-up font-bold invisible">
