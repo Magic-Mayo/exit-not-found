@@ -151,7 +151,7 @@ const generateEnemies = (lvl, max, room) => {
     player.checkFOV();
     paintCanvas()
 	player.hiliteMoveArea();
-	player.hiliteFOV();
+	// player.hiliteFOV();
 };
 
 const getEnemyStartCoordinate = (max, room) => {
@@ -385,7 +385,7 @@ const paintCanvas = () => {
             ctx.fillRect(x, y, TILE_HEIGHT, TILE_HEIGHT);
 		}
     }
-    player.hiliteFOV()
+    // player.hiliteFOV()
 };
 
 const enemyTurn = () => {
@@ -401,7 +401,10 @@ const enemyTurn = () => {
     
 	moveTimer = setTimeout(() =>
         asyncForEach(enemies, (enemy, i) => {
-            createChatMessage('enemy', `#${i} - ${enemy.name}`, msg[rng(msg.length)])
+            const [eX, eY] = enemy.coords;
+            if(player.inRange.some(({coords: [x,y]}) => x == eX && y == eY)){
+                createChatMessage('enemy', `#${i} - ${enemy.name}`, msg[rng(msg.length)])
+            }
             enemy.block = 0;
             return new Promise(async resolve => {
                 while(enemy.speedLeft > 0){
@@ -421,7 +424,7 @@ const enemyTurn = () => {
                 setTimeout(() =>{
                     enemy.resetActions();
                     resolve();
-                }, 1000);
+                }, 2000);
             });
         })
     , 500);
