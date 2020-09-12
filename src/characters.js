@@ -264,7 +264,7 @@ const Enemy = function (coords, enemyPower) {
 		const willHit =
             E.accuracy - player.agility >= toHit && player.def < E.attackStrength;
         const mult = rng(100) <= E.crit.chance ? E.attackStrength * E.crit.mult : E.attackStrength;
-        willHit ? (player.hp -= mult - ~~player.def - player.block) : 0;
+        willHit && (player.hp -= mult - ~~player.def - player.block);
         E.speedLeft -= E.attackSpeed;
         const hit = mult - player.block - player.def;
         
@@ -294,13 +294,13 @@ const Enemy = function (coords, enemyPower) {
         const isExit = ([a, b]) => exit[0] == a && exit[1] == b;
         const canSee = E.checkFOV();
         const canAttack = E.speedLeft - E.attackSpeed >= 0;
-        
+
         if(canSee && canAttack){
             return setTimeout(() => E.atkChar(resolve, i), 2000)
         }
 
         if(canSee && rng(100) <= 75){
-            return setTimeout(() => E.defStance(resolve, i), 400)
+            return setTimeout(() => E.defStance(resolve, i), 1400)
         }
 
 		const surroundings = [
@@ -351,7 +351,6 @@ const Enemy = function (coords, enemyPower) {
                 if (c.pos == "top") return subY < 0;
                 if (c.pos == "bottom") return subY > 0;
             });
-            console.log(availableSurroundings)
         }
 
         const newCoords = rng(availableSurroundings.length);
@@ -381,7 +380,8 @@ const Enemy = function (coords, enemyPower) {
     }
 	E.checkFOV = function () {
 		if (inRange(E.coords,player.coords,E.fov)) {
-			E.playerSpotted = 1;
+            E.playerSpotted = 1;
+            return 1;
 		} else if(!inRange(E.coords, player.coords,E.fov + E.fov)){
             E.playerSpotted = 0;
         }
