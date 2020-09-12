@@ -157,3 +157,5 @@ let walkableTiles = 0;
 let enemyIndex = 0;
 
 let firstEnemySpotted;
+
+let startedTyping;
