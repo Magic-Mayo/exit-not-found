@@ -39,7 +39,7 @@ const handleCanvasHover = (e) => {
 
     const hoverPlayer = checkIfTargetCoord([adjustedX,adjustedY], player.coords);
     
-	if (hoveredEnemy) {
+	if (hoveredEnemy && inRange(hoveredEnemy.coords, player.coords, player.fov)) {
         console.log('enemy')
 		_cursorModal.classList.remove('invisible')
 		showHoveredDetails(hoveredEnemy);
@@ -102,15 +102,17 @@ const showHoveredDetails = (enemy, user) => {
 };
 
 const typeName = e => {
+    if(!startedTyping){
+        _createNameInput.textContent = '';
+        startedTyping = 1;
+    }
     if(_createNameInput.textContent.length > 20  && e.keyCode != 8 && e.keyCode != 46) {
         e.preventDefault()
     } else if (e.key.match(/[A-Za-z0-9]/g) && e.key.length == 1){
-        console.log(e.key)
         _createNameInput.textContent = _createNameInput.textContent + e.key
     } else if (e.keyCode == 8) {
         _createNameInput.textContent = _createNameInput.textContent.substr(0,_createNameInput.textContent.length - 1)
     }
-
 }
 
 window.addEventListener('keydown', typeName)
