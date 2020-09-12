@@ -275,8 +275,9 @@ const Enemy = function (coords, enemyPower) {
 
         if(player.inRange.some(({coords: [x,y]}) => eX == x && eY == y)){
             createChatMessage('enemy', `#${i} - ${E.name}`, attack);
-        } else if(willHit && inRange([eX,eY], player.coords, E.fov)) {
-            createChatMessage('player', player.name, `${blindHitMsg[blindHitMsg.length]}  -${hit} hp`);
+        } else if(willHit && !inRange([eX,eY], player.coords, player.fov)) {
+            console.log(willHit)
+            createChatMessage('player', player.name, `${blindHitMsg[rng(blindHitMsg.length)]}  (-${hit} hp)`);
         }
 
         resolve();
@@ -296,12 +297,15 @@ const Enemy = function (coords, enemyPower) {
         const canAttack = E.speedLeft - E.attackSpeed >= 0;
 
         if(canSee && canAttack){
+            console.log('attack')
             return setTimeout(() => E.atkChar(resolve, i), 2000)
         }
-
+        
         if(canSee && rng(100) <= 75){
+            console.log('blocck')
             return setTimeout(() => E.defStance(resolve, i), 1400)
         }
+        console.log('move')
 
 		const surroundings = [
 			{
@@ -375,7 +379,9 @@ const Enemy = function (coords, enemyPower) {
 
         E.block = E.speedLeft;
         E.speedLeft = 0;
-        createChatMessage('enemy', `#${i} - ${E.name}`, msg[rng(msg.length)](player.name))
+        if(inRange([eX,eY], player.coords, player.fov)){
+            createChatMessage('enemy', `#${i} - ${E.name}`, msg[rng(msg.length)](player.name))
+        }
         resolve()
     }
 	E.checkFOV = function () {
