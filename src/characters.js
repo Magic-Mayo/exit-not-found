@@ -313,28 +313,28 @@ const Enemy = function (coords, enemyPower) {
 				coord: [x, y - TILE_WIDTH],
 				available: COORDINATES[x]?.[y - TILE_WIDTH]?.walkable,
 				occupied: COORDINATES[x]?.[y - TILE_WIDTH]?.occupied,
-				checkIfExit: isExit("top", [x, y - TILE_WIDTH]),
+				checkIfExit: isExit([x, y - TILE_WIDTH]),
 			},
 			{
 				pos: "right",
 				coord: [x + TILE_WIDTH, y],
 				available: COORDINATES[x + TILE_WIDTH]?.[y]?.walkable,
 				occupied: COORDINATES[x + TILE_WIDTH]?.[y]?.occupied,
-				checkIfExit: isExit("right", [x + TILE_WIDTH, y]),
+				checkIfExit: isExit([x + TILE_WIDTH, y]),
 			},
 			{
 				pos: "bottom",
 				coord: [x, y + TILE_WIDTH],
 				available: COORDINATES[x]?.[y + TILE_WIDTH]?.walkable,
 				occupied: COORDINATES[x]?.[y + TILE_WIDTH]?.occupied,
-				checkIfExit: isExit("bottom", [x, y + TILE_WIDTH]),
+				checkIfExit: isExit([x, y + TILE_WIDTH]),
 			},
 			{
 				pos: "left",
 				coord: [x - TILE_WIDTH, y],
 				available: COORDINATES[x - TILE_WIDTH]?.[y]?.walkable,
 				occupied: COORDINATES[x]?.[y - TILE_WIDTH]?.occupied,
-				checkIfExit: isExit("left", [x - TILE_WIDTH, y]),
+				checkIfExit: isExit([x - TILE_WIDTH, y]),
 			},
 		];
 
