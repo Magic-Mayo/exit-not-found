@@ -91,15 +91,15 @@ const Character = function (name, clas) {
     C.coords = playerCoord;
 	C.highlighted = 0;
 	
-	C.hiliteFOV = function () {
-		const [cX,cY] = getCenterOfCoords(C);
-		ctx.fillStyle = colors.fovHighlight
-        ctx.beginPath();
-        ctx.arc(cX,cY,C.fov * TILE_HEIGHT, 0, Math.PI * 2);
-        // ctx.clip()
-		// ctx.closePath();
-        ctx.fill();
-	}
+	// C.hiliteFOV = function () {
+	// 	const [cX,cY] = getCenterOfCoords(C);
+	// 	ctx.fillStyle = colors.fovHighlight
+    //     ctx.beginPath();
+    //     ctx.arc(cX,cY,C.fov * TILE_HEIGHT, 0, Math.PI * 2);
+    //     // ctx.clip()
+	// 	// ctx.closePath();
+    //     ctx.fill();
+	// }
 
 	C.hiliteMoveArea = function () {
         const checkerCoord = [C.coords];
@@ -251,7 +251,16 @@ const Enemy = function (coords, enemyPower) {
     };
 
 	E.atkChar = function (resolve, i) {
-        const toHit = rng(100)
+        const [eX, eY] = E.coords;
+        const toHit = rng(100);
+        const blindHitMsg = [
+            `uhhhhh....why am I bleeding?!`,
+            `ouch....what was that?`,
+            `is someone there...stop throwing stuff at me!!`,
+            `ok....I can't even see you.`,
+            `oh voice of the cave, please stop hurting me.`
+        ]
+
 		const willHit =
             E.accuracy - player.agility >= toHit && player.def < E.attackStrength;
         const mult = rng(100) <= E.crit.chance ? E.attackStrength * E.crit.mult : E.attackStrength;
@@ -263,7 +272,13 @@ const Enemy = function (coords, enemyPower) {
         willHit && E.attackStrength != mult ? `hehehehehe....get crit'd. you just got hit for ${hit}` :
         willHit ? `just hit you for ${hit}!` :
         `I missed!`
-        createChatMessage('enemy', `#${i} - ${E.name}`, attack);
+
+        if(player.inRange.some(({coords: [x,y]}) => eX == x && eY == y)){
+            createChatMessage('enemy', `#${i} - ${E.name}`, attack);
+        } else if(willHit && inRange([eX,eY], player.coords, E.fov)) {
+            createChatMessage('player', player.name, `${blindHitMsg[blindHitMsg.length]}  -${hit} hp`);
+        }
+
         resolve();
         
         // GAME OVER SCENARIO FOR PLAYER
@@ -328,9 +343,7 @@ const Enemy = function (coords, enemyPower) {
         E.speedLeft--;
 
         if (E.playerSpotted) {
-            console.log(availableSurroundings);
-            const [subX, subY] = [playerCoord[0] - x, playerCoord[1] - y];
-            // console.log(`DIFF COORD: ${[subX, subY]}`);
+            const [subX, subY] = [player.coords[0] - x, player.coords[1] - y];
 
             availableSurroundings = availableSurroundings.filter((c) => {
                 if (c.pos == "left") return subX < 0;
@@ -338,8 +351,7 @@ const Enemy = function (coords, enemyPower) {
                 if (c.pos == "top") return subY < 0;
                 if (c.pos == "bottom") return subY > 0;
             });
-
-            // console.log(availableSurroundings);
+            console.log(availableSurroundings)
         }
 
         const newCoords = rng(availableSurroundings.length);
@@ -367,16 +379,12 @@ const Enemy = function (coords, enemyPower) {
         createChatMessage('enemy', `#${i} - ${E.name}`, msg[rng(msg.length)](player.name))
         resolve()
     }
-	E.checkFOV = function (spotRange = 1) {
+	E.checkFOV = function () {
 		if (inRange(E.coords,player.coords,E.fov)) {
-			if (spotRange == 2) E.playerSpotted = 1;
-			// _enemySeesPlayer.innerHTML = "Gotcha!";
-			return 1;
-		} else {
-			E.playerSpotted = 0;
-			// _enemySeesPlayer.innerHTML = "Where'd you go??";
-			return 0;
-		}
+			E.playerSpotted = 1;
+		} else if(!inRange(E.coords, player.coords,E.fov + E.fov)){
+            E.playerSpotted = 0;
+        }
     };
     E.resetActions = function(){
         E.speedLeft = E.speed;
