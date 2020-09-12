@@ -139,8 +139,8 @@ const generateEnemies = (lvl, max, room) => {
 	for (let i = 0; i < enemyCount; i++) {
         const enemy = new Enemy(
             getEnemyStartCoordinate(max, room),
-			~~(totalEnemyPower / enemyCount)
-            );
+            ~~(totalEnemyPower / enemyCount)
+        );
         enemies.push(enemy);
         const {
             coords: [x, y],
@@ -389,6 +389,11 @@ const paintCanvas = () => {
 };
 
 const enemyTurn = () => {
+    const msg = [
+        'you ready?',
+        "it's my turn now!",
+        "I'm gonna get ya..."
+    ]
     window.removeEventListener('keypress', handleKeyPress);
     game.classList.remove("p-turn");
     game.classList.remove('n-turn')
@@ -396,29 +401,27 @@ const enemyTurn = () => {
     
 	moveTimer = setTimeout(() =>
         asyncForEach(enemies, (enemy, i) => {
+            createChatMessage('enemy', `#${i} - ${enemy.name}`, msg[rng(msg.length)])
             enemy.block = 0;
-            return new Promise(resolve => {
-                const turn = setInterval(() => {
-                    if(player.hp < 1) clearInterval(turn);
-                    enemy.handleTurn();
-                    if (enemy.speedLeft == 0) {
-                        clearInterval(turn);
-                        if (i == enemies.length - 1) {
-                            window.addEventListener('keypress', handleKeyPress);
-                            setTimeout(() => {
-                                game.classList.remove("e-turn");
-                                game.classList.add("p-turn");
-                                player.resetActions();
-                                player.hiliteMoveArea();
-                            }, 300);
-                        }
+            return new Promise(async resolve => {
+                while(enemy.speedLeft > 0){
+                    await new Promise(resolve => enemy.handleTurn(resolve, i));
+                }
 
-                        setTimeout(() =>{
-                            enemy.resetActions();
-                            resolve()
-                        }, 300);
-                    }
-                }, 300);
+                if (i == enemies.length - 1) {
+                    setTimeout(() => {
+                        window.addEventListener('keypress', handleKeyPress);
+                        game.classList.remove("e-turn");
+                        game.classList.add("p-turn");
+                        player.resetActions();
+                        player.hiliteMoveArea();
+                    }, 300);
+                }
+
+                setTimeout(() =>{
+                    enemy.resetActions();
+                    resolve();
+                }, 1000);
             });
         })
     , 500);
@@ -427,7 +430,7 @@ const enemyTurn = () => {
 const checkIfWaiting = () =>
 	new Promise((resolve) =>
 		setTimeout(
-			() => (player.awaitingUser ? resolve(true) : resolve(false)),
+			() => player.awaitingUser ? resolve(true) : resolve(false),
 			500
 		)
 	);
