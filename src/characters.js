@@ -379,7 +379,7 @@ const Enemy = function (coords, enemyPower) {
 
         E.block = E.speedLeft;
         E.speedLeft = 0;
-        if(inRange([eX,eY], player.coords, player.fov)){
+        if(inRange(E.coords, player.coords, player.fov)){
             createChatMessage('enemy', `#${i} - ${E.name}`, msg[rng(msg.length)](player.name))
         }
         resolve()
