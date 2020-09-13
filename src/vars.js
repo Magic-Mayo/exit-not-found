@@ -39,7 +39,16 @@ const narrator = {
         '....whelp.  Guess the "jokes" are just gonna keep coming'
     ],
     taunting: [
-
+        `you're going the wrong way`,
+        `you sure the exit is over there?`,
+        `you're never leaving....muahahahaha`,
+        `no don't go that way!!`,
+        `good luck....`,
+        `you sure you want to go that way?`,
+        `don't leave me...ha you can't!`,
+        `trust me....this is NOT a dream`,
+        `I will always be here for you...whether or not you like it`,
+        `I'm in your head and I'm not leaving....just like you aren't leaving here!`
     ],
     gameOver: [
         name => `....looks like ${name} was not able to find the exit`,

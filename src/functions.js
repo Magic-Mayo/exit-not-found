@@ -234,6 +234,7 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 		room[nextX][nextY].occupied = 1;    
         ++steps;
         
+        if(steps % 30 == 0) createChatMessage('narrator', 'narrator', narrator.taunting[rng(narrator.taunting.length)])
 		playerCoord = [nextX, nextY];
         player.coords = playerCoord;
         
