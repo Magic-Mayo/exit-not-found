@@ -221,9 +221,14 @@ const handlePlayerMovement = async (event, room, tileSize) => {
     }
     
     if (room[nextX]?.[nextY]?.walkable && !room[nextX]?.[nextY]?.occupied) {
-        
+        player.awaitingUser = 1;
         if(await tryAOO()) return enemyTurn();
-        // window.addEventListener('keypress', handleKeyPress)
+
+        while(player.awaitingUser){
+            const waiting = await checkIfWaiting();
+            if(waiting) continue;
+        }
+
         if (enemies.length) player.actionsLeft--;
 		room[playerX][playerY].occupied = 0;
 		room[nextX][nextY].occupied = 1;    
@@ -588,7 +593,7 @@ const attackOfOpp = async (enemy, i, arr) => {
 }
 
 const tryAOO = async () => {
-    if(enemies.some(E => inRange(E.coords,player.coords,E.fov) && E.playerSpotted)){
+    if(enemies.some(E => inRange(E.coords,player.coords,E.fov) && E.playerSpotted && E.hasBeenSpotted)){
         window.removeEventListener('keypress', handleKeyPress)
         if(firstAOO && !helpDisabled){
             asyncForEach(narrator.aoo, (msg, i, arr) =>
@@ -599,14 +604,18 @@ const tryAOO = async () => {
                         else {
                             createChatMessage('narrator', 'narrator', msg)
                             if(i == arr.length - 1){
-                                window.addEventListener('keypress', handleKeyPress)
+                                setTimeout(() => {
+                                    player.awaitingUser = 0;
+                                    firstAOO = 0;
+                                    window.addEventListener('keypress', handleKeyPress)
+                                    resolve();
+                                }, 2000)
                             }
                         }
-                        resolve();
+                        if(i != arr.length - 1) resolve();
                     }, i == 0 ? 1 : rng(1000) + 1500)
                 )
             )
-            firstAOO = 0;
             return;
         }
 
@@ -617,5 +626,5 @@ const tryAOO = async () => {
         window.addEventListener('keypress', handleKeyPress)
         if(!hit) return;
         else return 1;
-    }
+    } else player.awaitingUser = 0;
 }
