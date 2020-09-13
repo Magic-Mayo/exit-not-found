@@ -90,9 +90,13 @@ const startGame = (e,restart) => {
             new Promise(resolve => {
                 if(i != 0){
                     return setTimeout(() => {
-                        i == 1 || i == 3 ?
-                        createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
-                        createChatMessage('player',player.name, msg);
+                        console.log(i)
+                        
+                        createChatMessage(
+                            i != 4 && i != 5 ? 'narrator' : 'player',
+                            i != 4 && i != 5 ? 'narrator' : 'player',
+                            i != 1 ? msg : msg(player.name))
+                        // createChatMessage('player',player.name, msg);
                         if(i == arr.length - 1) {
                             player.awaitingUser = false;
                             game.classList.remove("n-turn");

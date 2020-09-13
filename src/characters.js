@@ -207,7 +207,7 @@ const Character = function (name, clas) {
 	};
 	C.defStance = async function () {
         if(enemies.length){
-            C.block = C.actionsLeft;
+            C.block = ~~(C.actionsLeft/2);
             C.actionsLeft = 0;
             while(C.awaitingUser){
                 const waiting = await checkIfWaiting();

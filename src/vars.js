@@ -21,7 +21,11 @@ const narrator = {
         '...what was that voice?  Is someone there?',
         `Use the WASD keys to move your character. Hint: It's the White box ;)`,
         'ok....thanks?',
-        '**whoever you are**'
+        '**whoever you are**',
+        'the green squares are where you can move to on your turn',
+        `you can also hover yourself and check your stats`,
+        `you'll also notice a block button...that will use all the actions you have left and convert half of it to defense`,
+        'use it wisely'
     ],
     fog: [
         "Tiles you have not explored yet are completely hidden by the fog of war.",
