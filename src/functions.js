@@ -584,6 +584,7 @@ const attackOfOpp = async (enemy, i, arr) => {
                 firstAOO = 0;
                 setTimeout(() => {
                     enemy.atkChar(()=>1,i,wasHit => (hit = wasHit))
+                    player.awaitingUser = 0;
                     if(hit){
                         player.actionsLeft = 0;
                         setTimeout(() => {
