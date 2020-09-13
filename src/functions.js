@@ -81,30 +81,30 @@ const startGame = (e,restart) => {
       );
   }
 
-  player.awaitingUser = true;
   game.classList.remove("p-turn");
   game.classList.remove('e-turn')
   game.classList.add("n-turn");
-	asyncForEach(narrator.start, (msg, i, arr) => 
-        new Promise(resolve => {
-            if(i != 0){
-                return setTimeout(() => {
-                    i == 1 || i == 3 ?
-                    createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
-                    createChatMessage('player',player.name, msg);
-                    if(i == arr.length - 1) {
-                        player.awaitingUser = false;
-                        game.classList.remove("n-turn");
-                        game.classList.add("p-turn");
-                    }
-                    resolve();
-                }, rng(750) + 1500)
-            }
+//   player.awaitingUser = true;
+// 	asyncForEach(narrator.start, (msg, i, arr) => 
+//         new Promise(resolve => {
+//             if(i != 0){
+//                 return setTimeout(() => {
+//                     i == 1 || i == 3 ?
+//                     createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
+//                     createChatMessage('player',player.name, msg);
+//                     if(i == arr.length - 1) {
+//                         player.awaitingUser = false;
+//                         game.classList.remove("n-turn");
+//                         game.classList.add("p-turn");
+//                     }
+//                     resolve();
+//                 }, rng(750) + 1500)
+//             }
 
-            createChatMessage('narrator', 'narrator', msg(player.name))
-            resolve();
-        })
-    )
+//             createChatMessage('narrator', 'narrator', msg(player.name))
+//             resolve();
+//         })
+//     )
 
 	  buildDungeon([0, 160]);
 }
@@ -135,8 +135,7 @@ const generateEnemies = (lvl, max, room) => {
     enemies = [];
     
 	enemyCount = rng(lvl / 2 + 2);
-	// console.log("ENEMY COUNT: " + enemyCount);
-	for (let i = 0; i < enemyCount; i++) {
+	for (let i = 0; i < enemyCount; i++){
         const enemy = new Enemy(
             getEnemyStartCoordinate(max, room),
             ~~(totalEnemyPower / enemyCount)
@@ -195,6 +194,11 @@ const handlePlayerMovement = async (event, room, tileSize) => {
     const [nextX, nextY] = dir[key];
     
     if (nextX == exit[0] && nextY == exit[1]) {
+        // window.removeEventListener('keypress', handleKeyPress)
+        if(await tryAOO()){
+            return enemyTurn();
+        }
+        // window.addEventListener('keypress', handleKeyPress)
         game.classList.remove("e-turn");
         game.classList.add("p-turn");
         clearTimeout(moveTimer);
@@ -213,8 +217,11 @@ const handlePlayerMovement = async (event, room, tileSize) => {
         
         return buildDungeon(exit);
     }
-        
+    
     if (room[nextX]?.[nextY]?.walkable && !room[nextX]?.[nextY]?.occupied) {
+        
+        if(await tryAOO()) return enemyTurn();
+        // window.addEventListener('keypress', handleKeyPress)
         if (enemies.length) player.actionsLeft--;
 		room[playerX][playerY].occupied = 0;
 		room[nextX][nextY].occupied = 1;    
@@ -538,3 +545,67 @@ const createChatMessage = (sender, name, message) => {
 
 
 const generateChatBorder = () => `<svg width="100%" height="100%"><rect width='100%' height='100%' fill='none' stroke='black' stroke-width='7' stroke-dasharray=${rng(41) + 40},${rng(31) + 30},${rng(11) + 20} stroke-dashoffset='84' stroke-linecap='square' /></svg>`
+
+const attackOfOpp = async (enemy, i, arr) => {
+    const msg = [
+        'going somewhere?  take this with you!',
+        'think you can just run do ya??',
+        `You can run, ${player.name}....but you can't hide`
+    ];
+    let hit;
+    
+    if(!inRange(enemy.coords, player.coords, enemy.fov)) return new Promise(resolve => resolve());
+
+    else {
+        if(inRange(enemy.coords,player.coords, enemy.fov)){
+            return new Promise(resolve => setTimeout(() => {
+                if(player.actionsLeft == 0) return resolve();
+                createChatMessage('enemy', `#${i} - ${enemy.name}`, msg[rng(msg.length)]);
+                firstAOO = 0;
+                setTimeout(() => {
+                    enemy.atkChar(()=>1,i,wasHit => (hit = wasHit))
+                    if(hit){
+                        player.actionsLeft = 0;
+                        setTimeout(() => {
+                            paintCanvas();
+                            resolve(1);
+                        }, 2000)
+                    } else resolve();
+                }, 1000);
+            }, 500))
+        }
+    }
+}
+
+const tryAOO = async () => {
+    if(enemies.some(E => inRange(E.coords,player.coords,E.fov) && E.playerSpotted)){
+        window.removeEventListener('keypress', handleKeyPress)
+        if(firstAOO ){
+            asyncForEach(narrator.aoo, (msg, i, arr) =>
+                new Promise(resolve =>
+                    setTimeout(() => {
+                        if(i == 0) createChatMessage('narrator', 'narrator', msg(player.name));
+                        else if(i == 1) createChatMessage('player', player.name, msg);
+                        else {
+                            createChatMessage('narrator', 'narrator', msg)
+                            if(i == arr.length - 1){
+                                window.addEventListener('keypress', handleKeyPress)
+                            }
+                        }
+                        resolve();
+                    }, i == 0 ? 1 : rng(1000) + 1500)
+                )
+            )
+            firstAOO = 0;
+            return;
+        }
+
+        let hit;
+        for(let i=0; i<enemies.length;i++){
+            if(await attackOfOpp(enemies[i],i,enemies)) hit = 1;
+        }
+        window.addEventListener('keypress', handleKeyPress)
+        if(!hit) return;
+        else return 1;
+    }
+}
