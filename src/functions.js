@@ -69,44 +69,46 @@ const startGame = (e,restart) => {
 	_container.classList.remove("invisible");
 	game.classList.add("p-turn");
     
-  player = new Character(
-      _createNameInput.textContent,
-      parseInt(_createClassInput.value)
-  );
+    player = new Character(
+        _createNameInput.textContent,
+        parseInt(_createClassInput.value)
+    );
 
-  if (!restart) {
-      player = new Character(
-          _createNameInput.textContent,
-          parseInt(_createClassInput.value)
-      );
-  }
+    if (!restart) {
+        player = new Character(
+            _createNameInput.textContent,
+            parseInt(_createClassInput.value)
+        );
+    }
 
-  game.classList.remove("p-turn");
-  game.classList.remove('e-turn')
-  game.classList.add("n-turn");
-  player.awaitingUser = true;
-	asyncForEach(narrator.start, (msg, i, arr) => 
-        new Promise(resolve => {
-            if(i != 0){
-                return setTimeout(() => {
-                    i == 1 || i == 3 ?
-                    createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
-                    createChatMessage('player',player.name, msg);
-                    if(i == arr.length - 1) {
-                        player.awaitingUser = false;
-                        game.classList.remove("n-turn");
-                        game.classList.add("p-turn");
-                    }
-                    resolve();
-                }, rng(750) + 1500)
-            }
+    game.classList.remove("p-turn");
+    game.classList.remove('e-turn')
+    game.classList.add("n-turn");
+    if(!helpDisabled){
+        player.awaitingUser = true;
+        asyncForEach(narrator.start, (msg, i, arr) => 
+            new Promise(resolve => {
+                if(i != 0){
+                    return setTimeout(() => {
+                        i == 1 || i == 3 ?
+                        createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
+                        createChatMessage('player',player.name, msg);
+                        if(i == arr.length - 1) {
+                            player.awaitingUser = false;
+                            game.classList.remove("n-turn");
+                            game.classList.add("p-turn");
+                        }
+                        resolve();
+                    }, rng(750) + 1500)
+                }
 
-            createChatMessage('narrator', 'narrator', msg(player.name))
-            resolve();
-        })
-    )
-
-	  buildDungeon([0, 160]);
+                createChatMessage('narrator', 'narrator', msg(player.name))
+                resolve();
+            })
+        )
+    }
+    
+    buildDungeon([0, 160]);
 }
 
 const inRange = ([aX,aY], [bX,bY], fov) => {
@@ -234,7 +236,7 @@ const handlePlayerMovement = async (event, room, tileSize) => {
 		player.hiliteMoveArea();
         player.checkFOV();
 
-        if(steps == Math.ceil(player.fov)){
+        if(steps == Math.ceil(player.fov) && !helpDisabled){
             window.removeEventListener('keypress', handleKeyPress);
             game.classList.remove("p-turn");
             game.classList.add("n-turn");
@@ -267,7 +269,7 @@ const handlePlayerMovement = async (event, room, tileSize) => {
             }
         }
 
-        if(!firstEnemySpotted && player.inRange.length){
+        if(!firstEnemySpotted && player.inRange.length && !helpDisabled){
             window.removeEventListener('keypress', handleKeyPress);
             game.classList.remove("p-turn");
             game.classList.add("n-turn");
@@ -580,7 +582,7 @@ const attackOfOpp = async (enemy, i, arr) => {
 const tryAOO = async () => {
     if(enemies.some(E => inRange(E.coords,player.coords,E.fov) && E.playerSpotted)){
         window.removeEventListener('keypress', handleKeyPress)
-        if(firstAOO ){
+        if(firstAOO && !helpDisabled){
             asyncForEach(narrator.aoo, (msg, i, arr) =>
                 new Promise(resolve =>
                     setTimeout(() => {
