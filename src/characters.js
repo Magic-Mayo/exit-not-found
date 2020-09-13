@@ -149,9 +149,9 @@ const Character = function (name, clas) {
 		const mult = rng(100) <= C.crit.chance ? Math.ceil(C.crit.mult * C.attackStrength) : C.attackStrength;
 		if (willHit) {
 			enemy.hp -= mult - enemy.def - enemy.block
-			if (!C.class) zzfxP(meleeDamageSound[rng(meleeDamageSound.length -1)]);		
-			else if (C.class == 1) zzfxP(magicDamageSound[rng(magicDamageSound.length -1)]);		
-			else if (C.class == 2) zzfxP(rangedDamageSound[rng(meleeDamageSound.length -1)]);		
+			if (!C.class) zzfxP(playerMeleeDamageSound[rng(playerMeleeDamageSound.length -1)]);		
+			else if (C.class == 1) zzfxP(playerMagicDamageSound[rng(playerMagicDamageSound.length -1)]);		
+			else if (C.class == 2) zzfxP(playerRangedDamageSound[rng(playerMeleeDamageSound.length -1)]);		
 		} else {
 			if (mult <= enemy.block + enemy.def) zzfxP(blockSound[rng(blockSound.length -1)])
 			else zzfxP(missedSound[rng(missedSound.length -1)])
