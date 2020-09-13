@@ -253,7 +253,7 @@ const Enemy = function (coords, enemyPower) {
 		chance: 60
     };
 
-	E.atkChar = function (resolve, i) {
+	E.atkChar = function (resolve, i, wasHit) {
         const [eX, eY] = E.coords;
         const toHit = rng(100);
         const blindHitMsg = [
@@ -265,7 +265,7 @@ const Enemy = function (coords, enemyPower) {
         ]
 
 		const willHit =
-            E.accuracy - player.agility >= toHit && player.def < E.attackStrength;
+            E.accuracy - player.agility >= toHit && player.def + player.block < E.attackStrength;
         const mult = rng(100) <= E.crit.chance ? E.attackStrength * E.crit.mult : E.attackStrength;
         willHit && (player.hp -= mult - ~~player.def - player.block);
         E.speedLeft -= E.attackSpeed;
@@ -277,8 +277,10 @@ const Enemy = function (coords, enemyPower) {
         `I missed!`
 
         if(player.inRange.some(({coords: [x,y]}) => eX == x && eY == y)){
+            wasHit && willHit && wasHit(1)
             createChatMessage('enemy', `#${i} - ${E.name}`, attack);
         } else if(willHit && !inRange([eX,eY], player.coords, player.fov)) {
+            wasHit && willHit && wasHit(1)
             console.log(willHit)
             createChatMessage('player', player.name, `${blindHitMsg[rng(blindHitMsg.length)]}  (-${hit} hp)`);
         }
@@ -337,12 +339,12 @@ const Enemy = function (coords, enemyPower) {
 				checkIfExit: isExit([x - TILE_WIDTH, y]),
 			},
 		];
-
+console.log(surroundings)
 		let availableSurroundings = surroundings.filter(
 			(c) => c.available && !c.checkIfExit && !c.occupied
 		);
 
-		player.checkFOV();
+        player.checkFOV();
 
         E.speedLeft--;
 
