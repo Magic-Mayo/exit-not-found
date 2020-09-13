@@ -89,9 +89,7 @@ const startGame = (e,restart) => {
         asyncForEach(narrator.start, (msg, i, arr) => 
             new Promise(resolve => {
                 if(i != 0){
-                    return setTimeout(() => {
-                        console.log(i)
-                        
+                    return setTimeout(() => {                        
                         createChatMessage(
                             i != 4 && i != 5 ? 'narrator' : 'player',
                             i != 4 && i != 5 ? 'narrator' : 'player',
@@ -215,7 +213,6 @@ const handlePlayerMovement = async (event, room, tileSize) => {
         if (lvl % 10 == 0) player.xp += 100;
         player.checkIfNextLvl();
         zzfxP(passDungeonSound[rng(passDungeonSound.length -1)]); // playerMove
-        console.log("you win!");
         
         player.resetActions();
         
@@ -481,6 +478,7 @@ const getExitGradient = (x, y) => {
 };
 
 const gameOver = () => {
+    enemies = [];
     const lastTimer = setTimeout(()=>0,0)
     zzfxP(gameOverSound[rng(gameOverSound.length -1)]);
     for(let i=0;i<lastTimer;i++){
@@ -566,7 +564,7 @@ const createChatMessage = (sender, name, message) => {
 
 const generateChatBorder = () => `<svg width="100%" height="100%"><rect width='100%' height='100%' fill='none' stroke='black' stroke-width='7' stroke-dasharray=${rng(41) + 40},${rng(31) + 30},${rng(11) + 20} stroke-dashoffset='84' stroke-linecap='square' /></svg>`
 
-const attackOfOpp = async (enemy, i, arr) => {
+const attackOfOpp = async (enemy, i) => {
     const msg = [
         'going somewhere?  take this with you!',
         'think you can just run do ya??',
@@ -584,6 +582,7 @@ const attackOfOpp = async (enemy, i, arr) => {
                 firstAOO = 0;
                 setTimeout(() => {
                     enemy.atkChar(()=>1,i,wasHit => (hit = wasHit))
+                    player.awaitingUser = 0;
                     if(hit){
                         player.actionsLeft = 0;
                         setTimeout(() => {
