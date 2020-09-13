@@ -482,7 +482,7 @@ const getExitGradient = (x, y) => {
 
 const gameOver = () => {
     const lastTimer = setTimeout(()=>0,0)
-
+    zzfxP(gameOverSound[rng(gameOverSound.length -1)]);
     for(let i=0;i<lastTimer;i++){
         clearTimeout(i)
     }
