@@ -73,13 +73,13 @@ const _btnReset = document.querySelector('.reset')
 const _container = document.querySelector('.container')
 const _landing = document.querySelector('.headline')
 const _cursorModal = document.querySelector('#cursorModal')
+const _help = document.querySelector('.help')
 // ***** PLAYER STATS *****
 // Level
 const _lvlUpAtk = document.querySelector('#lvlUpAtk')
 const _lvlUpDef = document.querySelector('#lvlUpDef')
 const _lvlUpAgil = document.querySelector('#lvlUpAgil')
 const _lvlUpActions = document.querySelector('#lvlUpActions')
-const _lvlUpBtn = document.querySelectorAll('.lvl-up-btn')
 
 // Fighting Details
 const _lvlUp = document.querySelector('.level-up')
@@ -111,8 +111,9 @@ const xyMax = TILE_HEIGHT * TILE_HEIGHT - TILE_HEIGHT;
 ==================================== */
 
 
-game.setAttribute('width', CANVAS_WIDTH)
-game.setAttribute('height', CANVAS_HEIGHT)
+// game.setAttribute('width', CANVAS_WIDTH)
+// game.setAttribute('height', CANVAS_HEIGHT)
+
 
 /* ==================================
 VARIABLES FOR HANDLING GAMEPLAY
@@ -173,3 +174,7 @@ let firstEnemySpotted;
 let startedTyping;
 
 let firstAOO = 1;
+
+let helpDisabled = 0;
+
+_help.addEventListener('change', () => helpDisabled = !helpDisabled)
