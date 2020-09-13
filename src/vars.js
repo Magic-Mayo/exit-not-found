@@ -39,12 +39,32 @@ const narrator = {
         '....whelp.  Guess the "jokes" are just gonna keep coming'
     ],
     taunting: [
-
+        `you're going the wrong way`,
+        `you sure the exit is over there?`,
+        `you're never leaving....muahahahaha`,
+        `no don't go that way!!`,
+        `good luck....`,
+        `you sure you want to go that way?`,
+        `don't leave me...ha you can't!`,
+        `trust me....this is NOT a dream`,
+        `I will always be here for you...whether or not you like it`,
+        `I'm in your head and I'm not leaving....just like you aren't leaving here!`
     ],
     gameOver: [
         name => `....looks like ${name} was not able to find the exit`,
         name => `didn't think ${name} would`,
         "well at least the jokes can stop now"
+    ],
+    aoo: [
+        name => `${name}....here's the deal`,
+        `.....`,
+        `you can try to run if you want`,
+        `but if the enemy has seen you and you've seen them...`,
+        `all you're doing by running is giving them a free shot at you`,
+        `and if they hit you...your turn is OVER!`,
+        `so you're better off sticking around for the fight...`,
+        'if you can hack it',
+        `you can have this one for free....next one won't be`
     ]
 }
 
@@ -62,13 +82,13 @@ const _btnReset = document.querySelector('.reset')
 const _container = document.querySelector('.container')
 const _landing = document.querySelector('.headline')
 const _cursorModal = document.querySelector('#cursorModal')
+const _help = document.querySelector('.help')
 // ***** PLAYER STATS *****
 // Level
 const _lvlUpAtk = document.querySelector('#lvlUpAtk')
 const _lvlUpDef = document.querySelector('#lvlUpDef')
 const _lvlUpAgil = document.querySelector('#lvlUpAgil')
 const _lvlUpActions = document.querySelector('#lvlUpActions')
-const _lvlUpBtn = document.querySelectorAll('.lvl-up-btn')
 
 // Fighting Details
 const _lvlUp = document.querySelector('.level-up')
@@ -100,8 +120,9 @@ const xyMax = TILE_HEIGHT * TILE_HEIGHT - TILE_HEIGHT;
 ==================================== */
 
 
-game.setAttribute('width', CANVAS_WIDTH)
-game.setAttribute('height', CANVAS_HEIGHT)
+// game.setAttribute('width', CANVAS_WIDTH)
+// game.setAttribute('height', CANVAS_HEIGHT)
+
 
 /* ==================================
 VARIABLES FOR HANDLING GAMEPLAY
@@ -156,4 +177,13 @@ let walkableTiles = 0;
 
 let enemyIndex = 0;
 
+//change back to undefined
 let firstEnemySpotted;
+
+let startedTyping;
+
+let firstAOO = 1;
+
+let helpDisabled = 0;
+
+_help.addEventListener('change', () => helpDisabled = !helpDisabled)

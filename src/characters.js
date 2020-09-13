@@ -135,11 +135,16 @@ const Character = function (name, clas) {
         })
     };
 	C.attackEnemy = async function (enemy) {
-        if(C.attackSpeed > C.actionsLeft) return "You don't have enough energy left to attack!  Try another action";
+        const noEnergy = [
+            "I'm tired....",
+            "Can I take a moment rest first?",
+            "If you want me to do something...I need more actions!"
+        ]
+
+        if(C.attackSpeed > C.actionsLeft) return noEnergy[rng(noEnergy.length)];
 
 		const willHit = (C.accuracy - enemy.agility) >= rng(100) && C.attackStrength > enemy.def + enemy.block
         C.actionsLeft -= C.attackSpeed;
-        // _actionsLeft.innerHTML = C.actionsLeft;
 		
 		const mult = rng(100) <= C.crit.chance ? Math.ceil(C.crit.mult * C.attackStrength) : C.attackStrength;
 		if (willHit) {
@@ -189,6 +194,7 @@ const Character = function (name, clas) {
         C.inRange = []
 		enemies.forEach((enemy) => {
 			if (inRange(C.coords, enemy.coords, C.fov)) {
+                enemy.hasBeenSpotted = 1;
                 C.inRange.push(enemy);
 			}
         });
@@ -198,10 +204,8 @@ const Character = function (name, clas) {
 	C.resetActions = function () {
         C.actionsLeft = C.actionsPerTurn;
         C.block = 0;
-		// _actionsLeft.innerHTML = C.actionsLeft;
 	};
 	C.defStance = async function () {
-        console.log('button click')
         if(enemies.length){
             C.block = C.actionsLeft;
             C.actionsLeft = 0;
@@ -243,14 +247,15 @@ const Enemy = function (coords, enemyPower) {
 	E.fov = !E.class ? rng(2) + 2 : rng() + 4;
     E.speed = E.class == 0 ? 6 : E.class == 1 ? 3 : 4;
     E.speedLeft = E.speed;
-	E.playerSpotted = 0;
+    E.playerSpotted = 0;
+    E.hasBeenSpotted;
     E.xp = ~~(enemyPower / 5);
     E.crit = {
 		mult: 2,
 		chance: 60
     };
 
-	E.atkChar = function (resolve, i) {
+	E.atkChar = function (resolve, i, wasHit) {
         const [eX, eY] = E.coords;
         const toHit = rng(100);
         const blindHitMsg = [
@@ -262,7 +267,7 @@ const Enemy = function (coords, enemyPower) {
         ]
 
 		const willHit =
-            E.accuracy - player.agility >= toHit && player.def < E.attackStrength;
+            E.accuracy - player.agility >= toHit && player.def + player.block < E.attackStrength;
         const mult = rng(100) <= E.crit.chance ? E.attackStrength * E.crit.mult : E.attackStrength;
         willHit && (player.hp -= mult - ~~player.def - player.block);
         E.speedLeft -= E.attackSpeed;
@@ -274,9 +279,12 @@ const Enemy = function (coords, enemyPower) {
         `I missed!`
 
         if(player.inRange.some(({coords: [x,y]}) => eX == x && eY == y)){
+            wasHit && willHit && wasHit(1)
             createChatMessage('enemy', `#${i} - ${E.name}`, attack);
-        } else if(willHit && inRange([eX,eY], player.coords, E.fov)) {
-            createChatMessage('player', player.name, `${blindHitMsg[blindHitMsg.length]}  -${hit} hp`);
+        } else if(willHit && !inRange([eX,eY], player.coords, player.fov)) {
+            wasHit && willHit && wasHit(1)
+            console.log(willHit)
+            createChatMessage('player', player.name, `${blindHitMsg[rng(blindHitMsg.length)]}  (-${hit} hp)`);
         }
 
         resolve();
@@ -298,7 +306,7 @@ const Enemy = function (coords, enemyPower) {
         if(canSee && canAttack){
             return setTimeout(() => E.atkChar(resolve, i), 2000)
         }
-
+        
         if(canSee && rng(100) <= 75){
             return setTimeout(() => E.defStance(resolve, i), 1400)
         }
@@ -309,28 +317,28 @@ const Enemy = function (coords, enemyPower) {
 				coord: [x, y - TILE_WIDTH],
 				available: COORDINATES[x]?.[y - TILE_WIDTH]?.walkable,
 				occupied: COORDINATES[x]?.[y - TILE_WIDTH]?.occupied,
-				checkIfExit: isExit("top", [x, y - TILE_WIDTH]),
+				checkIfExit: isExit([x, y - TILE_WIDTH]),
 			},
 			{
 				pos: "right",
 				coord: [x + TILE_WIDTH, y],
 				available: COORDINATES[x + TILE_WIDTH]?.[y]?.walkable,
 				occupied: COORDINATES[x + TILE_WIDTH]?.[y]?.occupied,
-				checkIfExit: isExit("right", [x + TILE_WIDTH, y]),
+				checkIfExit: isExit([x + TILE_WIDTH, y]),
 			},
 			{
 				pos: "bottom",
 				coord: [x, y + TILE_WIDTH],
 				available: COORDINATES[x]?.[y + TILE_WIDTH]?.walkable,
 				occupied: COORDINATES[x]?.[y + TILE_WIDTH]?.occupied,
-				checkIfExit: isExit("bottom", [x, y + TILE_WIDTH]),
+				checkIfExit: isExit([x, y + TILE_WIDTH]),
 			},
 			{
 				pos: "left",
 				coord: [x - TILE_WIDTH, y],
 				available: COORDINATES[x - TILE_WIDTH]?.[y]?.walkable,
 				occupied: COORDINATES[x]?.[y - TILE_WIDTH]?.occupied,
-				checkIfExit: isExit("left", [x - TILE_WIDTH, y]),
+				checkIfExit: isExit([x - TILE_WIDTH, y]),
 			},
 		];
 
@@ -338,19 +346,22 @@ const Enemy = function (coords, enemyPower) {
 			(c) => c.available && !c.checkIfExit && !c.occupied
 		);
 
-		player.checkFOV();
+        player.checkFOV();
 
         E.speedLeft--;
 
         if (E.playerSpotted) {
             const [subX, subY] = [player.coords[0] - x, player.coords[1] - y];
-
-            availableSurroundings = availableSurroundings.filter((c) => {
+            const moves = availableSurroundings.filter((c) => {
                 if (c.pos == "left") return subX < 0;
                 if (c.pos == "right") return subX > 0;
                 if (c.pos == "top") return subY < 0;
                 if (c.pos == "bottom") return subY > 0;
             });
+
+            if(moves.length){
+                availableSurroundings = moves;
+            }
         }
 
         const newCoords = rng(availableSurroundings.length);
@@ -375,7 +386,9 @@ const Enemy = function (coords, enemyPower) {
 
         E.block = E.speedLeft;
         E.speedLeft = 0;
-        createChatMessage('enemy', `#${i} - ${E.name}`, msg[rng(msg.length)](player.name))
+        if(inRange(E.coords, player.coords, player.fov)){
+            createChatMessage('enemy', `#${i} - ${E.name}`, msg[rng(msg.length)](player.name))
+        }
         resolve()
     }
 	E.checkFOV = function () {
