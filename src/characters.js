@@ -194,6 +194,7 @@ const Character = function (name, clas) {
         C.inRange = []
 		enemies.forEach((enemy) => {
 			if (inRange(C.coords, enemy.coords, C.fov)) {
+                enemy.hasBeenSpotted = 1;
                 C.inRange.push(enemy);
 			}
         });
@@ -246,7 +247,8 @@ const Enemy = function (coords, enemyPower) {
 	E.fov = !E.class ? rng(2) + 2 : rng() + 4;
     E.speed = E.class == 0 ? 6 : E.class == 1 ? 3 : 4;
     E.speedLeft = E.speed;
-	E.playerSpotted = 0;
+    E.playerSpotted = 0;
+    E.hasBeenSpotted;
     E.xp = ~~(enemyPower / 5);
     E.crit = {
 		mult: 2,
@@ -339,7 +341,7 @@ const Enemy = function (coords, enemyPower) {
 				checkIfExit: isExit([x - TILE_WIDTH, y]),
 			},
 		];
-console.log(surroundings)
+
 		let availableSurroundings = surroundings.filter(
 			(c) => c.available && !c.checkIfExit && !c.occupied
 		);

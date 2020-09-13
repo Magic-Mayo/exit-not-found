@@ -50,9 +50,9 @@ const narrator = {
         name => `${name}....here's the deal`,
         `.....`,
         `you can try to run if you want`,
-        `but all you're doing by running is giving the enemy a free shot at you`,
-        `and if they hit you...`,
-        `your turn is OVER!`,
+        `but if the enemy has seen you and you've seen them...`,
+        `all you're doing by running is giving them a free shot at you`,
+        `and if they hit you...your turn is OVER!`,
         `so you're better off sticking around for the fight...`,
         'if you can hack it',
         `you can have this one for free....next one won't be`
