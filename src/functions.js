@@ -471,11 +471,19 @@ const getExitGradient = (x, y) => {
 };
 
 const gameOver = () => {
+    const lastTimer = setTimeout(()=>0,0)
+
+    for(let i=0;i<lastTimer;i++){
+        clearTimeout(i)
+    }
+
     // POTENTIALLY FADE CANVAS OUT OR SIMILAR EFFECT
     const tiles = [];
     for(let x in COORDINATES){
         for(let y in COORDINATES[x]){
-            tiles.push([x,y])
+            if(!COORDINATES[x][y].border && COORDINATES[x][y].hasBeenSeen){
+                tiles.push([x,y])
+            }
         }
     }
 
@@ -562,7 +570,7 @@ const attackOfOpp = async (enemy, i, arr) => {
         if(inRange(enemy.coords,player.coords, enemy.fov)){
             return new Promise(resolve => setTimeout(() => {
                 if(player.actionsLeft == 0) return resolve();
-                createChatMessage('enemy', `#${i} - ${enemy.name}`, msg[rng(msg.length)]);
+                createChatMessage('enemy', `${enemy.name}`, msg[rng(msg.length)]);
                 firstAOO = 0;
                 setTimeout(() => {
                     enemy.atkChar(()=>1,i,wasHit => (hit = wasHit))
