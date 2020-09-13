@@ -149,9 +149,7 @@ const Character = function (name, clas) {
 		const mult = rng(100) <= C.crit.chance ? Math.ceil(C.crit.mult * C.attackStrength) : C.attackStrength;
 		if (willHit) {
 			enemy.hp -= mult - enemy.def - enemy.block
-			if (!C.class) zzfxP(meleeDamageSound[rng(meleeDamageSound.length -1)]);		
-			else if (C.class == 1) zzfxP(magicDamageSound[rng(magicDamageSound.length -1)]);		
-			else if (C.class == 2) zzfxP(rangedDamageSound[rng(meleeDamageSound.length -1)]);		
+			zzfxP(playerAttackSounds[player.class][rng(playerAttackSounds[player.class].length -1)])
 		} else {
 			if (mult <= enemy.block + enemy.def) zzfxP(blockSound[rng(blockSound.length -1)])
 			else zzfxP(missedSound[rng(missedSound.length -1)])
@@ -276,10 +274,18 @@ const Enemy = function (coords, enemyPower) {
         const attack = player.def + player.block >= mult ? `${player.name} blocked ${E.name}'s attack!` :
         willHit && E.attackStrength != mult ? `hehehehehe....get crit'd. you just got hit for ${hit}` :
         willHit ? `just hit you for ${hit}!` :
-        `I missed!`
+		`I missed!`
+		
+		if (willHit) {
+			zzfxP(enemyAttackSounds[E.class][rng(enemyAttackSounds[E.class].length -1)]);		
+		} else if (player.def + player.block >= E.attackStrength && E.accuracy - player.agility >= toHit) {
+			zzfxP(blockSound[rng(blockSound.length -1)]);
+		} else if (E.accuracy - player.agility < toHit) {
+			zzfxP(missedSound[rng(missedSound.length -1)]);
+		}
 
         if(player.inRange.some(({coords: [x,y]}) => eX == x && eY == y)){
-            wasHit && willHit && wasHit(1)
+			wasHit && willHit && wasHit(1)
             createChatMessage('enemy', `#${i} - ${E.name}`, attack);
         } else if(willHit && !inRange([eX,eY], player.coords, player.fov)) {
             wasHit && willHit && wasHit(1)
