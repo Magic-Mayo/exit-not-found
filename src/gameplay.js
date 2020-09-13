@@ -40,12 +40,9 @@ const handleCanvasHover = (e) => {
     const hoverPlayer = checkIfTargetCoord([adjustedX,adjustedY], player.coords);
     
 	if (hoveredEnemy && inRange(hoveredEnemy.coords, player.coords, player.fov)) {
-        console.log('enemy')
 		_cursorModal.classList.remove('invisible')
 		showHoveredDetails(hoveredEnemy);
-        
     } else if(hoverPlayer){
-        console.log('player')
         _cursorModal.classList.remove('invisible');
         showHoveredDetails(1,1);
     } else {

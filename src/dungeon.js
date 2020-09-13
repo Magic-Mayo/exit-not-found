@@ -4,7 +4,6 @@
 
 const buildDungeon = ([pExitX, pExitY]) => {
     walkableTiles = 0;
-    // console.log(COORDINATES)
     // clear board of previous paint...if any
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     start.length = 0;
