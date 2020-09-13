@@ -289,7 +289,6 @@ const Enemy = function (coords, enemyPower) {
             createChatMessage('enemy', `#${i} - ${E.name}`, attack);
         } else if(willHit && !inRange([eX,eY], player.coords, player.fov)) {
             wasHit && willHit && wasHit(1)
-            console.log(willHit)
             createChatMessage('player', player.name, `${blindHitMsg[rng(blindHitMsg.length)]}  (-${hit} hp)`);
         }
 
