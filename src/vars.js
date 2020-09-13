@@ -45,6 +45,17 @@ const narrator = {
         name => `....looks like ${name} was not able to find the exit`,
         name => `didn't think ${name} would`,
         "well at least the jokes can stop now"
+    ],
+    aoo: [
+        name => `${name}....here's the deal`,
+        `.....`,
+        `you can try to run if you want`,
+        `but all you're doing by running is giving the enemy a free shot at you`,
+        `and if they hit you...`,
+        `your turn is OVER!`,
+        `so you're better off sticking around for the fight...`,
+        'if you can hack it',
+        `you can have this one for free....next one won't be`
     ]
 }
 
@@ -156,6 +167,9 @@ let walkableTiles = 0;
 
 let enemyIndex = 0;
 
+//change back to undefined
 let firstEnemySpotted;
 
 let startedTyping;
+
+let firstAOO = 1;

@@ -84,27 +84,27 @@ const startGame = (e,restart) => {
   game.classList.remove("p-turn");
   game.classList.remove('e-turn')
   game.classList.add("n-turn");
-//   player.awaitingUser = true;
-// 	asyncForEach(narrator.start, (msg, i, arr) => 
-//         new Promise(resolve => {
-//             if(i != 0){
-//                 return setTimeout(() => {
-//                     i == 1 || i == 3 ?
-//                     createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
-//                     createChatMessage('player',player.name, msg);
-//                     if(i == arr.length - 1) {
-//                         player.awaitingUser = false;
-//                         game.classList.remove("n-turn");
-//                         game.classList.add("p-turn");
-//                     }
-//                     resolve();
-//                 }, rng(750) + 1500)
-//             }
+  player.awaitingUser = true;
+	asyncForEach(narrator.start, (msg, i, arr) => 
+        new Promise(resolve => {
+            if(i != 0){
+                return setTimeout(() => {
+                    i == 1 || i == 3 ?
+                    createChatMessage('narrator','narrator', i == 3 ? msg : msg(player.name)) :
+                    createChatMessage('player',player.name, msg);
+                    if(i == arr.length - 1) {
+                        player.awaitingUser = false;
+                        game.classList.remove("n-turn");
+                        game.classList.add("p-turn");
+                    }
+                    resolve();
+                }, rng(750) + 1500)
+            }
 
-//             createChatMessage('narrator', 'narrator', msg(player.name))
-//             resolve();
-//         })
-//     )
+            createChatMessage('narrator', 'narrator', msg(player.name))
+            resolve();
+        })
+    )
 
 	  buildDungeon([0, 160]);
 }
